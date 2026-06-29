@@ -13,6 +13,23 @@
 
 ---
 
+## 🏷️ GitHub Topics & Keywords (descoberta)
+> Tags mais buscadas em pacotes de gestão de projetos e de IA/observabilidade no GitHub.
+> Aplique no repo (máx. 20 topics): **Settings → Topics**, ou:
+> ```
+> gh repo edit --add-topic project-management,kanban,task-management,dashboard,executive-dashboard,business-intelligence,analytics,data-visualization,kpi,metrics,balanced-scorecard,llm,ai,llm-observability,llmops,langfuse,roi,agile,scrum,python
+> ```
+
+| Categoria | Topics / palavras-chave |
+|---|---|
+| **Gestão de Projetos** | `project-management` · `kanban` · `task-management` · `agile` · `scrum` · `gantt` · `productivity` |
+| **Dashboards & BI** | `dashboard` · `executive-dashboard` · `business-intelligence` · `analytics` · `data-visualization` · `kpi` · `metrics` |
+| **IA / LLM / Observabilidade** | `llm` · `ai` · `llm-observability` · `ai-observability` · `llmops` · `langfuse` · `observability` |
+| **Financeiro / Método** | `roi` · `npv` · `balanced-scorecard` · `lean-six-sigma` · `finance` |
+| **Stack** | `python` · `sqlite` · `rust` · `evidence` · `latex` |
+
+**Palavras-chave de busca (description do repo):** *balanced scorecard, project management, AI/LLM, token cost, ROI/VPL/TIR, KPI dashboard, Langfuse, observability, executive dashboard, Lean Six Sigma, pitch deck.*
+
 ## 📂 Índice de Arquivos
 
 ### Arquivos centrais (framework)
