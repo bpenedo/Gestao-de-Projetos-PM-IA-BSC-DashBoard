@@ -1,0 +1,4 @@
+name: bsc
+type: sqlite
+options:
+  filename: bsc_ia.db

@@ -1,0 +1,28 @@
+# ============================================================================
+# PRIVACIDADE — NUNCA PUBLICAR (dados/conversas pessoais)
+# ============================================================================
+foundations/_private/
+**/*.jsonl
+**/*.db
+**/*.db-journal
+**/.env
+foundations/watchdog.log
+foundations/pipeline/weekly_reports/
+
+# Caches / build
+**/__pycache__/
+**/*.pyc
+foundations/evidence/build/
+foundations/evidence/.evidence/
+foundations/evidence/node_modules/
+
+# 5D regenerável a partir do seed anônimo (evita vazar nomes reais)
+foundations/evidence/static/5d_projetos.png
+
+# Build Rust (recompilável)
+foundations/pipeline/analise_rs/target/
+**/*.whl
+**/*.so
+
+# Pitch decks gerados (regeneráveis; evita vazar projetos reais)
+foundations/pitchdeck/pitchdeck_*

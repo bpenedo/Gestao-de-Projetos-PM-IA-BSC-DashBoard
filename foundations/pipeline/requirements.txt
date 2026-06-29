@@ -1,0 +1,4 @@
+# Pipeline BSC de Projetos de IA — dependências Python
+# (sqlite3 já vem na biblioteca padrão do Python)
+langfuse>=4.0.0      # SDK oficial Langfuse v4 (ETL via api.observations.get_many)
+python-dotenv>=1.0.0 # leitura do arquivo .env (opcional, recomendado)

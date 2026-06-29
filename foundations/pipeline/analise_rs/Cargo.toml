@@ -1,0 +1,12 @@
+[package]
+name = "analise_rs"
+version = "0.1.0"
+edition = "2021"
+description = "Classificador Lean (RATE_LIMIT/ALUCINACAO/NENHUM) acelerado em Rust para o Framework PM IA."
+
+[lib]
+name = "analise_rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.22", features = ["extension-module"] }
