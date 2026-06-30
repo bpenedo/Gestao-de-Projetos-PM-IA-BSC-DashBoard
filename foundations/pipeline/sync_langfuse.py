@@ -48,7 +48,7 @@ async def _fetch_janela(cliente, inicio, fim):
     while True:
         pagina = await cliente.async_api.observations.get_many(
             type="GENERATION", from_start_time=inicio, to_start_time=fim,
-            limit=100, cursor=cursor)
+            limit=100, cursor=cursor, fields="core,io,usage,metadata")
         if not pagina.data:
             break
         out.extend(pagina.data)
@@ -75,7 +75,12 @@ def _gravar(conn, observacoes):
     cur = conn.cursor()
     total = 0
     for gen in observacoes:
-        project_name = gen.name or "Projeto_Nao_Identificado"
+        md = gen.metadata if isinstance(gen.metadata, dict) else {}
+        # project_name: metadata.project_name (recomendado) > trace name > observation name.
+        project_name = (md.get("project_name") or md.get("project")
+                        or getattr(gen, "trace_name", None) or gen.name
+                        or "Projeto_Nao_Identificado")
+        session = md.get("session") or gen.session_id
         usage = gen.usage_details or {}
         pt = int(usage.get("input", 0) or 0)
         ct = int(usage.get("output", 0) or 0)
@@ -90,7 +95,7 @@ def _gravar(conn, observacoes):
             (id, project_name, session_id, prompt_tokens, completion_tokens,
              tipo_erro, prompt_categoria, tempo_bloqueado_minutos, latency_seconds, updated_at)
             VALUES (?,?,?,?,?,?,?,?,?,?)""",
-            (gen.id, project_name, gen.session_id, pt, ct, tipo_erro, categoria, bloqueado, latency, ts))
+            (gen.id, project_name, session, pt, ct, tipo_erro, categoria, bloqueado, latency, ts))
         if tipo_erro != "NENHUM":
             cur.execute("""INSERT OR REPLACE INTO alertas_criticos
                 (id, project_name, session_id, tipo_erro, prompt_truncado,
