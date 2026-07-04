@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 190" width="160" height="190">
+  <defs>
+    <linearGradient id="gk_suit" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a4a72"/><stop offset="1" stop-color="#173254"/>
+    </linearGradient>
+    <radialGradient id="gk_bg" cx="50%" cy="40%" r="65%">
+      <stop offset="0" stop-color="#eef1f5"/><stop offset="1" stop-color="#d7dde5"/>
+    </radialGradient>
+  </defs>
+  <circle cx="80" cy="95" r="78" fill="url(#gk_bg)"/>
+  <!-- ombros / terno azul -->
+  <path d="M14 190 Q16 138 55 126 L105 126 Q144 138 146 190 Z" fill="url(#gk_suit)"/>
+  <!-- camisa -->
+  <path d="M62 126 L80 168 L98 126 Z" fill="#f5f7f9"/>
+  <!-- lapelas -->
+  <path d="M62 126 L80 168 L64 129 Z" fill="#132842"/>
+  <path d="M98 126 L80 168 L96 129 Z" fill="#132842"/>
+  <!-- gravata -->
+  <path d="M77 130 L83 130 L87 162 L80 176 L73 162 Z" fill="#8f1d2d"/>
+  <!-- pescoço -->
+  <rect x="69" y="104" width="22" height="28" fill="#e2b78f"/>
+  <!-- cabeça -->
+  <ellipse cx="80" cy="78" rx="31" ry="35" fill="#eec7a2"/>
+  <!-- cabelo penteado p/ trás -->
+  <path d="M49 64 Q80 36 111 64 Q113 48 80 43 Q47 48 49 64 Z" fill="#332720"/>
+  <path d="M49 64 Q80 55 111 64 L108 57 Q80 49 52 57 Z" fill="#463629"/>
+  <!-- óculos escuros -->
+  <rect x="56" y="72" width="19" height="11" rx="3.5" fill="#12161c"/>
+  <rect x="85" y="72" width="19" height="11" rx="3.5" fill="#12161c"/>
+  <rect x="75" y="75" width="10" height="3" fill="#12161c"/>
+  <!-- reflexo óculos -->
+  <path d="M59 75 l5 0" stroke="#3a4a5e" stroke-width="1.5"/>
+  <path d="M88 75 l5 0" stroke="#3a4a5e" stroke-width="1.5"/>
+  <!-- boca firme -->
+  <path d="M70 99 q10 4 18 0" stroke="#a06a4a" stroke-width="2" fill="none"/>
+  <!-- charuto -->
+  <rect x="86" y="98" width="27" height="6.5" rx="2.2" fill="#6b4423"/>
+  <rect x="109" y="98" width="6" height="6.5" fill="#d98a2b"/>
+  <!-- fumaça -->
+  <path d="M115 99 q9 -8 3 -17 q-6 -9 3 -17 q5 -6 1 -13" stroke="#c9c9c9" stroke-width="3" fill="none" opacity="0.7" stroke-linecap="round"/>
+</svg>

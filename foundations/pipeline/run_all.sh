@@ -31,6 +31,10 @@ python3 compute_kpis.py | tail -n 5
 
 echo "▶️  Calculando VPL/Payback (fluxo_caixa.csv se existir, senão demo)..."
 python3 carregar_fluxo.py || echo "  (VPL pulado)"
+python3 seed_planos.py || echo "  (planos pulado)"
+
+echo "▶️  Decisão multicritério AHP-TOPSIS 2n (melhor projeto)..."
+python3 ahp_topsis.py || echo "  (MCDA pulado)"
 
 echo "▶️  Gerando Mapa 5D do portfólio..."
 python3 gerar_5d_projetos.py || echo "  (5D pulado)"

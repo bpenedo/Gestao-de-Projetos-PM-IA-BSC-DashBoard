@@ -61,6 +61,12 @@ select * from bsc.planos_assinatura
 ```sql planos_pagos
 select * from bsc.planos_assinatura where usd_mes > 0 order by total_iof desc
 ```
+```sql mcda
+select * from bsc.decisao_mcda order by rank_final
+```
+```sql mcda_top
+select * from bsc.decisao_mcda where rank_final = 1
+```
 
 ## 📈 Sumário Executivo do Portfólio
 
@@ -294,6 +300,67 @@ select * from bsc.planos_assinatura where usd_mes > 0 order by total_iof desc
 </DataTable>
 
 <BarChart data={planos_pagos} x=plano y=total_iof title="Custo total mensal com IOF por plano (R$)" swapXY=true sort=true/>
+
+<div style="display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;margin:1.4rem 0 0.4rem;">
+  <img src="/gekko.svg" alt="financista Wall Street" width="86" height="102" style="flex:0 0 auto;"/>
+  <h2 style="text-align:center;margin:0;font-weight:800;">🏆 AHP-TOPSIS 2N — Modelo Multi-Critério Decisório (MCDM)</h2>
+  <img src="/shark.svg" alt="tubarão investidor" width="120" height="82" style="flex:0 0 auto;"/>
+</div>
+
+> **Escolha do MELHOR projeto** ponderando os indicadores como critérios. Pesos por **AHP**
+> (VPL 37% · TIR 24% · ILL 14% · PSR 14% · IITA 5,6% · IDLS 5,6% — CR = 0,012, consistente).
+> Ranking por **TOPSIS** em **duas normalizações** (vetorial/Euclidiana + min-max/linear); o
+> **Ci final** é a média. Coluna **Robusto?** = as duas normalizações concordam na posição.
+
+**🥇 Projeto vencedor (maior Ci final):**
+<DataTable data={mcda_top}>
+  <Column id=project_name title="🏆 Melhor Projeto"/>
+  <Column id=ci_final title="Ci final" fmt=num4/>
+</DataTable>
+
+<BarChart data={mcda} x=project_name y=ci_final title="Ranking AHP-TOPSIS 2n (Ci final, 0–1)" swapXY=true sort=true labels=true/>
+
+<DataTable data={mcda} rows=all rowShading=true>
+  <Column id=rank_final title="#"/>
+  <Column id=project_name title="Projeto"/>
+  <Column id=ci_vector title="Ci vetorial" fmt=num4/>
+  <Column id=ci_minmax title="Ci min-max" fmt=num4/>
+  <Column id=ci_final title="Ci final" fmt=num4/>
+  <Column id=concordante title="Robusto?" fmt=boolean/>
+</DataTable>
+
+> O vencedor tem **pitchdeck** gerado (ver pasta Projetos / `pitchdeck/`). Se as posições 6–7
+> divergem entre normalizações, é onde o ranking é mais sensível — decida com cautela ali.
+
+### 📌 Bottom-Line — Sumário Executivo & Insights C-Level
+
+**Veredito.** O modelo **AHP-TOPSIS 2n** elege **`Project F`** como o melhor projeto do portfólio
+(**Ci = 0,96** de 1,00), com **robustez confirmada**: as duas normalizações (vetorial e min-max)
+concordam na **1ª posição** e em 8/10 do ranking — o topo é estável, não é artefato de método.
+
+**Por que `Project F` venceu.** Os critérios **financeiros** (VPL R$ 5.973 · TIR 32,9% · ILL 1,75)
+estão **empatados** entre os projetos (fluxo de caixa ainda em *placeholder* uniforme). Com o
+financeiro neutralizado, a decisão migra para a **eficiência operacional**, e aí `Project F` domina:
+tem a **menor taxa de alucinação (IITA 9,1%)** e o **menor desperdício Lean (IDLS 15,0%)** de
+todo o portfólio — praticamente **metade** do desperdício do 2º colocado. Em outras palavras:
+**mesmo retorno projetado, executando com muito menos desperdício de tokens/caixa.**
+
+**Insights C-Level.**
+- 🥇 **Eficiência é o desempate:** quando o retorno é parecido, quem **queima menos** (menor IITA/IDLS)
+  entrega o mesmo valor com maior margem — é o ativo mais escalável.
+- 🛡️ **Robustez decisória:** a concordância entre as duas normalizações (8/10) dá **segurança** ao board
+  para agir no topo do ranking; a zona sensível (posições 6–7) exige análise qualitativa antes de cortar.
+- 📉 **Cauda de risco:** `Project C` (Ci 0,01) reúne o pior desempenho combinado — candidato a
+  **refatoração ou descontinuação** (cruzar com a Matriz BCG).
+
+**⚠️ Ressalva de honestidade decisória.** Os critérios financeiros carregam **75% do peso AHP**
+(VPL 37% + TIR 24% + ILL 14%), mas hoje **não diferenciam** porque o fluxo de caixa é placeholder.
+**O veredito só é definitivo com os fluxos de caixa REAIS por projeto** — ao inseri-los, o ranking
+pode mudar substancialmente (o financeiro voltará a dominar).
+
+**Recomendação.** (1) Aprovar `Project F` como **piloto de escala** pela eficiência comprovada; (2) inserir
+os **fluxos de caixa reais** e re-rodar o `ahp_topsis.py` para o veredito financeiro definitivo;
+(3) acionar plano de melhoria na cauda (`Project C`).
 
 ---
 ## 🔗 Painéis Individuais por Projeto

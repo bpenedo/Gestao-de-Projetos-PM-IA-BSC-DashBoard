@@ -119,6 +119,18 @@ CREATE TABLE IF NOT EXISTS planos_assinatura (
     PRIMARY KEY (provedor, plano)
 );
 
+-- 10. Decisão multicritério AHP-TOPSIS (2 normalizações) — ranking final dos projetos.
+CREATE TABLE IF NOT EXISTS decisao_mcda (
+    project_name  TEXT PRIMARY KEY,
+    ci_vector     REAL,     -- closeness coefficient (normalização vetorial/Euclidiana)
+    ci_minmax     REAL,     -- closeness coefficient (normalização min-max/linear)
+    ci_final      REAL,     -- média das duas (ranking final)
+    rank_final    INTEGER,
+    rank_vector   INTEGER,
+    rank_minmax   INTEGER,
+    concordante   INTEGER    -- 1 se as duas normalizações concordam na posição
+);
+
 -- 6. Pauta da reunião semanal (Weekly Checkpoint - sexta 09:00).
 CREATE TABLE IF NOT EXISTS reuniao_weekly (
     data_reuniao          TEXT,
