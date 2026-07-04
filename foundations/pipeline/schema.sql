@@ -109,6 +109,16 @@ CREATE TABLE IF NOT EXISTS vpl_fluxo (
     PRIMARY KEY (project_name, periodo)
 );
 
+-- 9. Planos de assinatura de IA (US$ + câmbio + IOF -> custo total mensal em R$).
+CREATE TABLE IF NOT EXISTS planos_assinatura (
+    provedor   TEXT,
+    plano      TEXT,
+    usd_mes    REAL,
+    cambio     REAL,   -- BRL por USD
+    iof_pct    REAL,   -- % de IOF sobre operação internacional
+    PRIMARY KEY (provedor, plano)
+);
+
 -- 6. Pauta da reunião semanal (Weekly Checkpoint - sexta 09:00).
 CREATE TABLE IF NOT EXISTS reuniao_weekly (
     data_reuniao          TEXT,

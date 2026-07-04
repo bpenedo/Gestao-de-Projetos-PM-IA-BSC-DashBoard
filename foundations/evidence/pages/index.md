@@ -55,6 +55,12 @@ select * from bsc.vpl_resultado
 ```sql vpl_fluxo
 select * from bsc.vpl_fluxo
 ```
+```sql planos
+select * from bsc.planos_assinatura
+```
+```sql planos_pagos
+select * from bsc.planos_assinatura where usd_mes > 0 order by total_iof desc
+```
 
 ## 📈 Sumário Executivo do Portfólio
 
@@ -273,6 +279,21 @@ select * from bsc.vpl_fluxo
 <LineChart data={vpl_fluxo} x=periodo y=cum_desc series=project_name title="Fluxo de caixa acumulado descontado por período" yAxisTitle="Acumulado descontado (R$)" markers=true>
   <ReferenceLine y=0 color=negative label="break-even"/>
 </LineChart>
+
+## 💳 Planos de Assinatura de IA — Custo Total com IOF
+> Câmbio **R$ 5,40/US$** · **IOF 3,5%** sobre operação internacional (cartão). `Total = US$ × câmbio × (1 + IOF)`.
+> Este é o custo real que alimenta a base de rateio (`assinaturas_infra`). Preços aproximados — verifique os sites oficiais.
+
+<DataTable data={planos} rows=all rowShading=true>
+  <Column id=provedor title="Provedor"/>
+  <Column id=plano title="Plano"/>
+  <Column id=usd_mes title="US$/mês" fmt=num0/>
+  <Column id=r_base title="R$ base" fmt='$#,##0.00'/>
+  <Column id=iof_reais title="IOF" fmt='$#,##0.00'/>
+  <Column id=total_iof title="Total c/ IOF (R$)" fmt='$#,##0.00'/>
+</DataTable>
+
+<BarChart data={planos_pagos} x=plano y=total_iof title="Custo total mensal com IOF por plano (R$)" swapXY=true sort=true/>
 
 ---
 ## 🔗 Painéis Individuais por Projeto

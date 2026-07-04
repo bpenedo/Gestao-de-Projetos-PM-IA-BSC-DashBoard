@@ -32,6 +32,7 @@ PRECO_API_POR_1K = float(os.environ.get("PRECO_API_POR_1K", "0.025"))  # R$ por 
 SELIC_ANUAL = float(os.environ.get("SELIC_ANUAL", "0.105"))    # taxa SELIC a.a. (BR) — ex.: 10,5%
 US_RATE_ANUAL = float(os.environ.get("US_RATE_ANUAL", "0.045"))  # Fed funds a.a. (EUA) — ex.: 4,5%
 USD_BRL = float(os.environ.get("USD_BRL", "5.40"))             # câmbio BRL por USD (dolarização)
+IOF_PCT = float(os.environ.get("IOF_PCT", "3.5"))              # IOF % sobre compras internacionais (cartão)
 PESO_RATE_LIMIT = 1.5   # penalidade de cota
 PESO_ALUCINACAO = 2.0   # penalidade de código/alucinação
 LIMITE_LATENCIA_S = 3.0  # latência aceitável (Lean); excedente = waste
