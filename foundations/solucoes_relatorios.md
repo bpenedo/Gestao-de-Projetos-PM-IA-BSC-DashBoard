@@ -1,6 +1,6 @@
 # 🛠️ solucoes_relatorios.md — Padrão de Conclusão de Relatórios (Melhoria Contínua)
 
-> **Framework "Painel BSC Dashboard — Gestão de Projetos (PM) IA"** · Autor: Bruno Teixeira Penedo.
+> **Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard"** · ©️ Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
 >
 > **STANDARD obrigatório:** todo relatório de projeto (página individual no Evidence) **deve** terminar
 > com um **Bottom-Line / Rodapé conclusivo** contendo: (1) dissertação de **Wastes**, (2) dissertação

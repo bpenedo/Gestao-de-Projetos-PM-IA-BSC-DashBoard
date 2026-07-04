@@ -1,6 +1,6 @@
 # 📈 Pitch Deck — TEMPLATE PADRÃO (Standard)
 
-> **Framework "Painel BSC Dashboard — Gestão de Projetos (PM) IA"** · ©️ Bruno Teixeira Penedo — 2026.
+> **Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard"** · ©️ Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
 >
 > Padrão canônico de geração de pitch deck. O gerador `pipeline/gerar_pitchdeck.py` produz, para cada
 > projeto **elegível**, os arquivos `pitchdeck_<nome_do_projeto>_DDMMAAAA.md` e `.pdf` (LaTeX/tectonic)

@@ -1,6 +1,6 @@
 -- ============================================================================
--- Framework "Painel BSC Dashboard - Gestão de Projetos (PM) IA"
--- Autor: Bruno Teixeira Penedo - 27/06/2026 18:00
+-- Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard"
+-- Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · (c) Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
 -- Schema do banco SQLite que alimenta o Balanced Scorecard de Projetos de IA.
 -- ============================================================================
 

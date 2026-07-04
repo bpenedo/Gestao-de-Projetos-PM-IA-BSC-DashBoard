@@ -1,4 +1,4 @@
-# 🧭 Framework VPL — Painel BSC Dashboard · Gestão de Projetos (PM) IA
+# 🧭 Framework VPL — Gestão de Projetos (PM) IA com Painel BSC e DashBoard
 
 ![Method](https://img.shields.io/badge/method-Balanced%20Scorecard-1F3A5F)
 ![AI](https://img.shields.io/badge/AI-LLM%20observability-45a1bf)
@@ -66,4 +66,4 @@ pacote** (`foundations/_private/`, git-ignored). Antes de publicar, rode a sanit
 
 ---
 
-**Framework "Painel BSC Dashboard — Gestão de Projetos (PM) IA"** · ©️ Bruno Teixeira Penedo — 2026. Todos os direitos reservados.
+**Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard"** · ©️ Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com

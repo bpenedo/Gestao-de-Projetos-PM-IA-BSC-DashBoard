@@ -3,7 +3,7 @@
 -- Calcula todos os KPIs por projeto: IITA, PEUC, ITR, IEET, IOLI, CDO, VRT/kT,
 -- IDLS, ICCA, IBMT, Burn Rate, CPP e o PSR (Score 0-5).
 -- Preço médio da API por 1k tokens parametrizado em 0.025 (ajuste conforme provider).
--- Autor: Bruno Teixeira Penedo.
+-- Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · (c) Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
 -- ============================================================================
 WITH sessao AS (
     -- Status por sessão: a sessão é útil se NÃO teve nenhuma falha.

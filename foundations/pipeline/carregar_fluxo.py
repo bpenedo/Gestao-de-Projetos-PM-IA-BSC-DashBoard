@@ -13,7 +13,7 @@ Uso:
     python3 carregar_fluxo.py caminho/do/arquivo.csv     # carrega o SEU CSV
     python3 carregar_fluxo.py --demo                      # gera fluxo de DEMO (Project A..J)
 Sem argumento, tenta 'fluxo_caixa.csv' no diretório; se não houver, usa --demo.
-Autor: Bruno Teixeira Penedo.
+Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · (c) Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
 """
 import csv
 import sys

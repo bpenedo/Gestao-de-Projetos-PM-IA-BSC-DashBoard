@@ -1,7 +1,6 @@
 # Foundations — WatchDog de Projetos com IA
 
-> **Framework "Painel BSC Dashboard — Gestão de Projetos (PM) IA"**
-> **Autor:** Bruno Teixeira Penedo · **Criação:** 27/06/2026 às 18:00 · Todos os direitos reservados.
+> **Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard"** · ©️ Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
 
 > Base de mensuração e monitoramento de projetos construídos com IA. Operada pela skill
 > **`measuring-ai-projects`**, que age como **WatchDog**: a cada projeto informado, cria

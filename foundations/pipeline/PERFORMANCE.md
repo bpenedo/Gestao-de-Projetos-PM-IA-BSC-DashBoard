@@ -1,5 +1,6 @@
 # ⚡ PERFORMANCE — Python tradicional vs Concorrente + Rust
-> Framework PM IA · Bruno Teixeira Penedo. Classificacao e fetch MEDIDOS; cenario de producao modela
+> **Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard"** · ©️ Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
+> Classificacao e fetch MEDIDOS; cenario de producao modela
 > fetch por latencia/pagina (~100ms) e usa a vazao medida da classificacao.
 
 ## Tabela comparativa (janela temporal em segundos)

@@ -8,7 +8,7 @@ Saída na pasta foundations/pitchdeck/:
   - pitchdeck_<projeto>_DDMMAAAA.pdf  (LaTeX compilado com tectonic)
 
 Uso:  python3 gerar_pitchdeck.py ["Nome do Projeto"]   (sem arg = todos os elegíveis)
-Autor: Bruno Teixeira Penedo.
+Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · (c) Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
 """
 import subprocess
 import sys
@@ -88,7 +88,7 @@ def _md(c):
     fin = "\n".join(f"| {r['periodo']} | {r['fluxo']:,.0f} | {r['fluxo_desc']:,.0f} | {r['cum_desc']:,.0f} |"
                     for r in c["fluxo"])
     return f"""# 📈 Pitch Deck — {c['nome']}
-*Gerado em {datetime.now():%d/%m/%Y} · Framework BSC PM IA (Bruno Teixeira Penedo)*
+*Gerado em {datetime.now():%d/%m/%Y} · © Bruno Teixeira Penedo 2026 · bpenedo@gmail.com*
 
 ## Executive Summary
 - **PITCH:** {c['pitch']}
@@ -189,7 +189,7 @@ Periodo & Fluxo & Fluxo desc. & Acum. desc.\\ \hline
 \end{{center}}
 
 \vspace{{8pt}}
-{{\centering\footnotesize Framework BSC PM IA \textcopyright Bruno Teixeira Penedo -- 2026.\par}}
+{{\centering\footnotesize Gestão de Projetos (PM) IA com Painel BSC e DashBoard \textcopyright~Bruno Teixeira Penedo -- 2026. bpenedo@gmail.com\par}}
 \end{{document}}
 """
 

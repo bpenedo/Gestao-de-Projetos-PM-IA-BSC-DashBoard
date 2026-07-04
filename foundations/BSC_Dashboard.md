@@ -1,6 +1,6 @@
 # 🧭 Painel BSC — Balanced Scorecard de Projetos com IA
 
-> **Framework "Painel BSC Dashboard — Gestão de Projetos (PM) IA"** · Autor: **Bruno Teixeira Penedo** · 27/06/2026 18:00.
+> **Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard"** · ©️ Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
 
 > **Visão gerencial final.** Consolida os KPIs das fundações nas **4 perspectivas de Kaplan &
 > Norton**. Gerado/atualizado no **Checkpoint Gerencial de toda sexta-feira** (agendado via cron).

@@ -11,7 +11,7 @@ Lê o JSON do hook em STDIN (campos como cwd, hook_event_name, session_id) e:
 
 Uso (manual de teste):
   echo '{"cwd":"/x/Projeto","hook_event_name":"SessionStart","session_id":"abc"}' | python3 watchdog_session.py
-Autor: Bruno Teixeira Penedo.
+Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · (c) Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
 """
 import json
 import sys

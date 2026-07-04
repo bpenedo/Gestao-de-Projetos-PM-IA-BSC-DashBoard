@@ -1,6 +1,6 @@
 # ⚙️ SETUP — Comece em 5 minutos (traga as SUAS chaves)
 
-> Framework "Painel BSC Dashboard — Gestão de Projetos (PM) IA" · Autor: Bruno Teixeira Penedo.
+> Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · ©️ Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
 > **Cada usuário usa a PRÓPRIA conta Langfuse.** Nenhuma chave do autor acompanha este pacote.
 
 ## Pré-requisitos

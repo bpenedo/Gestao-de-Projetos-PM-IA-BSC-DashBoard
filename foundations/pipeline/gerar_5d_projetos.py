@@ -10,7 +10,7 @@ glossy) usando a lib render_5d vendorizada localmente (pipeline/fivedchart_lib.p
   cor (dim5) = ICCA (RdYlGn)  -> SUSTENTABILIDADE (verde > 3x cobre custo; vermelho < 1x prejuízo)
 
 Saída: foundations/evidence/static/5d_projetos.png  (servida pelo Evidence em /5d_projetos.png)
-Autor: Bruno Teixeira Penedo.
+Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · (c) Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
 """
 from db import get_conn
 from config import QUERIES_DIR, FOUNDATIONS_DIR

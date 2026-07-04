@@ -2,7 +2,7 @@
 title: Painel BSC — Gestão de Projetos (PM) IA
 ---
 
-_Framework "Painel BSC Dashboard — Gestão de Projetos (PM) IA" · Bruno Teixeira Penedo · 27/06/2026._
+_Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · ©️ Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com_
 **Weekly Checkpoint — toda sexta-feira às 09:00.**
 
 > ⚠️ **Dados DEMO** dos 10 projetos reais de `~/devparetoprojects/*`. Tornam-se reais quando o Langfuse sincronizar.
