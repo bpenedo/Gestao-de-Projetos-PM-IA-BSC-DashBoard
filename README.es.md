@@ -16,6 +16,14 @@
 >
 > *"Lo que no se mide no se puede gestionar ni mejorar."*
 
+> *Cuando ores y estudies, no dejes que [mis palabras] te abandonen. Con cada palabra y expresión que sale de tus labios, ten presente traer una Unificación.* — Aryeh Kaplan
+
+> *La metafísica pura, situándose por esencia por encima y más allá de todas las formas y contingencias, no es ni oriental ni occidental: es universal.* — René Guénon
+
+> *Conocerse a sí mismo es conocer el propio linaje y el propio poder.* — Harvey Spencer Lewis
+
+> *Scientia es Lux Lucis* ∞ Sapere Aude S∴A∴☬ ☿
+
 > 📖 **Documentación principal:** **[`foundations/README.md`](foundations/README.md)** ·
 > ⚙️ **Configuración (usa tus propias claves):** [`foundations/pipeline/SETUP.md`](foundations/pipeline/SETUP.md) ·
 > 📊 **KPIs:** [`foundations/KPIs.md`](foundations/KPIs.md) / [`foundations/KPIs_README.md`](foundations/KPIs_README.md)

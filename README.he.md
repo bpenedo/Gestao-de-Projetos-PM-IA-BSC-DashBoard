@@ -16,6 +16,14 @@
 >
 > *"מה שלא נמדד לא ניתן לניהול ולא ניתן לשיפור."*
 
+> *כאשר אתה מתפלל ולומד, אל תיתן [לדבריי] לעזוב אותך. עם כל מילה וביטוי היוצאים משפתיך, שים אל לבך להביא ייחוד.* — Aryeh Kaplan
+
+> *המטאפיזיקה הטהורה, השוכנת מעצם מהותה מעל ומעבר לכל הצורות וכל המקרים, אינה מזרחית ואינה מערבית: היא אוניברסלית.* — René Guénon
+
+> *להכיר את עצמך פירושו להכיר את שושלתך ואת כוחך.* — Harvey Spencer Lewis
+
+> *Scientia es Lux Lucis* ∞ Sapere Aude S∴A∴☬ ☿
+
 > 📖 **תיעוד ראשי:** **[`foundations/README.md`](foundations/README.md)** ·
 > ⚙️ **התקנה (עם המפתחות שלכם):** [`foundations/pipeline/SETUP.md`](foundations/pipeline/SETUP.md) ·
 > 📊 **KPI:** [`foundations/KPIs.md`](foundations/KPIs.md) / [`foundations/KPIs_README.md`](foundations/KPIs_README.md)

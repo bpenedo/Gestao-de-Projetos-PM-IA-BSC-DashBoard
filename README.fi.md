@@ -13,6 +13,14 @@
 >
 > *"Mitä ei mitata, sitä ei voi hallita eikä parantaa."*
 
+> *Kun rukoilet ja opiskelet, älä anna [sanojeni] jättää sinua. Jokaisen huuliltasi lähtevän sanan ja ilmauksen kohdalla pidä mielessä Yhdistymisen aikaansaaminen.* — Aryeh Kaplan
+
+> *Puhdas metafysiikka, sijaiten olemukseltaan kaikkien muotojen ja kaikkien satunnaisuuksien yläpuolella ja tuolla puolen, ei ole itämainen eikä länsimainen: se on universaali.* — René Guénon
+
+> *Itsensä tunteminen on oman sukulinjansa ja oman voimansa tunteminen.* — Harvey Spencer Lewis
+
+> *Scientia es Lux Lucis* ∞ Sapere Aude S∴A∴☬ ☿
+
 > 📖 **Pääkirjaus:** **[`foundations/README.md`](foundations/README.md)** ·
 > ⚙️ **Asennus (omat avaimet):** [`foundations/pipeline/SETUP.md`](foundations/pipeline/SETUP.md)
 

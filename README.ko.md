@@ -16,6 +16,14 @@
 >
 > *"측정되지 않는 것은 관리할 수도, 개선할 수도 없다."*
 
+> *기도하고 공부할 때 [나의 말]이 너를 떠나지 않게 하라. 네 입술에서 나오는 모든 말과 표현마다 하나의 통합을 이룰 것을 마음에 두라.* — Aryeh Kaplan
+
+> *순수 형이상학은 그 본질상 모든 형식과 모든 우연을 넘어 그 위에 위치하며, 동양적이지도 서양적이지도 않다: 그것은 보편적이다.* — René Guénon
+
+> *자기 자신을 아는 것은 자신의 혈통과 자신의 힘을 아는 것이다.* — Harvey Spencer Lewis
+
+> *Scientia es Lux Lucis* ∞ Sapere Aude S∴A∴☬ ☿
+
 > 📖 **주요 문서:** **[`foundations/README.md`](foundations/README.md)** ·
 > ⚙️ **설정(본인 키 사용):** [`foundations/pipeline/SETUP.md`](foundations/pipeline/SETUP.md) ·
 > 📊 **KPI:** [`foundations/KPIs.md`](foundations/KPIs.md) / [`foundations/KPIs_README.md`](foundations/KPIs_README.md)

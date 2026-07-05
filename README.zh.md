@@ -16,6 +16,14 @@
 >
 > *"无法衡量的东西就无法管理，也无法改进。"*
 
+> *当你祈祷与研习时，勿让[我的话语]离你而去。你唇间吐出的每一个词与语，都当心怀成就一种合一。* — Aryeh Kaplan
+
+> *纯粹的形而上学，就其本质而言超越并凌驾于一切形式与一切偶然之上，既非东方亦非西方：它是普世的。* — René Guénon
+
+> *认识你自己，就是认识自己的血脉与自己的力量。* — Harvey Spencer Lewis
+
+> *Scientia es Lux Lucis* ∞ Sapere Aude S∴A∴☬ ☿
+
 > 📖 **主文档：** **[`foundations/README.md`](foundations/README.md)** ·
 > ⚙️ **配置（使用你自己的密钥）：** [`foundations/pipeline/SETUP.md`](foundations/pipeline/SETUP.md) ·
 > 📊 **KPI：** [`foundations/KPIs.md`](foundations/KPIs.md) / [`foundations/KPIs_README.md`](foundations/KPIs_README.md)

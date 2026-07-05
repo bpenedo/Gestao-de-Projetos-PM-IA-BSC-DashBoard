@@ -16,6 +16,14 @@
 >
 > *„Was nicht gemessen wird, kann weder gesteuert noch verbessert werden."*
 
+> *Wenn du betest und lernst, lass [meine Worte] dich nicht verlassen. Mit jedem Wort und Ausdruck, der deine Lippen verlässt, halte im Sinn, eine Vereinigung zu bewirken.* — Aryeh Kaplan
+
+> *Die reine Metaphysik, die sich ihrem Wesen nach über und jenseits aller Formen und aller Kontingenzen befindet, ist weder östlich noch westlich: sie ist universal.* — René Guénon
+
+> *Sich selbst zu kennen bedeutet, die eigene Abstammung und die eigene Kraft zu kennen.* — Harvey Spencer Lewis
+
+> *Scientia es Lux Lucis* ∞ Sapere Aude S∴A∴☬ ☿
+
 > 📖 **Hauptdokumentation:** **[`foundations/README.md`](foundations/README.md)** ·
 > ⚙️ **Einrichtung (eigene Schlüssel mitbringen):** [`foundations/pipeline/SETUP.md`](foundations/pipeline/SETUP.md) ·
 > 📊 **KPIs:** [`foundations/KPIs.md`](foundations/KPIs.md) / [`foundations/KPIs_README.md`](foundations/KPIs_README.md)

@@ -16,6 +16,14 @@
 >
 > *"जो मापा नहीं जाता, उसे न तो प्रबंधित किया जा सकता है और न ही सुधारा जा सकता है।"*
 
+> *जब तुम प्रार्थना और अध्ययन करो, तो [मेरे वचनों] को अपने से न जाने दो। तुम्हारे होंठों से निकलने वाले हर शब्द और अभिव्यक्ति के साथ, एक एकत्व लाने का ध्यान रखो।* — Aryeh Kaplan
+
+> *शुद्ध तत्त्वमीमांसा, अपने सार में सभी रूपों और सभी आकस्मिकताओं से ऊपर और परे स्थित होकर, न तो प्राच्य है न पाश्चात्य: वह सार्वभौमिक है।* — René Guénon
+
+> *स्वयं को जानना अपनी वंश-परंपरा और अपनी शक्ति को जानना है।* — Harvey Spencer Lewis
+
+> *Scientia es Lux Lucis* ∞ Sapere Aude S∴A∴☬ ☿
+
 > 📖 **मुख्य दस्तावेज़ीकरण:** **[`foundations/README.md`](foundations/README.md)** ·
 > ⚙️ **सेटअप (अपनी चाबियाँ लाएँ):** [`foundations/pipeline/SETUP.md`](foundations/pipeline/SETUP.md) ·
 > 📊 **KPI:** [`foundations/KPIs.md`](foundations/KPIs.md) / [`foundations/KPIs_README.md`](foundations/KPIs_README.md)

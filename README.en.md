@@ -16,6 +16,14 @@
 >
 > *"What is not measured cannot be managed or improved."*
 
+> *When you pray and study, do not let [my words] leave you. With every word and expression that leaves your lips, keep in mind to bring about a Unification.* — Aryeh Kaplan
+
+> *Pure metaphysics, situating itself by essence above and beyond all forms and all contingencies, is neither Eastern nor Western: it is universal.* — René Guénon
+
+> *To know yourself is to know your own lineage and your own power.* — Harvey Spencer Lewis
+
+> *Scientia es Lux Lucis* ∞ Sapere Aude S∴A∴☬ ☿
+
 > 📖 **Main documentation:** **[`foundations/README.md`](foundations/README.md)** ·
 > ⚙️ **Setup (bring your own keys):** [`foundations/pipeline/SETUP.md`](foundations/pipeline/SETUP.md) ·
 > 📊 **KPIs:** [`foundations/KPIs.md`](foundations/KPIs.md) / [`foundations/KPIs_README.md`](foundations/KPIs_README.md)

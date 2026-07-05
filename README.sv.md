@@ -13,6 +13,14 @@
 >
 > *"Det som inte mäts kan varken styras eller förbättras."*
 
+> *När du ber och studerar, låt inte [mina ord] lämna dig. Med varje ord och uttryck som lämnar dina läppar, ha i åtanke att åstadkomma en Förening.* — Aryeh Kaplan
+
+> *Den rena metafysiken, som till sitt väsen befinner sig över och bortom alla former och alla tillfälligheter, är varken östlig eller västlig: den är universell.* — René Guénon
+
+> *Att känna sig själv är att känna sin egen härstamning och sin egen kraft.* — Harvey Spencer Lewis
+
+> *Scientia es Lux Lucis* ∞ Sapere Aude S∴A∴☬ ☿
+
 > 📖 **Huvuddokumentation:** **[`foundations/README.md`](foundations/README.md)** ·
 > ⚙️ **Installation (ta med egna nycklar):** [`foundations/pipeline/SETUP.md`](foundations/pipeline/SETUP.md)
 
