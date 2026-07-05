@@ -128,8 +128,8 @@ def render_5d(items, axis_labels, title, out_path, color_mode='cat', cmap='virid
         ax.imshow(sphere_rgba(140, colors[i]), extent=[cx-rr, cx+rr, cy-rr, cy+rr], zorder=5+0.001*i, interpolation='bilinear')
         lbl = it_lbl(items[i])
         if lbl:
-            ax.text(cx, cy, _short(lbl, 18), ha='center', va='center', fontsize=8, fontweight='bold',
-                    color='white', zorder=20, path_effects=[pe.withStroke(linewidth=2.2, foreground='#00000088')])
+            ax.text(cx, cy, _short(lbl, 16), ha='center', va='center', fontsize=11, fontweight='bold',
+                    color='white', zorder=20, path_effects=[pe.withStroke(linewidth=3.2, foreground='#000000dd')])
     allp = [_proj(a, b, c) for a in (0, 1) for b in (0, 1) for c in (0, 1)]
     ax.set_xlim(min(p[0] for p in allp)-3.4, max(p[0] for p in allp)+2.2)
     ax.set_ylim(min(p[1] for p in allp)-2.4, max(p[1] for p in allp)+1.6)

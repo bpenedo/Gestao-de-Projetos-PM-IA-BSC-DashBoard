@@ -36,6 +36,9 @@ python3 seed_planos.py || echo "  (planos pulado)"
 echo "▶️  Decisão multicritério AHP-TOPSIS 2n (melhor projeto)..."
 python3 ahp_topsis.py || echo "  (MCDA pulado)"
 
+echo "▶️  Gerando Dossiê Administrativo da Jóia da Coroa (concorrente: SWOT/PESTEL/5W4H/Pareto/GUT/Radar)..."
+python3 gerar_admtools.py || echo "  (admtools pulado)"
+
 echo "▶️  Gerando Mapa 5D do portfólio..."
 python3 gerar_5d_projetos.py || echo "  (5D pulado)"
 

@@ -80,7 +80,76 @@ select * from bsc.decisao_mcda where rank_final = 1
 >
 > **Leitura de conselho:** o projeto ideal fica à **direita/fundo** (escala+qualidade), **alto** (PSR) e **verde** (sustentável). Esfera **grande e vermelha** = muito caixa queimado sem cobertura → corrigir antes de escalar.
 
-![Mapa 5D do Portfólio de Projetos de IA](/5d_projetos.png?v=4)
+![Mapa 5D do Portfólio de Projetos de IA](/5d_projetos.png?v=5)
+
+### 🖱️ Mapa 5D Interativo — passe o mouse sobre cada esfera
+> **X** = Tokens (escala) · **Y** = PEUC (%) · **tamanho** = PSR (0–5) · **cor** = ICCA (🟢 sustentável · 🟠 limítrofe · 🔴 prejuízo). Ao passar o mouse em cada **esfera glossy**, aparece **Nome do projeto, PSR, PEUC e Tokens**.
+
+<ECharts config={{
+  tooltip: {
+    trigger: 'item',
+    backgroundColor: 'rgba(17,28,42,0.96)',
+    borderColor: '#3a4a5e',
+    borderWidth: 1,
+    padding: 12,
+    textStyle: { color: '#ffffff', fontSize: 14 },
+    extraCssText: 'box-shadow:0 6px 24px rgba(0,0,0,.45);border-radius:8px;',
+    formatter: (p) => {
+      const d = p.data;
+      return `<div style="font-size:16px;font-weight:700;margin-bottom:6px;color:#7ec8ff">${d.name}</div>`
+        + `<div style="font-size:13px;line-height:1.6">`
+        + `⭐ <b>PSR</b>: ${Number(d.psr).toFixed(2)} / 5<br/>`
+        + `✅ <b>PEUC</b>: ${Number(d.peuc).toFixed(1)}%<br/>`
+        + `🔢 <b>Tokens</b>: ${Number(d.tokens).toLocaleString('pt-BR')}`
+        + `</div>`;
+    }
+  },
+  grid: { left: 62, right: 40, top: 24, bottom: 58 },
+  xAxis: {
+    type: 'value', name: 'Tokens (escala) →', nameLocation: 'middle', nameGap: 34,
+    scale: true, nameTextStyle: { fontSize: 12, fontWeight: 600 },
+    axisLabel: { formatter: (v) => v >= 1000 ? (v/1000) + 'k' : v, fontSize: 11 },
+    splitLine: { lineStyle: { color: 'rgba(140,150,165,0.18)' } }
+  },
+  yAxis: {
+    type: 'value', name: 'PEUC (%)', min: 0, max: 100,
+    nameTextStyle: { fontSize: 12, fontWeight: 600 },
+    axisLabel: { fontSize: 11 },
+    splitLine: { lineStyle: { color: 'rgba(140,150,165,0.18)' } }
+  },
+  series: [{
+    type: 'scatter',
+    data: kpis.map(d => {
+      const icca = Number(d.kpi_icca) || 0;
+      const psr = Number(d.kpi_psr) || 0;
+      const base = icca >= 3 ? '#1f9d55' : (icca >= 1 ? '#e0a52b' : '#c0392b');
+      const hi   = icca >= 3 ? '#8fe8b4' : (icca >= 1 ? '#ffdd93' : '#f2988f');
+      return {
+        name: d.project_name,
+        value: [Number(d.total_tokens) || 0, Number(d.kpi_peuc) || 0],
+        psr: psr, peuc: Number(d.kpi_peuc) || 0, tokens: Number(d.total_tokens) || 0,
+        symbolSize: 16 + psr * 8,
+        itemStyle: {
+          color: { type: 'radial', x: 0.35, y: 0.30, r: 0.72,
+                   colorStops: [ { offset: 0, color: hi }, { offset: 0.55, color: base }, { offset: 1, color: base } ] },
+          borderColor: 'rgba(255,255,255,0.65)', borderWidth: 1,
+          shadowBlur: 14, shadowColor: 'rgba(0,0,0,0.35)', shadowOffsetY: 6
+        }
+      };
+    }),
+    label: {
+      show: true, formatter: (p) => p.data.name, position: 'top', distance: 7,
+      fontSize: 14, fontWeight: 700, color: '#16222e',
+      textBorderColor: 'rgba(255,255,255,0.95)', textBorderWidth: 3.5
+    },
+    labelLayout: { hideOverlap: false, moveOverlap: 'shiftY' },
+    emphasis: {
+      scale: 1.4, focus: 'self',
+      itemStyle: { shadowBlur: 30, shadowColor: 'rgba(0,0,0,0.55)', borderColor: '#fff', borderWidth: 2 },
+      label: { fontSize: 17, fontWeight: 'bold', color: '#000', textBorderColor: '#fff', textBorderWidth: 4 }
+    }
+  }]
+}} />
 
 ## 📉 Tendência do Indicador-Mestre (CPP) e do Score (PSR)
 > O que mais importa para o C-Level: **a direção**. CPP caindo = portfólio ficando mais eficiente.
@@ -302,9 +371,9 @@ select * from bsc.decisao_mcda where rank_final = 1
 <BarChart data={planos_pagos} x=plano y=total_iof title="Custo total mensal com IOF por plano (R$)" swapXY=true sort=true/>
 
 <div style="display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;margin:1.4rem 0 0.4rem;">
-  <img src="/gekko.svg" alt="financista Wall Street" width="86" height="102" style="flex:0 0 auto;"/>
-  <h2 style="text-align:center;margin:0;font-weight:800;">🏆 AHP-TOPSIS 2N — Modelo Multi-Critério Decisório (MCDM)</h2>
   <img src="/shark.svg" alt="tubarão investidor" width="120" height="82" style="flex:0 0 auto;"/>
+  <h2 style="text-align:center;margin:0;font-weight:800;">🏆 AHP-TOPSIS 2N — Modelo Multi-Critério Decisório (MCDM)</h2>
+  <img src="/gekko_photo.png" alt="Gordon Gekko fumando charuto (terno azul)" width="100" height="100" style="flex:0 0 auto;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.25);"/>
 </div>
 
 > **Escolha do MELHOR projeto** ponderando os indicadores como critérios. Pesos por **AHP**
@@ -361,6 +430,66 @@ pode mudar substancialmente (o financeiro voltará a dominar).
 **Recomendação.** (1) Aprovar `Project F` como **piloto de escala** pela eficiência comprovada; (2) inserir
 os **fluxos de caixa reais** e re-rodar o `ahp_topsis.py` para o veredito financeiro definitivo;
 (3) acionar plano de melhoria na cauda (`Project C`).
+
+---
+## 👑 Dossiê Administrativo da **Jóia da Coroa** — {mcda_top[0].project_name}
+
+> Ferramentas administrativas clássicas aplicadas **exclusivamente ao projeto eleito** para
+> enriquecê-lo, enaltecê-lo e evidenciar seu **diferencial competitivo**. Todas são geradas
+> por **pipeline Python concorrente** (`gerar_admtools.py`) — não dependem de nenhum template
+> externo. Detalhamento e justificativa em `foundations/admtools/ferramentas_administrativas.md`.
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.2rem;margin:1rem 0;">
+
+<div>
+
+**🎯 SWOT — posição estratégica**
+Forças/fraquezas/oportunidades/ameaças derivadas dos KPIs reais (menor IITA e IDLS = força dominante).
+<img src="/admtools/swot.png" alt="SWOT do projeto eleito" style="width:100%;border-radius:8px;"/>
+
+</div>
+<div>
+
+**🌐 PESTELC — macroambiente**
+Sete fatores externos (Político, Econômico, Social, Tecnológico, Ecológico, Legal, Cultural).
+<img src="/admtools/pestel.png" alt="PESTELC do projeto eleito" style="width:100%;border-radius:8px;"/>
+
+</div>
+<div>
+
+**🗺️ 5W4H — plano de ação (5W + 4H)**
+What/Why/Where/When/Who + How/How much/How many/How long — roteiro de escala do eleito.
+<img src="/admtools/5w4h.png" alt="5W4H do projeto eleito" style="width:100%;border-radius:8px;"/>
+
+</div>
+<div>
+
+**📊 Pareto de falhas (80/20)**
+Categorias de prompt que concentram 80% das falhas — onde atacar primeiro (dados reais do Langfuse).
+<img src="/admtools/pareto.png" alt="Pareto de falhas do projeto eleito" style="width:100%;border-radius:8px;"/>
+
+</div>
+<div>
+
+**🔥 Matriz GUT — priorização (heatmap)**
+Gravidade × Urgência × Tendência das ações; maior GUT = agir primeiro.
+<img src="/admtools/gut.png" alt="Matriz GUT do projeto eleito" style="width:100%;border-radius:8px;"/>
+
+</div>
+<div>
+
+**🕸️ Radar competitivo — diferencial**
+Impressão digital do eleito **vs média do portfólio** (a área azul domina a cinza em quase todo eixo).
+<img src="/admtools/radar.png" alt="Radar competitivo do projeto eleito" style="width:100%;border-radius:8px;"/>
+
+</div>
+
+</div>
+
+> **📌 Leitura executiva.** O **radar** é o retrato do diferencial competitivo: a Jóia da Coroa
+> supera a média em anti-alucinação, Lean e entrega útil. **SWOT/PESTEL/5W4H** transformam esse
+> diagnóstico em **estratégia e plano de ação**; **Pareto + GUT** dizem **exatamente onde** agir
+> primeiro para converter a liderança operacional em retorno financeiro definitivo.
 
 ---
 ## 🔗 Painéis Individuais por Projeto

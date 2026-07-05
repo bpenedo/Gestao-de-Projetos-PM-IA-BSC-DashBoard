@@ -19,6 +19,12 @@ foundations/evidence/node_modules/
 # 5D regenerável a partir do seed anônimo (evita vazar nomes reais)
 foundations/evidence/static/5d_projetos.png
 
+# Dossiê administrativo do projeto eleito (regenerável; contém o nome real do eleito)
+foundations/evidence/static/admtools/
+
+# Still de filme (terceiros/copyright) usado só no dashboard local — não redistribuir
+foundations/evidence/static/gekko_photo.png
+
 # Build Rust (recompilável)
 foundations/pipeline/analise_rs/target/
 **/*.whl
