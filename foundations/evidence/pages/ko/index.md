@@ -1,14 +1,17 @@
 ---
-title: Painel BSC — Gestão de Projetos (PM) IA
+title: BSC 패널 — AI 프로젝트 관리(PM)
 ---
+
+🌐 [Português](/) · [English](/en) · [Español](/es) · [Français](/fr) · [Deutsch](/de) · [中文](/zh) · **한국어** · [हिन्दी](/hi) · [עברית](/he)
+
 
 🌐 **Português** · [English](/en) · [Español](/es) · [Français](/fr) · [Deutsch](/de) · [中文](/zh) · [한국어](/ko) · [हिन्दी](/hi)
 
 
-_Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · ©️ Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com_
-**Weekly Checkpoint — toda sexta-feira às 09:00.**
+_Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · ©️ Bruno Teixeira Penedo — 2026. 모든 권리 보유. E-mail: bpenedo@gmail.com_
+**주간 체크포인트 — 매주 금요일 09:00.**
 
-> ⚠️ **Dados DEMO** dos 10 projetos reais de `~/devparetoprojects/*`. Tornam-se reais quando o Langfuse sincronizar.
+> ⚠️ **데모 데이터**(익명 포트폴리오). Langfuse 동기화 시 실제 데이터가 됩니다.
 
 ```sql kpis
 select * from bsc.kpis_bsc_ia
@@ -71,21 +74,21 @@ select * from bsc.decisao_mcda order by rank_final
 select * from bsc.decisao_mcda where rank_final = 1
 ```
 
-## 📈 Sumário Executivo do Portfólio
+## 📈 포트폴리오 요약 보고
 
 <BigValue data={kpis} value=total_tokens title="Tokens Totais" agg=sum fmt=num0/>
 <BigValue data={kpis} value=kpi_psr title="PSR Médio (0-5)" agg=mean fmt=num1/>
 <BigValue data={kpis} value=kpi_idls_lean title="Desperdício Lean Médio %" agg=mean fmt=num1/>
 <BigValue data={kpis} value=burn_rate_ia title="Burn Rate Total" agg=sum fmt='$#,##0.00'/>
 
-## 🌐 Mapa 5D do Portfólio (visão C-Level)
+## 🌐 포트폴리오 5D 지도 (C-레벨 관점)
 > Esferas 3D estilo 5dchart — **5 dimensões por projeto**: **X**=Volume/escala (tokens) · **Y**=PEUC/qualidade (%) · **Z**=PSR/saúde (0–5) · **tamanho**=Burn Rate (R$) · **cor**=ICCA/sustentabilidade (🟢 acima de 3x cobre custo · 🔴 abaixo de 1x = prejuízo).
 >
 > **Leitura de conselho:** o projeto ideal fica à **direita/fundo** (escala+qualidade), **alto** (PSR) e **verde** (sustentável). Esfera **grande e vermelha** = muito caixa queimado sem cobertura → corrigir antes de escalar.
 
 ![Mapa 5D do Portfólio de Projetos de IA](/5d_projetos.png?v=5)
 
-### 🖱️ Mapa 5D Interativo — passe o mouse sobre cada esfera
+### 🖱️ 인터랙티브 5D 지도 — 각 구체에 마우스를 올리세요
 > **X** = Tokens (escala) · **Y** = PEUC (%) · **tamanho** = PSR (0–5) · **cor** = ICCA (🟢 sustentável · 🟠 limítrofe · 🔴 prejuízo). Ao passar o mouse em cada **esfera glossy**, aparece **Nome do projeto, PSR, PEUC e Tokens**.
 
 <ECharts config={{
@@ -154,18 +157,18 @@ select * from bsc.decisao_mcda where rank_final = 1
   }]
 }} />
 
-## 📉 Tendência do Indicador-Mestre (CPP) e do Score (PSR)
+## 📉 핵심 지표(CPP) 및 점수(PSR) 추세
 > O que mais importa para o C-Level: **a direção**. CPP caindo = portfólio ficando mais eficiente.
 
 <LineChart data={tendencia} x=data_snapshot y=cpp_medio yAxisTitle="CPP médio (R$/%)" title="Custo por Ponto de Progresso — tendência do portfólio" markers=true/>
 
 <LineChart data={tendencia} x=data_snapshot y=psr_medio yAxisTitle="PSR médio" yMin=0 yMax=5 title="Score médio do portfólio (PSR 0-5)" markers=true/>
 
-## ⭐ Score (PSR) por Projeto
+## ⭐ 프로젝트별 점수 (PSR)
 
 <BarChart data={kpis} x=project_name y=kpi_psr swapXY=true title="PSR (0-5) por projeto — ordenado" sort=true labels=true/>
 
-## 🍩 Composição & Mix (donut com profundidade)
+## 🍩 구성 및 믹스 (입체 도넛)
 
 <Grid cols=2>
 <Group>
@@ -205,20 +208,20 @@ select * from bsc.decisao_mcda where rank_final = 1
 </Group>
 </Grid>
 
-## 🧭 Quadrante de Sustentabilidade (escalar ou corrigir?)
+## 🧭 지속가능성 사분면 (확장 vs 개선?)
 > Eixo X = **ICCA** (cobertura: acima de 3x = saudável) · Eixo Y = **IBMT** (queima marginal: abaixo de 0,33 = bom) · tamanho = Burn Rate.
 > Canto inferior-direito = **escalar com lucro**; superior-esquerdo = **corrigir antes de crescer**.
 
 <ScatterPlot data={kpis} x=kpi_icca y=kpi_ibmt series=project_name size=burn_rate_ia xAxisTitle="ICCA — cobertura de custo (x)" yAxisTitle="IBMT — burn marginal (x)" title="Sustentabilidade financeira por projeto"/>
 
-## 📊 Pareto de Falhas por Projeto
+## 📊 프로젝트별 실패 파레토
 
 <BarChart data={falhas} x=project_name y=percentual_dominancia series=categoria_falha type=stacked100 swapXY=true title="Dominância de falhas (%) por projeto"/>
 
-## 🗂️ Score & Saúde Financeira (tabela)
+## 🗂️ 점수 및 재무 건전성 (표)
 
 <DataTable data={kpis} rows=all rowShading=true>
-  <Column id=project_name title="Projeto"/>
+  <Column id=project_name title="프로젝트"/>
   <Column id=kpi_psr title="PSR" fmt=num2/>
   <Column id=kpi_peuc title="PEUC %" fmt=num1/>
   <Column id=kpi_iita title="IITA %" fmt=num1/>
@@ -229,28 +232,28 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=kpi_cpp title="CPP R$/%" fmt='$#,##0.00'/>
 </DataTable>
 
-## 🚨 Alertas Críticos
+## 🚨 중요 경고
 
 <DataTable data={alertas} rows=8>
-  <Column id=project_name title="Projeto"/>
-  <Column id=tipo_erro title="Falha"/>
+  <Column id=project_name title="프로젝트"/>
+  <Column id=tipo_erro title="실패"/>
   <Column id=tokens_desperdicados title="Tokens" fmt=num0/>
-  <Column id=data_evento title="Quando"/>
+  <Column id=data_evento title="시점"/>
 </DataTable>
 
-## 📅 Pauta da Reunião Semanal
+## 📅 주간 회의 안건
 
 <DataTable data={reuniao} rows=all>
-  <Column id=project_name title="Projeto"/>
-  <Column id=sumario_executivo title="Sumário"/>
-  <Column id=acoes_corretivas_lean title="Ações Lean (PDCA)"/>
+  <Column id=project_name title="프로젝트"/>
+  <Column id=sumario_executivo title="요약"/>
+  <Column id=acoes_corretivas_lean title="린 액션 (PDCA)"/>
 </DataTable>
 
-## 🪙 Custo de Recuperação (VRT) — 5 blocos + média (2ª ótica)
+## 🪙 비용 회수 (VRT) — 5블록 + 평균 (제2 관점)
 > Mesma base de rateio em **5 granularidades** (R$ por 50/100/250/500/1.000 tokens) + a **média dos blocos** — uma segunda percepção do consumo por projeto.
 
 <DataTable data={kpis} rows=all rowShading=true>
-  <Column id=project_name title="Projeto"/>
+  <Column id=project_name title="프로젝트"/>
   <Column id=vrt_50t title="50 tok" fmt='#,##0.00000'/>
   <Column id=vrt_100t title="100 tok" fmt='#,##0.00000'/>
   <Column id=vrt_250t title="250 tok" fmt='#,##0.00000'/>
@@ -259,18 +262,18 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=vrt_media_blocos title="MÉDIA blocos" fmt='#,##0.00000' contentType=colorscale/>
 </DataTable>
 
-## ⏰ Horário Crítico de Interrupção/Impacto (HCI)
+## ⏰ 핵심 중단/영향 시간대 (HCI)
 > Em que **hora do dia (BRT)** cada projeto é mais impactado — para agir na janela certa (upgrade de Tier, backoff, agendamento).
 
 <BarChart data={hora_total} x=hora_brt y=interrupcoes title="Interrupções por hora do dia (BRT) — portfólio" xAxisTitle="Hora (0-23, BRT)"/>
 
 <DataTable data={horario_critico} rows=all rowShading=true>
-  <Column id=project_name title="Projeto"/>
-  <Column id=hora_pico title="Hora de pico (BRT)" fmt='0"h"'/>
-  <Column id=interrupcoes_pico title="Interrupções no pico" fmt=num0/>
+  <Column id=project_name title="프로젝트"/>
+  <Column id=hora_pico title="피크 시간 (BRT)" fmt='0"h"'/>
+  <Column id=interrupcoes_pico title="피크 중단 수" fmt=num0/>
 </DataTable>
 
-## ♻️ Taxonomia de Wastes (Lean Six Sigma) — onde mais se desperdiça
+## ♻️ 낭비 분류 (Lean Six Sigma) — 가장 많이 낭비되는 곳
 > Desperdício medido por **tokens ponderados** (Defeito 2,0× · Cota 1,5× · Superproc. 1,0× · Latência 0,5×), não só por contagem.
 
 <Grid cols=2>
@@ -294,8 +297,8 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 **Waste dominante por projeto**
 <DataTable data={waste_dom} rows=all>
-  <Column id=project_name title="Projeto"/>
-  <Column id=waste_dominante title="Waste dominante"/>
+  <Column id=project_name title="프로젝트"/>
+  <Column id=waste_dominante title="주요 낭비"/>
   <Column id=waste_tokens title="Tokens desperd." fmt=num0/>
 </DataTable>
 
@@ -304,34 +307,34 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 <BarChart data={wastes} x=project_name y=waste_tokens series=categoria_waste type=stacked swapXY=true title="Composição de waste (tokens ponderados) por projeto"/>
 
-## 🔬 RCA — Alucinação por Tipo de Prompt (o que ATRASA cada projeto)
+## 🔬 RCA — 프롬프트 유형별 환각 (각 프로젝트를 지연시키는 요인)
 > Root Cause Analysis: classificamos os prompts em **categorias** e medimos a alucinação de cada uma.
 > Diagnóstico objetivo de **o que atrasa cada projeto** e **o que atrasa COMUMENTE a todos (interseção)**.
 
-### 🎯 Interseção — o gargalo comum ao portfólio
+### 🎯 교집합 — 포트폴리오 공통 병목
 > O tipo de prompt que é o **gargalo nº1 de alucinação** no maior número de projetos. Atacar este primeiro tem o maior efeito sistêmico.
 
 <BarChart data={rca_inter} x=prompt_categoria y=projetos_onde_e_top1 title="Tipo de prompt que mais atrasa o portfólio (gargalo #1 em N projetos)" yAxisTitle="Nº de projetos onde é o gargalo #1" labels=true sort=true/>
 
-### 🧭 Gargalo de alucinação por projeto (RCA individual)
+### 🧭 프로젝트별 환각 병목 (개별 RCA)
 
 <DataTable data={rca_proj} rows=all rowShading=true>
-  <Column id=project_name title="Projeto"/>
-  <Column id=prompt_gargalo title="Prompt que mais alucina (gargalo)"/>
-  <Column id=alucinacoes title="Alucinações" fmt=num0/>
+  <Column id=project_name title="프로젝트"/>
+  <Column id=prompt_gargalo title="환각이 가장 많은 프롬프트(병목)"/>
+  <Column id=alucinacoes title="환각 수" fmt=num0/>
 </DataTable>
 
-### 📊 Taxonomia de alucinação por categoria × projeto
+### 📊 카테고리 × 프로젝트별 환각 분류
 
 <BarChart data={aluc_cat} x=project_name y=alucinacoes series=prompt_categoria type=stacked swapXY=true title="Alucinações por tipo de prompt em cada projeto"/>
 
-## 💰 VPL, Payback & Fluxo de Caixa do Portfólio
+## 💰 NPV, 회수기간 및 포트폴리오 현금흐름
 > Calculado a partir do **seu fluxo de caixa** (CSV/planilha — ver `pipeline/fluxo_caixa_template.csv` e
 > `python3 carregar_fluxo.py SEU.csv`). VPL = Σ fluxo ÷ (1+i)ᵗ · Payback **simples** (variação temporal) e
 > **descontado**, ambos interpolados. _Dados de demonstração até você fornecer o seu CSV._
 
 <DataTable data={vpl} rows=all rowShading=true>
-  <Column id=project_name title="Projeto"/>
+  <Column id=project_name title="프로젝트"/>
   <Column id=vpl title="VPL (R$)" fmt='$#,##0' contentType=colorscale/>
   <Column id=tir title="TIR" fmt=pct1/>
   <Column id=ill title="ILL (PI)" fmt=num2/>
@@ -358,13 +361,13 @@ select * from bsc.decisao_mcda where rank_final = 1
   <ReferenceLine y=0 color=negative label="break-even"/>
 </LineChart>
 
-## 💳 Planos de Assinatura de IA — Custo Total com IOF
+## 💳 AI 구독 요금제 — IOF 포함 총비용
 > Câmbio **R$ 5,40/US$** · **IOF 3,5%** sobre operação internacional (cartão). `Total = US$ × câmbio × (1 + IOF)`.
 > Este é o custo real que alimenta a base de rateio (`assinaturas_infra`). Preços aproximados — verifique os sites oficiais.
 
 <DataTable data={planos} rows=all rowShading=true>
-  <Column id=provedor title="Provedor"/>
-  <Column id=plano title="Plano"/>
+  <Column id=provedor title="제공자"/>
+  <Column id=plano title="요금제"/>
   <Column id=usd_mes title="US$/mês" fmt=num0/>
   <Column id=r_base title="R$ base" fmt='$#,##0.00'/>
   <Column id=iof_reais title="IOF" fmt='$#,##0.00'/>
@@ -375,7 +378,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 <div style="display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;margin:1.4rem 0 0.4rem;">
   <img src="/shark.svg" alt="tubarão investidor" width="120" height="82" style="flex:0 0 auto;"/>
-  <h2 style="text-align:center;margin:0;font-weight:800;">🏆 AHP-TOPSIS 2N — Modelo Multi-Critério Decisório (MCDM)</h2>
+  <h2 style="text-align:center;margin:0;font-weight:800;">🏆 AHP-TOPSIS 2N — 다기준 의사결정 모델 (MCDM)</h2>
   <img src="/gekko_photo.png" alt="Gordon Gekko fumando charuto (terno azul)" width="100" height="100" style="flex:0 0 auto;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.25);"/>
 </div>
 
@@ -386,7 +389,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 **🥇 Projeto vencedor (maior Ci final):**
 <DataTable data={mcda_top}>
-  <Column id=project_name title="🏆 Melhor Projeto"/>
+  <Column id=project_name title="🏆 최고 프로젝트"/>
   <Column id=ci_final title="Ci final" fmt=num4/>
 </DataTable>
 
@@ -394,25 +397,25 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 <DataTable data={mcda} rows=all rowShading=true>
   <Column id=rank_final title="#"/>
-  <Column id=project_name title="Projeto"/>
+  <Column id=project_name title="프로젝트"/>
   <Column id=ci_vector title="Ci vetorial" fmt=num4/>
   <Column id=ci_minmax title="Ci min-max" fmt=num4/>
   <Column id=ci_final title="Ci final" fmt=num4/>
-  <Column id=concordante title="Robusto?" fmt=boolean/>
+  <Column id=concordante title="견고?" fmt=boolean/>
 </DataTable>
 
 > O vencedor tem **pitchdeck** gerado (ver pasta Projetos / `pitchdeck/`). Se as posições 6–7
 > divergem entre normalizações, é onde o ranking é mais sensível — decida com cautela ali.
 
-### 📌 Bottom-Line — Sumário Executivo & Insights C-Level
+### 📌 결론 — 요약 보고 및 C-레벨 인사이트
 
-**Veredito.** O modelo **AHP-TOPSIS 2n** elege **`Project F`** como o melhor projeto do portfólio
+**Veredito.** O modelo **AHP-TOPSIS 2n** elege ****{mcda_top[0].project_name}**** como o melhor projeto do portfólio
 (**Ci = 0,96** de 1,00), com **robustez confirmada**: as duas normalizações (vetorial e min-max)
 concordam na **1ª posição** e em 8/10 do ranking — o topo é estável, não é artefato de método.
 
-**Por que `Project F` venceu.** Os critérios **financeiros** (VPL R$ 5.973 · TIR 32,9% · ILL 1,75)
+**Por que **{mcda_top[0].project_name}** venceu.** Os critérios **financeiros** (VPL R$ 5.973 · TIR 32,9% · ILL 1,75)
 estão **empatados** entre os projetos (fluxo de caixa ainda em *placeholder* uniforme). Com o
-financeiro neutralizado, a decisão migra para a **eficiência operacional**, e aí `Project F` domina:
+financeiro neutralizado, a decisão migra para a **eficiência operacional**, e aí **{mcda_top[0].project_name}** domina:
 tem a **menor taxa de alucinação (IITA 9,1%)** e o **menor desperdício Lean (IDLS 15,0%)** de
 todo o portfólio — praticamente **metade** do desperdício do 2º colocado. Em outras palavras:
 **mesmo retorno projetado, executando com muito menos desperdício de tokens/caixa.**
@@ -422,7 +425,7 @@ todo o portfólio — praticamente **metade** do desperdício do 2º colocado. E
   entrega o mesmo valor com maior margem — é o ativo mais escalável.
 - 🛡️ **Robustez decisória:** a concordância entre as duas normalizações (8/10) dá **segurança** ao board
   para agir no topo do ranking; a zona sensível (posições 6–7) exige análise qualitativa antes de cortar.
-- 📉 **Cauda de risco:** `Project C` (Ci 0,01) reúne o pior desempenho combinado — candidato a
+- 📉 **Cauda de risco:** **o último colocado** (Ci 0,01) reúne o pior desempenho combinado — candidato a
   **refatoração ou descontinuação** (cruzar com a Matriz BCG).
 
 **⚠️ Ressalva de honestidade decisória.** Os critérios financeiros carregam **75% do peso AHP**
@@ -430,12 +433,12 @@ todo o portfólio — praticamente **metade** do desperdício do 2º colocado. E
 **O veredito só é definitivo com os fluxos de caixa REAIS por projeto** — ao inseri-los, o ranking
 pode mudar substancialmente (o financeiro voltará a dominar).
 
-**Recomendação.** (1) Aprovar `Project F` como **piloto de escala** pela eficiência comprovada; (2) inserir
+**Recomendação.** (1) Aprovar **{mcda_top[0].project_name}** como **piloto de escala** pela eficiência comprovada; (2) inserir
 os **fluxos de caixa reais** e re-rodar o `ahp_topsis.py` para o veredito financeiro definitivo;
-(3) acionar plano de melhoria na cauda (`Project C`).
+(3) acionar plano de melhoria na cauda (**o último colocado**).
 
 ---
-## 👑 Dossiê Administrativo da **Jóia da Coroa** — {mcda_top[0].project_name}
+## 👑 **왕관의 보석** 행정 도시에 — {mcda_top[0].project_name}
 
 > Ferramentas administrativas clássicas aplicadas **exclusivamente ao projeto eleito** para
 > enriquecê-lo, enaltecê-lo e evidenciar seu **diferencial competitivo**. Todas são geradas
@@ -446,42 +449,42 @@ os **fluxos de caixa reais** e re-rodar o `ahp_topsis.py` para o veredito financ
 
 <div>
 
-**🎯 SWOT — posição estratégica**
+**🎯 SWOT — 전략적 위치**
 Forças/fraquezas/oportunidades/ameaças derivadas dos KPIs reais (menor IITA e IDLS = força dominante).
 <img src="/admtools/swot.png" alt="SWOT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
-**🌐 PESTELC — macroambiente**
+**🌐 PESTELC — 거시환경**
 Sete fatores externos (Político, Econômico, Social, Tecnológico, Ecológico, Legal, Cultural).
 <img src="/admtools/pestel.png" alt="PESTELC do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
-**🗺️ 5W4H — plano de ação (5W + 4H)**
+**🗺️ 5W4H — 실행 계획 (5W + 4H)**
 What/Why/Where/When/Who + How/How much/How many/How long — roteiro de escala do eleito.
 <img src="/admtools/5w4h.png" alt="5W4H do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
-**📊 Pareto de falhas (80/20)**
+**📊 실패 파레토 (80/20)**
 Categorias de prompt que concentram 80% das falhas — onde atacar primeiro (dados reais do Langfuse).
 <img src="/admtools/pareto.png" alt="Pareto de falhas do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
-**🔥 Matriz GUT — priorização (heatmap)**
+**🔥 GUT 매트릭스 — 우선순위 (히트맵)**
 Gravidade × Urgência × Tendência das ações; maior GUT = agir primeiro.
 <img src="/admtools/gut.png" alt="Matriz GUT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
-**🕸️ Radar competitivo — diferencial**
+**🕸️ 경쟁 레이더 — 차별점**
 Impressão digital do eleito **vs média do portfólio** (a área azul domina a cinza em quase todo eixo).
 <img src="/admtools/radar.png" alt="Radar competitivo do projeto eleito" style="width:100%;border-radius:8px;"/>
 
@@ -495,7 +498,7 @@ Impressão digital do eleito **vs média do portfólio** (a área azul domina a 
 > primeiro para converter a liderança operacional em retorno financeiro definitivo.
 
 ---
-## 🔗 Painéis Individuais por Projeto
+## 🔗 프로젝트별 개별 패널
 
 {#each kpis as p}
 <a href="/projetos/{p.project_name}">▶️ {p.project_name} — PSR {p.kpi_psr}</a>
