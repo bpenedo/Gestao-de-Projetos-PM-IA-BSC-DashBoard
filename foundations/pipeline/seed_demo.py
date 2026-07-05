@@ -6,7 +6,7 @@ Reutiliza a lógica determinística de seed_from_folders (perfil/gerar), apenas 
 Use ESTE seed (e não seed_from_folders.py) ao publicar — ver github_load.md.
 
 Uso:  python3 seed_demo.py [N]   (N = nº de projetos, default 10 -> Project A..J)
-Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · (c) Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
+Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 """
 import sys
 from datetime import datetime, timedelta

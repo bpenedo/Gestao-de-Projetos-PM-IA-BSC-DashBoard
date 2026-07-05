@@ -1,6 +1,6 @@
 # Pipeline BSC de Projetos de IA
 
-> Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · ©️ Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
+> Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 > ETL: **Langfuse → SQLite → Evidence**. Documentação dos KPIs: [`../KPIs_README.md`](../KPIs_README.md).
 
 ## Estrutura

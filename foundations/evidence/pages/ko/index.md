@@ -2,13 +2,13 @@
 title: BSC 패널 — AI 프로젝트 관리(PM)
 ---
 
-🌐 [Português](/) · [English](/en) · [Español](/es) · [Français](/fr) · [Deutsch](/de) · [中文](/zh) · **한국어** · [हिन्दी](/hi) · [עברית](/he)
+🌐 [Português](/) · [English](/en) · [Español](/es) · [Français](/fr) · [Deutsch](/de) · [中文](/zh) · **한국어** · [हिन्दी](/hi) · [עברית](/he) · [Svenska](/sv) · [Русский](/ru) · [Suomi](/fi)
 
 
 🌐 **Português** · [English](/en) · [Español](/es) · [Français](/fr) · [Deutsch](/de) · [中文](/zh) · [한국어](/ko) · [हिन्दी](/hi)
 
 
-_Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · ©️ Bruno Teixeira Penedo — 2026. 모든 권리 보유. E-mail: bpenedo@gmail.com_
+_Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com_
 **주간 체크포인트 — 매주 금요일 09:00.**
 
 > ⚠️ **데모 데이터**(익명 포트폴리오). Langfuse 동기화 시 실제 데이터가 됩니다.
@@ -76,20 +76,20 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 ## 📈 포트폴리오 요약 보고
 
-<BigValue data={kpis} value=total_tokens title="Tokens Totais" agg=sum fmt=num0/>
-<BigValue data={kpis} value=kpi_psr title="PSR Médio (0-5)" agg=mean fmt=num1/>
-<BigValue data={kpis} value=kpi_idls_lean title="Desperdício Lean Médio %" agg=mean fmt=num1/>
-<BigValue data={kpis} value=burn_rate_ia title="Burn Rate Total" agg=sum fmt='$#,##0.00'/>
+<BigValue data={kpis} value=total_tokens title="총 토큰" agg=sum fmt=num0/>
+<BigValue data={kpis} value=kpi_psr title="평균 PSR (0-5)" agg=mean fmt=num1/>
+<BigValue data={kpis} value=kpi_idls_lean title="평균 린 낭비 %" agg=mean fmt=num1/>
+<BigValue data={kpis} value=burn_rate_ia title="총 소진율" agg=sum fmt='$#,##0.00'/>
 
 ## 🌐 포트폴리오 5D 지도 (C-레벨 관점)
-> Esferas 3D estilo 5dchart — **5 dimensões por projeto**: **X**=Volume/escala (tokens) · **Y**=PEUC/qualidade (%) · **Z**=PSR/saúde (0–5) · **tamanho**=Burn Rate (R$) · **cor**=ICCA/sustentabilidade (🟢 acima de 3x cobre custo · 🔴 abaixo de 1x = prejuízo).
+> 3D 구체(5dchart 스타일) — **프로젝트당 5차원**: **X**=규모(토큰) · **Y**=PEUC/품질 (%) · **Z**=PSR/건전성 (0–5) · **크기**=Burn Rate (R$) · **색**=ICCA/지속가능성 (🟢 3x 이상 비용 회수 · 🔴 1x 미만 = 손실).
 >
-> **Leitura de conselho:** o projeto ideal fica à **direita/fundo** (escala+qualidade), **alto** (PSR) e **verde** (sustentável). Esfera **grande e vermelha** = muito caixa queimado sem cobertura → corrigir antes de escalar.
+> **경영진 관점:** 이상적 프로젝트는 **오른쪽/뒤**(규모+품질), **높음**(PSR), **초록**(지속가능). **크고 빨간** 구체 = 커버리지 없이 많은 현금 소진 → 확장 전 개선.
 
 ![Mapa 5D do Portfólio de Projetos de IA](/5d_projetos.png?v=5)
 
 ### 🖱️ 인터랙티브 5D 지도 — 각 구체에 마우스를 올리세요
-> **X** = Tokens (escala) · **Y** = PEUC (%) · **tamanho** = PSR (0–5) · **cor** = ICCA (🟢 sustentável · 🟠 limítrofe · 🔴 prejuízo). Ao passar o mouse em cada **esfera glossy**, aparece **Nome do projeto, PSR, PEUC e Tokens**.
+> **X** = 토큰(규모) · **Y** = PEUC (%) · **크기** = PSR (0–5) · **색** = ICCA (🟢 지속가능 · 🟠 경계 · 🔴 손실). 각 **글로시 구체**에 마우스를 올리면 **프로젝트명, PSR, PEUC, 토큰**이 표시됩니다.
 
 <ECharts config={{
   tooltip: {
@@ -158,15 +158,15 @@ select * from bsc.decisao_mcda where rank_final = 1
 }} />
 
 ## 📉 핵심 지표(CPP) 및 점수(PSR) 추세
-> O que mais importa para o C-Level: **a direção**. CPP caindo = portfólio ficando mais eficiente.
+> C-레벨에 가장 중요한 것: **방향**. CPP 하락 = 포트폴리오 효율화.
 
-<LineChart data={tendencia} x=data_snapshot y=cpp_medio yAxisTitle="CPP médio (R$/%)" title="Custo por Ponto de Progresso — tendência do portfólio" markers=true/>
+<LineChart data={tendencia} x=data_snapshot y=cpp_medio yAxisTitle="CPP médio (R$/%)" title="진척 포인트당 비용 — 포트폴리오 추세" markers=true/>
 
-<LineChart data={tendencia} x=data_snapshot y=psr_medio yAxisTitle="PSR médio" yMin=0 yMax=5 title="Score médio do portfólio (PSR 0-5)" markers=true/>
+<LineChart data={tendencia} x=data_snapshot y=psr_medio yAxisTitle="PSR médio" yMin=0 yMax=5 title="포트폴리오 평균 점수 (PSR 0-5)" markers=true/>
 
 ## ⭐ 프로젝트별 점수 (PSR)
 
-<BarChart data={kpis} x=project_name y=kpi_psr swapXY=true title="PSR (0-5) por projeto — ordenado" sort=true labels=true/>
+<BarChart data={kpis} x=project_name y=kpi_psr swapXY=true title="프로젝트별 PSR (0-5) — 정렬" sort=true labels=true/>
 
 ## 🍩 구성 및 믹스 (입체 도넛)
 
@@ -209,14 +209,14 @@ select * from bsc.decisao_mcda where rank_final = 1
 </Grid>
 
 ## 🧭 지속가능성 사분면 (확장 vs 개선?)
-> Eixo X = **ICCA** (cobertura: acima de 3x = saudável) · Eixo Y = **IBMT** (queima marginal: abaixo de 0,33 = bom) · tamanho = Burn Rate.
-> Canto inferior-direito = **escalar com lucro**; superior-esquerdo = **corrigir antes de crescer**.
+> X축 = **ICCA**(커버리지: 3x 이상 = 건전) · Y축 = **IBMT**(한계 소진: 0.33 미만 = 양호) · 크기 = Burn Rate.
+> 우하단 = **수익성 있게 확장**; 좌상단 = **성장 전 개선**.
 
-<ScatterPlot data={kpis} x=kpi_icca y=kpi_ibmt series=project_name size=burn_rate_ia xAxisTitle="ICCA — cobertura de custo (x)" yAxisTitle="IBMT — burn marginal (x)" title="Sustentabilidade financeira por projeto"/>
+<ScatterPlot data={kpis} x=kpi_icca y=kpi_ibmt series=project_name size=burn_rate_ia xAxisTitle="ICCA — cobertura de custo (x)" yAxisTitle="IBMT — burn marginal (x)" title="프로젝트별 재무 지속가능성"/>
 
 ## 📊 프로젝트별 실패 파레토
 
-<BarChart data={falhas} x=project_name y=percentual_dominancia series=categoria_falha type=stacked100 swapXY=true title="Dominância de falhas (%) por projeto"/>
+<BarChart data={falhas} x=project_name y=percentual_dominancia series=categoria_falha type=stacked100 swapXY=true title="프로젝트별 실패 우세도 (%)"/>
 
 ## 🗂️ 점수 및 재무 건전성 (표)
 
@@ -250,7 +250,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 </DataTable>
 
 ## 🪙 비용 회수 (VRT) — 5블록 + 평균 (제2 관점)
-> Mesma base de rateio em **5 granularidades** (R$ por 50/100/250/500/1.000 tokens) + a **média dos blocos** — uma segunda percepção do consumo por projeto.
+> 동일 배분 기준의 **5개 세분화**(50/100/250/500/1,000 토큰당 R$) + **블록 평균** — 프로젝트 소비의 두 번째 관점.
 
 <DataTable data={kpis} rows=all rowShading=true>
   <Column id=project_name title="프로젝트"/>
@@ -259,13 +259,13 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=vrt_250t title="250 tok" fmt='#,##0.00000'/>
   <Column id=vrt_500t title="500 tok" fmt='#,##0.00000'/>
   <Column id=vrt_por_ktoken title="1.000 tok" fmt='#,##0.00000'/>
-  <Column id=vrt_media_blocos title="MÉDIA blocos" fmt='#,##0.00000' contentType=colorscale/>
+  <Column id=vrt_media_blocos title="평균 블록" fmt='#,##0.00000' contentType=colorscale/>
 </DataTable>
 
 ## ⏰ 핵심 중단/영향 시간대 (HCI)
-> Em que **hora do dia (BRT)** cada projeto é mais impactado — para agir na janela certa (upgrade de Tier, backoff, agendamento).
+> 각 프로젝트가 **하루 중 어느 시간대(BRT)**에 가장 영향받는지 — 올바른 창에서 대응(Tier 업그레이드, 백오프, 스케줄링).
 
-<BarChart data={hora_total} x=hora_brt y=interrupcoes title="Interrupções por hora do dia (BRT) — portfólio" xAxisTitle="Hora (0-23, BRT)"/>
+<BarChart data={hora_total} x=hora_brt y=interrupcoes title="시간대별 중단 (BRT) — 포트폴리오" xAxisTitle="Hora (0-23, BRT)"/>
 
 <DataTable data={horario_critico} rows=all rowShading=true>
   <Column id=project_name title="프로젝트"/>
@@ -274,12 +274,12 @@ select * from bsc.decisao_mcda where rank_final = 1
 </DataTable>
 
 ## ♻️ 낭비 분류 (Lean Six Sigma) — 가장 많이 낭비되는 곳
-> Desperdício medido por **tokens ponderados** (Defeito 2,0× · Cota 1,5× · Superproc. 1,0× · Latência 0,5×), não só por contagem.
+> 낭비는 **가중 토큰**으로 측정(결함 2.0× · 쿼터 1.5× · 과처리 1.0× · 지연 0.5×), 단순 개수가 아님.
 
 <Grid cols=2>
 <Group>
 
-**Mix de waste do portfólio**
+**포트폴리오 낭비 믹스**
 <ECharts config={{
   tooltip: { trigger: 'item', valueFormatter: (v) => Number(v).toLocaleString() + ' tok' },
   legend: { type: 'scroll', bottom: 0, textStyle: { fontSize: 9 } },
@@ -295,26 +295,26 @@ select * from bsc.decisao_mcda where rank_final = 1
 </Group>
 <Group>
 
-**Waste dominante por projeto**
+**프로젝트별 주요 낭비**
 <DataTable data={waste_dom} rows=all>
   <Column id=project_name title="프로젝트"/>
   <Column id=waste_dominante title="주요 낭비"/>
-  <Column id=waste_tokens title="Tokens desperd." fmt=num0/>
+  <Column id=waste_tokens title="낭비 토큰" fmt=num0/>
 </DataTable>
 
 </Group>
 </Grid>
 
-<BarChart data={wastes} x=project_name y=waste_tokens series=categoria_waste type=stacked swapXY=true title="Composição de waste (tokens ponderados) por projeto"/>
+<BarChart data={wastes} x=project_name y=waste_tokens series=categoria_waste type=stacked swapXY=true title="낭비 구성(가중 토큰) 프로젝트별"/>
 
 ## 🔬 RCA — 프롬프트 유형별 환각 (각 프로젝트를 지연시키는 요인)
-> Root Cause Analysis: classificamos os prompts em **categorias** e medimos a alucinação de cada uma.
-> Diagnóstico objetivo de **o que atrasa cada projeto** e **o que atrasa COMUMENTE a todos (interseção)**.
+> 근본 원인 분석: 프롬프트를 **카테고리**로 분류하고 각각의 환각을 측정.
+> **각 프로젝트를 지연시키는 것**과 **모두를 공통으로 지연시키는 것(교집합)**의 객관적 진단.
 
 ### 🎯 교집합 — 포트폴리오 공통 병목
-> O tipo de prompt que é o **gargalo nº1 de alucinação** no maior número de projetos. Atacar este primeiro tem o maior efeito sistêmico.
+> 가장 많은 프로젝트에서 **환각 병목 1위**인 프롬프트 유형. 이것을 먼저 공략하면 시스템적 효과가 가장 큼.
 
-<BarChart data={rca_inter} x=prompt_categoria y=projetos_onde_e_top1 title="Tipo de prompt que mais atrasa o portfólio (gargalo #1 em N projetos)" yAxisTitle="Nº de projetos onde é o gargalo #1" labels=true sort=true/>
+<BarChart data={rca_inter} x=prompt_categoria y=projetos_onde_e_top1 title="포트폴리오를 가장 지연시키는 프롬프트 유형(N개 프로젝트의 1위 병목)" yAxisTitle="Nº de projetos onde é o gargalo #1" labels=true sort=true/>
 
 ### 🧭 프로젝트별 환각 병목 (개별 RCA)
 
@@ -326,29 +326,31 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 ### 📊 카테고리 × 프로젝트별 환각 분류
 
-<BarChart data={aluc_cat} x=project_name y=alucinacoes series=prompt_categoria type=stacked swapXY=true title="Alucinações por tipo de prompt em cada projeto"/>
+<BarChart data={aluc_cat} x=project_name y=alucinacoes series=prompt_categoria type=stacked swapXY=true title="각 프로젝트의 프롬프트 유형별 환각"/>
 
 ## 💰 NPV, 회수기간 및 포트폴리오 현금흐름
-> Calculado a partir do **seu fluxo de caixa** (CSV/planilha — ver `pipeline/fluxo_caixa_template.csv` e
-> `python3 carregar_fluxo.py SEU.csv`). VPL = Σ fluxo ÷ (1+i)ᵗ · Payback **simples** (variação temporal) e
-> **descontado**, ambos interpolados. _Dados de demonstração até você fornecer o seu CSV._
+> **당신의 현금흐름**으로 계산(CSV/스프레드시트 — `pipeline/fluxo_caixa_template.csv` 및 `python3 carregar_fluxo.py 당신.csv` 참조). NPV = Σ 흐름 ÷ (1+i)ᵗ · 회수기간 **단순**(시간 보간) 및 **할인**, 둘 다 보간. _CSV 제공 전까지는 데모 데이터._
 
 <DataTable data={vpl} rows=all rowShading=true>
   <Column id=project_name title="프로젝트"/>
   <Column id=vpl title="VPL (R$)" fmt='$#,##0' contentType=colorscale/>
   <Column id=tir title="TIR" fmt=pct1/>
+  <Column id=tirm title="TIRM" fmt=pct1/>
   <Column id=ill title="ILL (PI)" fmt=num2/>
-  <Column id=payback_simples title="PB simples" fmt=num2/>
-  <Column id=payback_descontado title="PB descontado" fmt=num2/>
+  <Column id=vul title="VUL (R$)" fmt='$#,##0'/>
+  <Column id=payback_simples title="단순 PB" fmt=num2/>
+  <Column id=payback_descontado title="할인 PB" fmt=num2/>
   <Column id=supera_selic title="TIR>SELIC?" fmt=boolean/>
   <Column id=supera_us title="TIR>EUA?" fmt=boolean/>
   <Column id=vpl_usd title="VPL US$" fmt='$#,##0'/>
   <Column id=payback_desc_usd title="PB desc. US$" fmt=num2/>
 </DataTable>
 
+> 🆕 **TIRM**(수정 IRR)은 유입을 프로젝트 금리로 재투자 — IRR보다 현실적. **VUL**(순균등가치)은 NPV를 등가 연간 시리즈로 변환.
+
 > **TIR** = retorno do projeto · **ILL (PI)** acima de 1 = cria valor · comparados à **SELIC** e aos **juros dos EUA** (valores reais por projeto na tabela acima — colunas `TIR>SELIC?`/`TIR>EUA?`). O fluxo é **dolarizado** (USD/BRL) e descontado à taxa americana → colunas **VPL US$** e **PB desc. US$**. _Benchmarks (SELIC, juros EUA, câmbio) são placeholders — ajuste no `.env`._
 
-**TIR por projeto vs. custo de oportunidade (SELIC × EUA)**
+**프로젝트별 IRR vs. 기회비용 (SELIC × 미국)**
 
 <BarChart data={vpl} x=project_name y=tir title="TIR por projeto comparada à SELIC e aos juros dos EUA" yAxisTitle="TIR (por período)" sort=true>
   <ReferenceLine y=0.105 color=warning label="SELIC (BR) ~10,5%"/>
@@ -362,8 +364,8 @@ select * from bsc.decisao_mcda where rank_final = 1
 </LineChart>
 
 ## 💳 AI 구독 요금제 — IOF 포함 총비용
-> Câmbio **R$ 5,40/US$** · **IOF 3,5%** sobre operação internacional (cartão). `Total = US$ × câmbio × (1 + IOF)`.
-> Este é o custo real que alimenta a base de rateio (`assinaturas_infra`). Preços aproximados — verifique os sites oficiais.
+> 환율 **R$ 5.40/US$** · 국제 거래(카드) **IOF 3.5%**. `총액 = US$ × 환율 × (1 + IOF)`.
+> 배분 기준(`assinaturas_infra`)에 입력되는 실제 비용. 대략적 가격 — 공식 사이트 확인.
 
 <DataTable data={planos} rows=all rowShading=true>
   <Column id=provedor title="제공자"/>
@@ -382,12 +384,12 @@ select * from bsc.decisao_mcda where rank_final = 1
   <img src="/gekko_photo.png" alt="Gordon Gekko fumando charuto (terno azul)" width="100" height="100" style="flex:0 0 auto;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.25);"/>
 </div>
 
-> **Escolha do MELHOR projeto** ponderando os indicadores como critérios. Pesos por **AHP**
+> 지표를 기준으로 가중하여 **최고 프로젝트 선정**. 가중치는 **AHP**
 > (VPL 37% · TIR 24% · ILL 14% · PSR 14% · IITA 5,6% · IDLS 5,6% — CR = 0,012, consistente).
 > Ranking por **TOPSIS** em **duas normalizações** (vetorial/Euclidiana + min-max/linear); o
-> **Ci final** é a média. Coluna **Robusto?** = as duas normalizações concordam na posição.
+> **최종 Ci**는 평균. **견고?** 열 = 두 정규화가 순위에 동의.
 
-**🥇 Projeto vencedor (maior Ci final):**
+**🥇 우승 프로젝트(최고 최종 Ci):**
 <DataTable data={mcda_top}>
   <Column id=project_name title="🏆 최고 프로젝트"/>
   <Column id=ci_final title="Ci final" fmt=num4/>
@@ -404,98 +406,76 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=concordante title="견고?" fmt=boolean/>
 </DataTable>
 
-> O vencedor tem **pitchdeck** gerado (ver pasta Projetos / `pitchdeck/`). Se as posições 6–7
-> divergem entre normalizações, é onde o ranking é mais sensível — decida com cautela ali.
+> 우승자는 **피치덱**이 생성됨(프로젝트 폴더 / `pitchdeck/` 참조). 6–7위가 정규화 간에 갈리는 지점이 순위가 가장 민감 — 그곳은 신중히 결정.
 
 ### 📌 결론 — 요약 보고 및 C-레벨 인사이트
 
-**Veredito.** O modelo **AHP-TOPSIS 2n** elege ****{mcda_top[0].project_name}**** como o melhor projeto do portfólio
-(**Ci = 0,96** de 1,00), com **robustez confirmada**: as duas normalizações (vetorial e min-max)
-concordam na **1ª posição** e em 8/10 do ranking — o topo é estável, não é artefato de método.
+**판정.** **AHP-TOPSIS 2n** 모델은 **{mcda_top[0].project_name}**을(를) 포트폴리오 최고 프로젝트로 선정(**Ci = 0.96**/1.00), **견고성 확인**: 두 정규화(벡터·min-max)가 **1위**와 순위의 8/10에서 일치 — 최상위는 안정적이며 방법의 산물이 아님.
 
-**Por que **{mcda_top[0].project_name}** venceu.** Os critérios **financeiros** (VPL R$ 5.973 · TIR 32,9% · ILL 1,75)
-estão **empatados** entre os projetos (fluxo de caixa ainda em *placeholder* uniforme). Com o
-financeiro neutralizado, a decisão migra para a **eficiência operacional**, e aí **{mcda_top[0].project_name}** domina:
-tem a **menor taxa de alucinação (IITA 9,1%)** e o **menor desperdício Lean (IDLS 15,0%)** de
-todo o portfólio — praticamente **metade** do desperdício do 2º colocado. Em outras palavras:
-**mesmo retorno projetado, executando com muito menos desperdício de tokens/caixa.**
+**{mcda_top[0].project_name}이(가) 이긴 이유.** **재무** 기준(NPV R$ 5,973 · IRR 32.9% · ILL 1.75)은 프로젝트 간 **동률**(현금흐름은 여전히 균일 *플레이스홀더*). 재무가 상쇄되자 결정은 **운영 효율**로 이동, 여기서 {mcda_top[0].project_name}이(가) 우위: 포트폴리오 최저 **환각률(IITA 9.1%)**과 최저 **린 낭비(IDLS 15.0%)** — 2위의 거의 **절반**. 즉: **동일한 예상 수익을 훨씬 적은 토큰/현금 낭비로 실행.**
 
-**Insights C-Level.**
-- 🥇 **Eficiência é o desempate:** quando o retorno é parecido, quem **queima menos** (menor IITA/IDLS)
-  entrega o mesmo valor com maior margem — é o ativo mais escalável.
-- 🛡️ **Robustez decisória:** a concordância entre as duas normalizações (8/10) dá **segurança** ao board
-  para agir no topo do ranking; a zona sensível (posições 6–7) exige análise qualitativa antes de cortar.
-- 📉 **Cauda de risco:** **o último colocado** (Ci 0,01) reúne o pior desempenho combinado — candidato a
-  **refatoração ou descontinuação** (cruzar com a Matriz BCG).
+**C-레벨 인사이트.**
+- 🥇 **효율이 결정타:** 수익이 비슷하면 **덜 태우는**(낮은 IITA/IDLS) 쪽이 더 높은 마진으로 같은 가치를 전달 — 가장 확장 가능한 자산.
+- 🛡️ **결정 견고성:** 두 정규화의 일치(8/10)는 이사회가 순위 최상단에서 행동할 **확신**을 줌; 민감 구간(6–7위)은 컷 전에 정성 분석 필요.
+- 📉 **리스크 꼬리:** 최하위(Ci 0.01)는 종합 성과 최악 — **리팩터링 또는 중단** 후보(BCG 매트릭스와 교차 확인).
 
-**⚠️ Ressalva de honestidade decisória.** Os critérios financeiros carregam **75% do peso AHP**
-(VPL 37% + TIR 24% + ILL 14%), mas hoje **não diferenciam** porque o fluxo de caixa é placeholder.
-**O veredito só é definitivo com os fluxos de caixa REAIS por projeto** — ao inseri-los, o ranking
-pode mudar substancialmente (o financeiro voltará a dominar).
+**⚠️ 의사결정 정직성 유의.** 재무 기준은 **AHP 가중치의 75%**(NPV 37% + IRR 24% + ILL 14%)를 차지하나, 현금흐름이 플레이스홀더라 현재는 **차별화되지 않음**. **프로젝트별 실제 현금흐름이 있어야 판정이 확정** — 입력 시 순위가 크게 바뀔 수 있음(재무가 다시 지배).
 
-**Recomendação.** (1) Aprovar **{mcda_top[0].project_name}** como **piloto de escala** pela eficiência comprovada; (2) inserir
-os **fluxos de caixa reais** e re-rodar o `ahp_topsis.py` para o veredito financeiro definitivo;
-(3) acionar plano de melhoria na cauda (**o último colocado**).
+**권고.** (1) 검증된 효율로 {mcda_top[0].project_name}을(를) **확장 파일럿**으로 승인; (2) **실제 현금흐름**을 입력하고 `ahp_topsis.py`를 재실행해 최종 재무 판정; (3) 꼬리(최하위)에 개선 계획 가동.
 
 ---
 ## 👑 **왕관의 보석** 행정 도시에 — {mcda_top[0].project_name}
 
-> Ferramentas administrativas clássicas aplicadas **exclusivamente ao projeto eleito** para
-> enriquecê-lo, enaltecê-lo e evidenciar seu **diferencial competitivo**. Todas são geradas
-> por **pipeline Python concorrente** (`gerar_admtools.py`) — não dependem de nenhum template
-> externo. Detalhamento e justificativa em `foundations/admtools/ferramentas_administrativas.md`.
+> 고전 관리 도구를 **선정 프로젝트에만** 적용해 이를 풍부하게 하고 부각하며 **경쟁 우위**를 드러냄. 모두 **동시성 Python 파이프라인**(`gerar_admtools.py`)으로 생성 — 외부 템플릿 불필요. 상세·근거는 `foundations/admtools/ferramentas_administrativas.md`.
 
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.2rem;margin:1rem 0;">
 
 <div>
 
 **🎯 SWOT — 전략적 위치**
-Forças/fraquezas/oportunidades/ameaças derivadas dos KPIs reais (menor IITA e IDLS = força dominante).
+실제 KPI 기반 강점/약점/기회/위협(최저 IITA·IDLS = 지배적 강점).
 <img src="/admtools/swot.png" alt="SWOT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🌐 PESTELC — 거시환경**
-Sete fatores externos (Político, Econômico, Social, Tecnológico, Ecológico, Legal, Cultural).
+일곱 가지 외부 요인(정치, 경제, 사회, 기술, 생태, 법률, 문화).
 <img src="/admtools/pestel.png" alt="PESTELC do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🗺️ 5W4H — 실행 계획 (5W + 4H)**
-What/Why/Where/When/Who + How/How much/How many/How long — roteiro de escala do eleito.
+What/Why/Where/When/Who + How/How much/How many/How long — 선정 프로젝트의 확장 로드맵.
 <img src="/admtools/5w4h.png" alt="5W4H do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **📊 실패 파레토 (80/20)**
-Categorias de prompt que concentram 80% das falhas — onde atacar primeiro (dados reais do Langfuse).
+실패의 80%가 집중된 프롬프트 카테고리 — 먼저 공략할 곳(실제 Langfuse 데이터).
 <img src="/admtools/pareto.png" alt="Pareto de falhas do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🔥 GUT 매트릭스 — 우선순위 (히트맵)**
-Gravidade × Urgência × Tendência das ações; maior GUT = agir primeiro.
+조치의 심각도 × 긴급도 × 경향; GUT 높을수록 = 먼저 실행.
 <img src="/admtools/gut.png" alt="Matriz GUT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🕸️ 경쟁 레이더 — 차별점**
-Impressão digital do eleito **vs média do portfólio** (a área azul domina a cinza em quase todo eixo).
+선정 프로젝트의 지문 **vs 포트폴리오 평균**(파란 영역이 거의 모든 축에서 회색을 압도).
 <img src="/admtools/radar.png" alt="Radar competitivo do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 
 </div>
 
-> **📌 Leitura executiva.** O **radar** é o retrato do diferencial competitivo: a Jóia da Coroa
-> supera a média em anti-alucinação, Lean e entrega útil. **SWOT/PESTEL/5W4H** transformam esse
-> diagnóstico em **estratégia e plano de ação**; **Pareto + GUT** dizem **exatamente onde** agir
-> primeiro para converter a liderança operacional em retorno financeiro definitivo.
+> **📌 경영진 관점.** **레이더**는 경쟁 우위를 그려냄: 왕관의 보석은 안티-환각·린·유효 산출에서 평균을 능가. **SWOT/PESTEL/5W4H**는 이 진단을 **전략과 실행 계획**으로 전환; **Pareto + GUT**는 운영 리더십을 확정적 재무 수익으로 전환하기 위해 **정확히 어디서** 먼저 행동할지 제시.
 
 ---
 ## 🔗 프로젝트별 개별 패널

@@ -8,7 +8,7 @@ A classificação de falhas usa `analise.classificar` (acelerada por Rust se dis
 As escritas no SQLite são feitas no fim, de forma serial (sqlite3 não é concorrente).
 
 Sem credenciais -> avisa e sai 0. Credencial inválida (401) -> mensagem clara, sem traceback.
-Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · (c) Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
+Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 """
 import asyncio
 from datetime import datetime, timedelta, timezone

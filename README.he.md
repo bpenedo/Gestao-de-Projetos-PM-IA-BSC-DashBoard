@@ -1,6 +1,6 @@
 # 🧭 Framework VPL — ניהול פרויקטים (PM) של AI עם לוח BSC ודשבורד
 
-🌐 [Português](README.md) · [English](README.en.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [中文](README.zh.md) · [한국어](README.ko.md) · [हिन्दी](README.hi.md) · **עברית**
+🌐 [Português](README.md) · [English](README.en.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [中文](README.zh.md) · [한국어](README.ko.md) · [हिन्दी](README.hi.md) · **עברית** · [Svenska](README.sv.md) · [Русский](README.ru.md) · [Suomi](README.fi.md)
 
 ![Method](https://img.shields.io/badge/method-Balanced%20Scorecard-1F3A5F)
 ![AI](https://img.shields.io/badge/AI-LLM%20observability-45a1bf)
@@ -61,11 +61,6 @@ foundations/
 `balanced-scorecard` · `llm` · `ai` · `llm-observability` · `llmops` · `langfuse` · `roi` ·
 `agile` · `scrum` · `python`
 
-## 🔒 פרטיות
-ההדגמה היא **100% אנונימית** (Project A…J). נתונים אישיים, שיחות ומסדי נתונים אמיתיים נשארים **מחוץ
-לחבילה** (`foundations/_private/`, git-ignored). לפני פרסום, הריצו את הסניטציה של
-[`github_load.md`](foundations/github_load.md).
-
 ---
 
-**Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard"** · ©️ Bruno Teixeira Penedo — 2026. כל הזכויות שמורות. E-mail: bpenedo@gmail.com
+**Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard** · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com

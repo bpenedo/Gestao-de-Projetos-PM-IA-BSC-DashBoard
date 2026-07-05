@@ -2,13 +2,13 @@
 title: BSC 面板 — AI 项目管理（PM）
 ---
 
-🌐 [Português](/) · [English](/en) · [Español](/es) · [Français](/fr) · [Deutsch](/de) · **中文** · [한국어](/ko) · [हिन्दी](/hi) · [עברית](/he)
+🌐 [Português](/) · [English](/en) · [Español](/es) · [Français](/fr) · [Deutsch](/de) · **中文** · [한국어](/ko) · [हिन्दी](/hi) · [עברית](/he) · [Svenska](/sv) · [Русский](/ru) · [Suomi](/fi)
 
 
 🌐 **Português** · [English](/en) · [Español](/es) · [Français](/fr) · [Deutsch](/de) · [中文](/zh) · [한국어](/ko) · [हिन्दी](/hi)
 
 
-_Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · ©️ Bruno Teixeira Penedo — 2026. 保留所有权利。 E-mail: bpenedo@gmail.com_
+_Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com_
 **每周检查点 — 每周五 09:00。**
 
 > ⚠️ **演示数据**（匿名组合）。Langfuse 同步后即为真实数据。
@@ -76,20 +76,20 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 ## 📈 组合执行摘要
 
-<BigValue data={kpis} value=total_tokens title="Tokens Totais" agg=sum fmt=num0/>
-<BigValue data={kpis} value=kpi_psr title="PSR Médio (0-5)" agg=mean fmt=num1/>
-<BigValue data={kpis} value=kpi_idls_lean title="Desperdício Lean Médio %" agg=mean fmt=num1/>
-<BigValue data={kpis} value=burn_rate_ia title="Burn Rate Total" agg=sum fmt='$#,##0.00'/>
+<BigValue data={kpis} value=total_tokens title="总 Token 数" agg=sum fmt=num0/>
+<BigValue data={kpis} value=kpi_psr title="平均 PSR (0-5)" agg=mean fmt=num1/>
+<BigValue data={kpis} value=kpi_idls_lean title="平均精益浪费 %" agg=mean fmt=num1/>
+<BigValue data={kpis} value=burn_rate_ia title="总消耗率" agg=sum fmt='$#,##0.00'/>
 
 ## 🌐 组合 5D 地图（C 级视图）
-> Esferas 3D estilo 5dchart — **5 dimensões por projeto**: **X**=Volume/escala (tokens) · **Y**=PEUC/qualidade (%) · **Z**=PSR/saúde (0–5) · **tamanho**=Burn Rate (R$) · **cor**=ICCA/sustentabilidade (🟢 acima de 3x cobre custo · 🔴 abaixo de 1x = prejuízo).
+> 3D 球体（5dchart 风格）——**每项目 5 维**：**X**=规模（Token）· **Y**=PEUC/质量 (%) · **Z**=PSR/健康 (0–5) · **大小**=消耗率 (R$) · **颜色**=ICCA/可持续性（🟢 高于 3x 覆盖成本 · 🔴 低于 1x = 亏损）。
 >
-> **Leitura de conselho:** o projeto ideal fica à **direita/fundo** (escala+qualidade), **alto** (PSR) e **verde** (sustentável). Esfera **grande e vermelha** = muito caixa queimado sem cobertura → corrigir antes de escalar.
+> **董事会解读：** 理想项目位于**右/后**（规模+质量）、**高**（PSR）且**绿色**（可持续）。**又大又红**的球 = 大量现金消耗且无覆盖 → 先修复再扩展。
 
 ![Mapa 5D do Portfólio de Projetos de IA](/5d_projetos.png?v=5)
 
 ### 🖱️ 交互式 5D 地图 — 将鼠标悬停在每个球体上
-> **X** = Tokens (escala) · **Y** = PEUC (%) · **tamanho** = PSR (0–5) · **cor** = ICCA (🟢 sustentável · 🟠 limítrofe · 🔴 prejuízo). Ao passar o mouse em cada **esfera glossy**, aparece **Nome do projeto, PSR, PEUC e Tokens**.
+> **X** = Token（规模）· **Y** = PEUC (%) · **大小** = PSR (0–5) · **颜色** = ICCA（🟢 可持续 · 🟠 临界 · 🔴 亏损）。将鼠标悬停在每个**光泽球体**上，可见**项目名称、PSR、PEUC 和 Token**。
 
 <ECharts config={{
   tooltip: {
@@ -158,15 +158,15 @@ select * from bsc.decisao_mcda where rank_final = 1
 }} />
 
 ## 📉 主指标 (CPP) 与评分 (PSR) 趋势
-> O que mais importa para o C-Level: **a direção**. CPP caindo = portfólio ficando mais eficiente.
+> 对 C 级最重要的是**方向**。CPP 下降 = 组合更高效。
 
-<LineChart data={tendencia} x=data_snapshot y=cpp_medio yAxisTitle="CPP médio (R$/%)" title="Custo por Ponto de Progresso — tendência do portfólio" markers=true/>
+<LineChart data={tendencia} x=data_snapshot y=cpp_medio yAxisTitle="CPP médio (R$/%)" title="每进度点成本 — 组合趋势" markers=true/>
 
-<LineChart data={tendencia} x=data_snapshot y=psr_medio yAxisTitle="PSR médio" yMin=0 yMax=5 title="Score médio do portfólio (PSR 0-5)" markers=true/>
+<LineChart data={tendencia} x=data_snapshot y=psr_medio yAxisTitle="PSR médio" yMin=0 yMax=5 title="组合平均评分 (PSR 0-5)" markers=true/>
 
 ## ⭐ 各项目评分 (PSR)
 
-<BarChart data={kpis} x=project_name y=kpi_psr swapXY=true title="PSR (0-5) por projeto — ordenado" sort=true labels=true/>
+<BarChart data={kpis} x=project_name y=kpi_psr swapXY=true title="各项目 PSR (0-5) — 已排序" sort=true labels=true/>
 
 ## 🍩 构成与占比（带景深的环形图）
 
@@ -209,14 +209,14 @@ select * from bsc.decisao_mcda where rank_final = 1
 </Grid>
 
 ## 🧭 可持续性象限（扩展还是修复？）
-> Eixo X = **ICCA** (cobertura: acima de 3x = saudável) · Eixo Y = **IBMT** (queima marginal: abaixo de 0,33 = bom) · tamanho = Burn Rate.
-> Canto inferior-direito = **escalar com lucro**; superior-esquerdo = **corrigir antes de crescer**.
+> X 轴 = **ICCA**（覆盖：高于 3x = 健康）· Y 轴 = **IBMT**（边际消耗：低于 0.33 = 好）· 大小 = 消耗率。
+> 右下角 = **盈利扩展**；左上角 = **增长前先修复**。
 
-<ScatterPlot data={kpis} x=kpi_icca y=kpi_ibmt series=project_name size=burn_rate_ia xAxisTitle="ICCA — cobertura de custo (x)" yAxisTitle="IBMT — burn marginal (x)" title="Sustentabilidade financeira por projeto"/>
+<ScatterPlot data={kpis} x=kpi_icca y=kpi_ibmt series=project_name size=burn_rate_ia xAxisTitle="ICCA — cobertura de custo (x)" yAxisTitle="IBMT — burn marginal (x)" title="各项目财务可持续性"/>
 
 ## 📊 各项目故障帕累托
 
-<BarChart data={falhas} x=project_name y=percentual_dominancia series=categoria_falha type=stacked100 swapXY=true title="Dominância de falhas (%) por projeto"/>
+<BarChart data={falhas} x=project_name y=percentual_dominancia series=categoria_falha type=stacked100 swapXY=true title="各项目故障占比 (%)"/>
 
 ## 🗂️ 评分与财务健康（表格）
 
@@ -250,7 +250,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 </DataTable>
 
 ## 🪙 成本回收 (VRT) — 5 个分块 + 平均值（第二视角）
-> Mesma base de rateio em **5 granularidades** (R$ por 50/100/250/500/1.000 tokens) + a **média dos blocos** — uma segunda percepção do consumo por projeto.
+> 相同分摊基准的 **5 种粒度**（每 50/100/250/500/1000 Token 的 R$）+ **分块平均** — 项目消耗的第二视角。
 
 <DataTable data={kpis} rows=all rowShading=true>
   <Column id=project_name title="项目"/>
@@ -259,13 +259,13 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=vrt_250t title="250 tok" fmt='#,##0.00000'/>
   <Column id=vrt_500t title="500 tok" fmt='#,##0.00000'/>
   <Column id=vrt_por_ktoken title="1.000 tok" fmt='#,##0.00000'/>
-  <Column id=vrt_media_blocos title="MÉDIA blocos" fmt='#,##0.00000' contentType=colorscale/>
+  <Column id=vrt_media_blocos title="平均分块" fmt='#,##0.00000' contentType=colorscale/>
 </DataTable>
 
 ## ⏰ 关键中断/影响时段 (HCI)
-> Em que **hora do dia (BRT)** cada projeto é mais impactado — para agir na janela certa (upgrade de Tier, backoff, agendamento).
+> 每个项目在**一天中的哪个时段 (BRT)** 受影响最大 — 以便在正确窗口行动（升级 Tier、退避、排程）。
 
-<BarChart data={hora_total} x=hora_brt y=interrupcoes title="Interrupções por hora do dia (BRT) — portfólio" xAxisTitle="Hora (0-23, BRT)"/>
+<BarChart data={hora_total} x=hora_brt y=interrupcoes title="按小时的中断 (BRT) — 组合" xAxisTitle="Hora (0-23, BRT)"/>
 
 <DataTable data={horario_critico} rows=all rowShading=true>
   <Column id=project_name title="项目"/>
@@ -274,12 +274,12 @@ select * from bsc.decisao_mcda where rank_final = 1
 </DataTable>
 
 ## ♻️ 浪费分类 (Lean Six Sigma) — 浪费最多之处
-> Desperdício medido por **tokens ponderados** (Defeito 2,0× · Cota 1,5× · Superproc. 1,0× · Latência 0,5×), não só por contagem.
+> 浪费以**加权 Token** 衡量（缺陷 2.0× · 配额 1.5× · 过度处理 1.0× · 延迟 0.5×），而非仅按数量。
 
 <Grid cols=2>
 <Group>
 
-**Mix de waste do portfólio**
+**组合浪费构成**
 <ECharts config={{
   tooltip: { trigger: 'item', valueFormatter: (v) => Number(v).toLocaleString() + ' tok' },
   legend: { type: 'scroll', bottom: 0, textStyle: { fontSize: 9 } },
@@ -295,26 +295,26 @@ select * from bsc.decisao_mcda where rank_final = 1
 </Group>
 <Group>
 
-**Waste dominante por projeto**
+**各项目主要浪费**
 <DataTable data={waste_dom} rows=all>
   <Column id=project_name title="项目"/>
   <Column id=waste_dominante title="主要浪费"/>
-  <Column id=waste_tokens title="Tokens desperd." fmt=num0/>
+  <Column id=waste_tokens title="浪费的 Token" fmt=num0/>
 </DataTable>
 
 </Group>
 </Grid>
 
-<BarChart data={wastes} x=project_name y=waste_tokens series=categoria_waste type=stacked swapXY=true title="Composição de waste (tokens ponderados) por projeto"/>
+<BarChart data={wastes} x=project_name y=waste_tokens series=categoria_waste type=stacked swapXY=true title="浪费构成（加权 Token）按项目"/>
 
 ## 🔬 RCA — 按提示词类型的幻觉（是什么在拖慢每个项目）
-> Root Cause Analysis: classificamos os prompts em **categorias** e medimos a alucinação de cada uma.
-> Diagnóstico objetivo de **o que atrasa cada projeto** e **o que atrasa COMUMENTE a todos (interseção)**.
+> 根因分析：将提示词分为**类别**并测量每类的幻觉。
+> 客观诊断**是什么拖慢每个项目**以及**共同拖慢所有项目的是什么（交集）**。
 
 ### 🎯 交集 — 组合共有的瓶颈
-> O tipo de prompt que é o **gargalo nº1 de alucinação** no maior número de projetos. Atacar este primeiro tem o maior efeito sistêmico.
+> 在最多项目中作为**头号幻觉瓶颈**的提示词类型。优先攻克它具有最大的系统性效果。
 
-<BarChart data={rca_inter} x=prompt_categoria y=projetos_onde_e_top1 title="Tipo de prompt que mais atrasa o portfólio (gargalo #1 em N projetos)" yAxisTitle="Nº de projetos onde é o gargalo #1" labels=true sort=true/>
+<BarChart data={rca_inter} x=prompt_categoria y=projetos_onde_e_top1 title="最拖慢组合的提示词类型（N 个项目中的头号瓶颈）" yAxisTitle="Nº de projetos onde é o gargalo #1" labels=true sort=true/>
 
 ### 🧭 各项目的幻觉瓶颈（单项 RCA）
 
@@ -326,29 +326,31 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 ### 📊 按类别 × 项目的幻觉分类
 
-<BarChart data={aluc_cat} x=project_name y=alucinacoes series=prompt_categoria type=stacked swapXY=true title="Alucinações por tipo de prompt em cada projeto"/>
+<BarChart data={aluc_cat} x=project_name y=alucinacoes series=prompt_categoria type=stacked swapXY=true title="各项目按提示词类型的幻觉"/>
 
 ## 💰 NPV、回收期与组合现金流
-> Calculado a partir do **seu fluxo de caixa** (CSV/planilha — ver `pipeline/fluxo_caixa_template.csv` e
-> `python3 carregar_fluxo.py SEU.csv`). VPL = Σ fluxo ÷ (1+i)ᵗ · Payback **simples** (variação temporal) e
-> **descontado**, ambos interpolados. _Dados de demonstração até você fornecer o seu CSV._
+> 根据**您的现金流**计算（CSV/表格 — 见 `pipeline/fluxo_caixa_template.csv` 与 `python3 carregar_fluxo.py 您的.csv`）。NPV = Σ 流量 ÷ (1+i)ᵗ · 回收期**简单**（时间插值）与**贴现**，均为插值。_在您提供 CSV 之前为演示数据。_
 
 <DataTable data={vpl} rows=all rowShading=true>
   <Column id=project_name title="项目"/>
   <Column id=vpl title="VPL (R$)" fmt='$#,##0' contentType=colorscale/>
   <Column id=tir title="TIR" fmt=pct1/>
+  <Column id=tirm title="TIRM" fmt=pct1/>
   <Column id=ill title="ILL (PI)" fmt=num2/>
-  <Column id=payback_simples title="PB simples" fmt=num2/>
-  <Column id=payback_descontado title="PB descontado" fmt=num2/>
+  <Column id=vul title="VUL (R$)" fmt='$#,##0'/>
+  <Column id=payback_simples title="简单回收期" fmt=num2/>
+  <Column id=payback_descontado title="贴现回收期" fmt=num2/>
   <Column id=supera_selic title="TIR>SELIC?" fmt=boolean/>
   <Column id=supera_us title="TIR>EUA?" fmt=boolean/>
   <Column id=vpl_usd title="VPL US$" fmt='$#,##0'/>
   <Column id=payback_desc_usd title="PB desc. US$" fmt=num2/>
 </DataTable>
 
+> 🆕 **TIRM**（修正内部收益率）以项目利率再投资流入 — 比 IRR 更现实。**VUL**（净均一价值）将 NPV 转换为等额年金序列。
+
 > **TIR** = retorno do projeto · **ILL (PI)** acima de 1 = cria valor · comparados à **SELIC** e aos **juros dos EUA** (valores reais por projeto na tabela acima — colunas `TIR>SELIC?`/`TIR>EUA?`). O fluxo é **dolarizado** (USD/BRL) e descontado à taxa americana → colunas **VPL US$** e **PB desc. US$**. _Benchmarks (SELIC, juros EUA, câmbio) são placeholders — ajuste no `.env`._
 
-**TIR por projeto vs. custo de oportunidade (SELIC × EUA)**
+**各项目 IRR vs. 机会成本（SELIC × 美国）**
 
 <BarChart data={vpl} x=project_name y=tir title="TIR por projeto comparada à SELIC e aos juros dos EUA" yAxisTitle="TIR (por período)" sort=true>
   <ReferenceLine y=0.105 color=warning label="SELIC (BR) ~10,5%"/>
@@ -362,8 +364,8 @@ select * from bsc.decisao_mcda where rank_final = 1
 </LineChart>
 
 ## 💳 AI 订阅计划 — 含 IOF 总成本
-> Câmbio **R$ 5,40/US$** · **IOF 3,5%** sobre operação internacional (cartão). `Total = US$ × câmbio × (1 + IOF)`.
-> Este é o custo real que alimenta a base de rateio (`assinaturas_infra`). Preços aproximados — verifique os sites oficiais.
+> 汇率 **R$ 5.40/US$** · 国际操作（信用卡）**IOF 3.5%**。`总额 = US$ × 汇率 × (1 + IOF)`。
+> 这是喂入分摊基准（`assinaturas_infra`）的真实成本。价格为近似值 — 请查阅官方网站。
 
 <DataTable data={planos} rows=all rowShading=true>
   <Column id=provedor title="提供商"/>
@@ -382,12 +384,12 @@ select * from bsc.decisao_mcda where rank_final = 1
   <img src="/gekko_photo.png" alt="Gordon Gekko fumando charuto (terno azul)" width="100" height="100" style="flex:0 0 auto;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.25);"/>
 </div>
 
-> **Escolha do MELHOR projeto** ponderando os indicadores como critérios. Pesos por **AHP**
+> 通过将指标作为准则加权来**选择最佳项目**。权重由 **AHP**
 > (VPL 37% · TIR 24% · ILL 14% · PSR 14% · IITA 5,6% · IDLS 5,6% — CR = 0,012, consistente).
 > Ranking por **TOPSIS** em **duas normalizações** (vetorial/Euclidiana + min-max/linear); o
-> **Ci final** é a média. Coluna **Robusto?** = as duas normalizações concordam na posição.
+> **Ci 终值**为平均。**稳健？**列 = 两种归一化在位次上一致。
 
-**🥇 Projeto vencedor (maior Ci final):**
+**🥇 获胜项目（最高 Ci 终值）：**
 <DataTable data={mcda_top}>
   <Column id=project_name title="🏆 最佳项目"/>
   <Column id=ci_final title="Ci final" fmt=num4/>
@@ -404,98 +406,76 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=concordante title="稳健？" fmt=boolean/>
 </DataTable>
 
-> O vencedor tem **pitchdeck** gerado (ver pasta Projetos / `pitchdeck/`). Se as posições 6–7
-> divergem entre normalizações, é onde o ranking é mais sensível — decida com cautela ali.
+> 获胜者已生成**路演材料**（见 项目 文件夹 / `pitchdeck/`）。当第 6–7 位在归一化间分歧时，排名最敏感 — 在此谨慎决策。
 
 ### 📌 结论 — 执行摘要与 C 级洞察
 
-**Veredito.** O modelo **AHP-TOPSIS 2n** elege ****{mcda_top[0].project_name}**** como o melhor projeto do portfólio
-(**Ci = 0,96** de 1,00), com **robustez confirmada**: as duas normalizações (vetorial e min-max)
-concordam na **1ª posição** e em 8/10 do ranking — o topo é estável, não é artefato de método.
+**结论。** **AHP-TOPSIS 2n** 模型选出 **{mcda_top[0].project_name}** 为组合最佳项目（**Ci = 0.96**（满分 1.00）），且**稳健性已确认**：两种归一化（向量与 min-max）在**第 1 位**及排名的 8/10 上一致 — 榜首稳定，并非方法假象。
 
-**Por que **{mcda_top[0].project_name}** venceu.** Os critérios **financeiros** (VPL R$ 5.973 · TIR 32,9% · ILL 1,75)
-estão **empatados** entre os projetos (fluxo de caixa ainda em *placeholder* uniforme). Com o
-financeiro neutralizado, a decisão migra para a **eficiência operacional**, e aí **{mcda_top[0].project_name}** domina:
-tem a **menor taxa de alucinação (IITA 9,1%)** e o **menor desperdício Lean (IDLS 15,0%)** de
-todo o portfólio — praticamente **metade** do desperdício do 2º colocado. Em outras palavras:
-**mesmo retorno projetado, executando com muito menos desperdício de tokens/caixa.**
+**{mcda_top[0].project_name} 为何胜出。** **财务**准则（NPV R$ 5,973 · IRR 32.9% · ILL 1.75）在各项目间**打平**（现金流仍为统一*占位*）。财务被中和后，决策转向**运营效率**，此时 {mcda_top[0].project_name} 胜出：拥有全组合**最低幻觉率（IITA 9.1%）**与**最低精益浪费（IDLS 15.0%）**——几乎是第 2 名浪费的**一半**。换言之：**同等预期回报，却以远少的 Token/现金浪费执行。**
 
-**Insights C-Level.**
-- 🥇 **Eficiência é o desempate:** quando o retorno é parecido, quem **queima menos** (menor IITA/IDLS)
-  entrega o mesmo valor com maior margem — é o ativo mais escalável.
-- 🛡️ **Robustez decisória:** a concordância entre as duas normalizações (8/10) dá **segurança** ao board
-  para agir no topo do ranking; a zona sensível (posições 6–7) exige análise qualitativa antes de cortar.
-- 📉 **Cauda de risco:** **o último colocado** (Ci 0,01) reúne o pior desempenho combinado — candidato a
-  **refatoração ou descontinuação** (cruzar com a Matriz BCG).
+**C 级洞察。**
+- 🥇 **效率是决胜点：** 回报相近时，谁**消耗更少**（更低 IITA/IDLS）就以更高利润率交付同等价值 — 最可扩展的资产。
+- 🛡️ **决策稳健性：** 两种归一化的一致（8/10）让董事会有**把握**在榜首行动；敏感区间（第 6–7 位）在裁撤前需定性分析。
+- 📉 **风险长尾：** 末位项目（Ci 0.01）综合表现最差 — **重构或停用**的候选（与 BCG 矩阵交叉验证）。
 
-**⚠️ Ressalva de honestidade decisória.** Os critérios financeiros carregam **75% do peso AHP**
-(VPL 37% + TIR 24% + ILL 14%), mas hoje **não diferenciam** porque o fluxo de caixa é placeholder.
-**O veredito só é definitivo com os fluxos de caixa REAIS por projeto** — ao inseri-los, o ranking
-pode mudar substancialmente (o financeiro voltará a dominar).
+**⚠️ 决策诚实性提醒。** 财务准则占 **AHP 权重的 75%**（NPV 37% + IRR 24% + ILL 14%），但目前因现金流为占位而**无法区分**。**唯有各项目的真实现金流才能得出最终结论** — 一旦录入，排名可能大幅变化（财务将重新主导）。
 
-**Recomendação.** (1) Aprovar **{mcda_top[0].project_name}** como **piloto de escala** pela eficiência comprovada; (2) inserir
-os **fluxos de caixa reais** e re-rodar o `ahp_topsis.py` para o veredito financeiro definitivo;
-(3) acionar plano de melhoria na cauda (**o último colocado**).
+**建议。**（1）以已验证的效率批准 {mcda_top[0].project_name} 作为**扩展试点**；（2）录入**真实现金流**并重跑 `ahp_topsis.py` 得出最终财务结论；（3）对长尾（末位项目）启动改进计划。
 
 ---
 ## 👑 **皇冠明珠**行政档案 — {mcda_top[0].project_name}
 
-> Ferramentas administrativas clássicas aplicadas **exclusivamente ao projeto eleito** para
-> enriquecê-lo, enaltecê-lo e evidenciar seu **diferencial competitivo**. Todas são geradas
-> por **pipeline Python concorrente** (`gerar_admtools.py`) — não dependem de nenhum template
-> externo. Detalhamento e justificativa em `foundations/admtools/ferramentas_administrativas.md`.
+> 经典管理工具**专门应用于当选项目**，以丰富、彰显并凸显其**竞争优势**。全部由**并发 Python 流水线**（`gerar_admtools.py`）生成 — 不依赖任何外部模板。详见 `foundations/admtools/ferramentas_administrativas.md`。
 
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.2rem;margin:1rem 0;">
 
 <div>
 
 **🎯 SWOT — 战略定位**
-Forças/fraquezas/oportunidades/ameaças derivadas dos KPIs reais (menor IITA e IDLS = força dominante).
+基于真实 KPI 的优势/劣势/机会/威胁（最低 IITA 与 IDLS = 主导优势）。
 <img src="/admtools/swot.png" alt="SWOT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🌐 PESTELC — 宏观环境**
-Sete fatores externos (Político, Econômico, Social, Tecnológico, Ecológico, Legal, Cultural).
+七个外部因素（政治、经济、社会、技术、生态、法律、文化）。
 <img src="/admtools/pestel.png" alt="PESTELC do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🗺️ 5W4H — 行动计划（5W + 4H）**
-What/Why/Where/When/Who + How/How much/How many/How long — roteiro de escala do eleito.
+What/Why/Where/When/Who + How/How much/How many/How long — 当选项目的扩展路线图。
 <img src="/admtools/5w4h.png" alt="5W4H do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **📊 故障帕累托（80/20）**
-Categorias de prompt que concentram 80% das falhas — onde atacar primeiro (dados reais do Langfuse).
+集中 80% 故障的提示词类别 — 优先攻克之处（Langfuse 真实数据）。
 <img src="/admtools/pareto.png" alt="Pareto de falhas do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🔥 GUT 矩阵 — 优先级排序（热力图）**
-Gravidade × Urgência × Tendência das ações; maior GUT = agir primeiro.
+行动的严重性 × 紧急性 × 趋势；GUT 越高 = 越先行动。
 <img src="/admtools/gut.png" alt="Matriz GUT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🕸️ 竞争雷达 — 差异化**
-Impressão digital do eleito **vs média do portfólio** (a área azul domina a cinza em quase todo eixo).
+当选项目的指纹**对比组合平均**（蓝色区域在几乎每个轴上都压制灰色）。
 <img src="/admtools/radar.png" alt="Radar competitivo do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 
 </div>
 
-> **📌 Leitura executiva.** O **radar** é o retrato do diferencial competitivo: a Jóia da Coroa
-> supera a média em anti-alucinação, Lean e entrega útil. **SWOT/PESTEL/5W4H** transformam esse
-> diagnóstico em **estratégia e plano de ação**; **Pareto + GUT** dizem **exatamente onde** agir
-> primeiro para converter a liderança operacional em retorno financeiro definitivo.
+> **📌 高管解读。** **雷达**刻画竞争优势：皇冠明珠在抗幻觉、精益与有效交付上超过平均。**SWOT/PESTEL/5W4H** 将该诊断转化为**战略与行动计划**；**Pareto + GUT** 指出**优先在何处**行动，以将运营领先转化为最终财务回报。
 
 ---
 ## 🔗 各项目独立面板

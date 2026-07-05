@@ -1,6 +1,6 @@
 # 📊 Catálogo Completo — KPIs, Lean Six Sigma & BSC
 
-> **Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard"** · ©️ Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
+> **Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard** · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 >
 > Lista **TODOS** os indicadores do projeto: KPIs das 4 perspectivas do Balanced Scorecard,
 > economia de tokens/APIs, EVM, financeiro de investimento, conceitos de fronteira, RCA e os

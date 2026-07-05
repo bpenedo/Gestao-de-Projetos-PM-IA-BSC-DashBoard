@@ -2,13 +2,13 @@
 title: לוח BSC — ניהול פרויקטים (PM) של AI
 ---
 
-🌐 [Português](/) · [English](/en) · [Español](/es) · [Français](/fr) · [Deutsch](/de) · [中文](/zh) · [한국어](/ko) · [हिन्दी](/hi) · **עברית**
+🌐 [Português](/) · [English](/en) · [Español](/es) · [Français](/fr) · [Deutsch](/de) · [中文](/zh) · [한국어](/ko) · [हिन्दी](/hi) · **עברית** · [Svenska](/sv) · [Русский](/ru) · [Suomi](/fi)
 
 
 🌐 **Português** · [English](/en) · [Español](/es) · [Français](/fr) · [Deutsch](/de) · [中文](/zh) · [한국어](/ko) · [हिन्दी](/hi)
 
 
-_Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · ©️ Bruno Teixeira Penedo — 2026. כל הזכויות שמורות. E-mail: bpenedo@gmail.com_
+_Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com_
 **נקודת ביקורת שבועית — כל יום שישי בשעה 09:00.**
 
 > ⚠️ **נתוני הדגמה** (תיק מנוטרל). הופכים לאמיתיים לאחר סנכרון Langfuse.
@@ -76,20 +76,20 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 ## 📈 תקציר מנהלים של התיק
 
-<BigValue data={kpis} value=total_tokens title="Tokens Totais" agg=sum fmt=num0/>
-<BigValue data={kpis} value=kpi_psr title="PSR Médio (0-5)" agg=mean fmt=num1/>
-<BigValue data={kpis} value=kpi_idls_lean title="Desperdício Lean Médio %" agg=mean fmt=num1/>
-<BigValue data={kpis} value=burn_rate_ia title="Burn Rate Total" agg=sum fmt='$#,##0.00'/>
+<BigValue data={kpis} value=total_tokens title="סה״כ טוקנים" agg=sum fmt=num0/>
+<BigValue data={kpis} value=kpi_psr title="PSR ממוצע (0-5)" agg=mean fmt=num1/>
+<BigValue data={kpis} value=kpi_idls_lean title="בזבוז Lean ממוצע %" agg=mean fmt=num1/>
+<BigValue data={kpis} value=burn_rate_ia title="סה״כ Burn Rate" agg=sum fmt='$#,##0.00'/>
 
 ## 🌐 מפת 5D של התיק (מבט דרג בכיר)
-> Esferas 3D estilo 5dchart — **5 dimensões por projeto**: **X**=Volume/escala (tokens) · **Y**=PEUC/qualidade (%) · **Z**=PSR/saúde (0–5) · **tamanho**=Burn Rate (R$) · **cor**=ICCA/sustentabilidade (🟢 acima de 3x cobre custo · 🔴 abaixo de 1x = prejuízo).
+> כדורים תלת-ממדיים (סגנון 5dchart) — **5 ממדים לכל פרויקט**: **X**=נפח (טוקנים) · **Y**=PEUC/איכות (%) · **Z**=PSR/בריאות (0–5) · **גודל**=Burn Rate (R$) · **צבע**=ICCA/קיימות (🟢 מעל 3x מכסה עלות · 🔴 מתחת ל-1x = הפסד).
 >
-> **Leitura de conselho:** o projeto ideal fica à **direita/fundo** (escala+qualidade), **alto** (PSR) e **verde** (sustentável). Esfera **grande e vermelha** = muito caixa queimado sem cobertura → corrigir antes de escalar.
+> **קריאה לדירקטוריון:** הפרויקט האידיאלי נמצא **ימין/עומק** (היקף+איכות), **גבוה** (PSR) ו**ירוק** (בר-קיימא). כדור **גדול ואדום** = הרבה מזומן שנשרף ללא כיסוי → לתקן לפני הרחבה.
 
 ![Mapa 5D do Portfólio de Projetos de IA](/5d_projetos.png?v=5)
 
 ### 🖱️ מפת 5D אינטראקטיבית — העבירו את העכבר מעל כל כדור
-> **X** = Tokens (escala) · **Y** = PEUC (%) · **tamanho** = PSR (0–5) · **cor** = ICCA (🟢 sustentável · 🟠 limítrofe · 🔴 prejuízo). Ao passar o mouse em cada **esfera glossy**, aparece **Nome do projeto, PSR, PEUC e Tokens**.
+> **X** = טוקנים (היקף) · **Y** = PEUC (%) · **גודל** = PSR (0–5) · **צבע** = ICCA (🟢 בר-קיימא · 🟠 גבולי · 🔴 הפסד). מעבר עכבר מעל כל **כדור מבריק** מציג **שם הפרויקט, PSR, PEUC וטוקנים**.
 
 <ECharts config={{
   tooltip: {
@@ -158,15 +158,15 @@ select * from bsc.decisao_mcda where rank_final = 1
 }} />
 
 ## 📉 מגמת המדד המרכזי (CPP) והציון (PSR)
-> O que mais importa para o C-Level: **a direção**. CPP caindo = portfólio ficando mais eficiente.
+> מה שהכי חשוב לדרג הבכיר: **הכיוון**. CPP יורד = התיק נעשה יעיל יותר.
 
-<LineChart data={tendencia} x=data_snapshot y=cpp_medio yAxisTitle="CPP médio (R$/%)" title="Custo por Ponto de Progresso — tendência do portfólio" markers=true/>
+<LineChart data={tendencia} x=data_snapshot y=cpp_medio yAxisTitle="CPP médio (R$/%)" title="עלות לנקודת התקדמות — מגמת התיק" markers=true/>
 
-<LineChart data={tendencia} x=data_snapshot y=psr_medio yAxisTitle="PSR médio" yMin=0 yMax=5 title="Score médio do portfólio (PSR 0-5)" markers=true/>
+<LineChart data={tendencia} x=data_snapshot y=psr_medio yAxisTitle="PSR médio" yMin=0 yMax=5 title="ציון ממוצע של התיק (PSR 0-5)" markers=true/>
 
 ## ⭐ ציון (PSR) לפי פרויקט
 
-<BarChart data={kpis} x=project_name y=kpi_psr swapXY=true title="PSR (0-5) por projeto — ordenado" sort=true labels=true/>
+<BarChart data={kpis} x=project_name y=kpi_psr swapXY=true title="PSR (0-5) לפי פרויקט — ממוין" sort=true labels=true/>
 
 ## 🍩 הרכב ותמהיל (תרשים דונאט עם עומק)
 
@@ -209,14 +209,14 @@ select * from bsc.decisao_mcda where rank_final = 1
 </Grid>
 
 ## 🧭 רביע הקיימות (להרחיב או לתקן?)
-> Eixo X = **ICCA** (cobertura: acima de 3x = saudável) · Eixo Y = **IBMT** (queima marginal: abaixo de 0,33 = bom) · tamanho = Burn Rate.
-> Canto inferior-direito = **escalar com lucro**; superior-esquerdo = **corrigir antes de crescer**.
+> ציר X = **ICCA** (כיסוי: מעל 3x = בריא) · ציר Y = **IBMT** (שריפה שולית: מתחת ל-0.33 = טוב) · גודל = Burn Rate.
+> פינה ימנית-תחתונה = **הרחבה עם רווח**; שמאלית-עליונה = **לתקן לפני צמיחה**.
 
-<ScatterPlot data={kpis} x=kpi_icca y=kpi_ibmt series=project_name size=burn_rate_ia xAxisTitle="ICCA — cobertura de custo (x)" yAxisTitle="IBMT — burn marginal (x)" title="Sustentabilidade financeira por projeto"/>
+<ScatterPlot data={kpis} x=kpi_icca y=kpi_ibmt series=project_name size=burn_rate_ia xAxisTitle="ICCA — cobertura de custo (x)" yAxisTitle="IBMT — burn marginal (x)" title="קיימות פיננסית לפי פרויקט"/>
 
 ## 📊 פארטו של כשלים לפי פרויקט
 
-<BarChart data={falhas} x=project_name y=percentual_dominancia series=categoria_falha type=stacked100 swapXY=true title="Dominância de falhas (%) por projeto"/>
+<BarChart data={falhas} x=project_name y=percentual_dominancia series=categoria_falha type=stacked100 swapXY=true title="דומיננטיות כשלים (%) לפי פרויקט"/>
 
 ## 🗂️ ציון ובריאות פיננסית (טבלה)
 
@@ -250,7 +250,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 </DataTable>
 
 ## 🪙 עלות השבה (VRT) — 5 בלוקים + ממוצע (מבט שני)
-> Mesma base de rateio em **5 granularidades** (R$ por 50/100/250/500/1.000 tokens) + a **média dos blocos** — uma segunda percepção do consumo por projeto.
+> אותו בסיס הקצאה ב-**5 רזולוציות** (R$ ל-50/100/250/500/1,000 טוקנים) + **ממוצע הבלוקים** — מבט שני על הצריכה לכל פרויקט.
 
 <DataTable data={kpis} rows=all rowShading=true>
   <Column id=project_name title="פרויקט"/>
@@ -259,13 +259,13 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=vrt_250t title="250 tok" fmt='#,##0.00000'/>
   <Column id=vrt_500t title="500 tok" fmt='#,##0.00000'/>
   <Column id=vrt_por_ktoken title="1.000 tok" fmt='#,##0.00000'/>
-  <Column id=vrt_media_blocos title="MÉDIA blocos" fmt='#,##0.00000' contentType=colorscale/>
+  <Column id=vrt_media_blocos title="ממוצע בלוקים" fmt='#,##0.00000' contentType=colorscale/>
 </DataTable>
 
 ## ⏰ שעת ההפרעה/ההשפעה הקריטית (HCI)
-> Em que **hora do dia (BRT)** cada projeto é mais impactado — para agir na janela certa (upgrade de Tier, backoff, agendamento).
+> באיזו **שעה ביום (BRT)** כל פרויקט מושפע ביותר — כדי לפעול בחלון הנכון (שדרוג Tier, backoff, תזמון).
 
-<BarChart data={hora_total} x=hora_brt y=interrupcoes title="Interrupções por hora do dia (BRT) — portfólio" xAxisTitle="Hora (0-23, BRT)"/>
+<BarChart data={hora_total} x=hora_brt y=interrupcoes title="הפרעות לפי שעה ביום (BRT) — התיק" xAxisTitle="Hora (0-23, BRT)"/>
 
 <DataTable data={horario_critico} rows=all rowShading=true>
   <Column id=project_name title="פרויקט"/>
@@ -274,12 +274,12 @@ select * from bsc.decisao_mcda where rank_final = 1
 </DataTable>
 
 ## ♻️ טקסונומיית בזבוזים (Lean Six Sigma) — היכן מבזבזים הכי הרבה
-> Desperdício medido por **tokens ponderados** (Defeito 2,0× · Cota 1,5× · Superproc. 1,0× · Latência 0,5×), não só por contagem.
+> בזבוז נמדד לפי **טוקנים משוקללים** (פגם 2.0× · מכסה 1.5× · עיבוד-יתר 1.0× · השהיה 0.5×), לא רק לפי כמות.
 
 <Grid cols=2>
 <Group>
 
-**Mix de waste do portfólio**
+**תמהיל בזבוז בתיק**
 <ECharts config={{
   tooltip: { trigger: 'item', valueFormatter: (v) => Number(v).toLocaleString() + ' tok' },
   legend: { type: 'scroll', bottom: 0, textStyle: { fontSize: 9 } },
@@ -295,26 +295,26 @@ select * from bsc.decisao_mcda where rank_final = 1
 </Group>
 <Group>
 
-**Waste dominante por projeto**
+**בזבוז דומיננטי לפי פרויקט**
 <DataTable data={waste_dom} rows=all>
   <Column id=project_name title="פרויקט"/>
   <Column id=waste_dominante title="בזבוז דומיננטי"/>
-  <Column id=waste_tokens title="Tokens desperd." fmt=num0/>
+  <Column id=waste_tokens title="טוקנים מבוזבזים" fmt=num0/>
 </DataTable>
 
 </Group>
 </Grid>
 
-<BarChart data={wastes} x=project_name y=waste_tokens series=categoria_waste type=stacked swapXY=true title="Composição de waste (tokens ponderados) por projeto"/>
+<BarChart data={wastes} x=project_name y=waste_tokens series=categoria_waste type=stacked swapXY=true title="הרכב בזבוז (טוקנים משוקללים) לפי פרויקט"/>
 
 ## 🔬 RCA — הזיות לפי סוג פרומפט (מה שמעכב כל פרויקט)
-> Root Cause Analysis: classificamos os prompts em **categorias** e medimos a alucinação de cada uma.
-> Diagnóstico objetivo de **o que atrasa cada projeto** e **o que atrasa COMUMENTE a todos (interseção)**.
+> ניתוח שורש: מסווגים את הפרומפטים ל-**קטגוריות** ומודדים את ההזיה של כל אחת.
+> אבחון אובייקטיבי של **מה מעכב כל פרויקט** ו**מה מעכב את כולם במשותף (חיתוך)**.
 
 ### 🎯 חיתוך — צוואר הבקבוק המשותף לתיק
-> O tipo de prompt que é o **gargalo nº1 de alucinação** no maior número de projetos. Atacar este primeiro tem o maior efeito sistêmico.
+> סוג הפרומפט שהוא **צוואר בקבוק ההזיה מס' 1** במרב הפרויקטים. תקיפתו ראשון בעלת האפקט המערכתי הגדול ביותר.
 
-<BarChart data={rca_inter} x=prompt_categoria y=projetos_onde_e_top1 title="Tipo de prompt que mais atrasa o portfólio (gargalo #1 em N projetos)" yAxisTitle="Nº de projetos onde é o gargalo #1" labels=true sort=true/>
+<BarChart data={rca_inter} x=prompt_categoria y=projetos_onde_e_top1 title="סוג הפרומפט שהכי מעכב את התיק (צוואר בקבוק #1 ב-N פרויקטים)" yAxisTitle="Nº de projetos onde é o gargalo #1" labels=true sort=true/>
 
 ### 🧭 צוואר בקבוק של הזיות לפי פרויקט (RCA פרטני)
 
@@ -326,29 +326,31 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 ### 📊 טקסונומיית הזיות לפי קטגוריה × פרויקט
 
-<BarChart data={aluc_cat} x=project_name y=alucinacoes series=prompt_categoria type=stacked swapXY=true title="Alucinações por tipo de prompt em cada projeto"/>
+<BarChart data={aluc_cat} x=project_name y=alucinacoes series=prompt_categoria type=stacked swapXY=true title="הזיות לפי סוג פרומפט בכל פרויקט"/>
 
 ## 💰 NPV, החזר וזרם מזומנים של התיק
-> Calculado a partir do **seu fluxo de caixa** (CSV/planilha — ver `pipeline/fluxo_caixa_template.csv` e
-> `python3 carregar_fluxo.py SEU.csv`). VPL = Σ fluxo ÷ (1+i)ᵗ · Payback **simples** (variação temporal) e
-> **descontado**, ambos interpolados. _Dados de demonstração até você fornecer o seu CSV._
+> מחושב מ**תזרים המזומנים שלך** (CSV/גיליון — ראו `pipeline/fluxo_caixa_template.csv` ו-`python3 carregar_fluxo.py שלך.csv`). NPV = Σ תזרים ÷ (1+i)ᵗ · Payback **פשוט** (וריאציה בזמן) ו**מהוון**, שניהם באינטרפולציה. _נתוני הדגמה עד שתספק CSV משלך._
 
 <DataTable data={vpl} rows=all rowShading=true>
   <Column id=project_name title="פרויקט"/>
   <Column id=vpl title="VPL (R$)" fmt='$#,##0' contentType=colorscale/>
   <Column id=tir title="TIR" fmt=pct1/>
+  <Column id=tirm title="TIRM" fmt=pct1/>
   <Column id=ill title="ILL (PI)" fmt=num2/>
-  <Column id=payback_simples title="PB simples" fmt=num2/>
-  <Column id=payback_descontado title="PB descontado" fmt=num2/>
+  <Column id=vul title="VUL (R$)" fmt='$#,##0'/>
+  <Column id=payback_simples title="PB פשוט" fmt=num2/>
+  <Column id=payback_descontado title="PB מהוון" fmt=num2/>
   <Column id=supera_selic title="TIR>SELIC?" fmt=boolean/>
   <Column id=supera_us title="TIR>EUA?" fmt=boolean/>
   <Column id=vpl_usd title="VPL US$" fmt='$#,##0'/>
   <Column id=payback_desc_usd title="PB desc. US$" fmt=num2/>
 </DataTable>
 
+> 🆕 **TIRM** (IRR מתוקן) משקיע מחדש את התקבולים בריבית הפרויקט — ריאלי יותר מ-IRR. **VUL** (ערך אחיד נטו) ממיר את ה-NPV לסדרה שנתית שקולה.
+
 > **TIR** = retorno do projeto · **ILL (PI)** acima de 1 = cria valor · comparados à **SELIC** e aos **juros dos EUA** (valores reais por projeto na tabela acima — colunas `TIR>SELIC?`/`TIR>EUA?`). O fluxo é **dolarizado** (USD/BRL) e descontado à taxa americana → colunas **VPL US$** e **PB desc. US$**. _Benchmarks (SELIC, juros EUA, câmbio) são placeholders — ajuste no `.env`._
 
-**TIR por projeto vs. custo de oportunidade (SELIC × EUA)**
+**IRR לפי פרויקט מול עלות אלטרנטיבית (SELIC × ארה"ב)**
 
 <BarChart data={vpl} x=project_name y=tir title="TIR por projeto comparada à SELIC e aos juros dos EUA" yAxisTitle="TIR (por período)" sort=true>
   <ReferenceLine y=0.105 color=warning label="SELIC (BR) ~10,5%"/>
@@ -362,8 +364,8 @@ select * from bsc.decisao_mcda where rank_final = 1
 </LineChart>
 
 ## 💳 תוכניות מנוי ל-AI — עלות כוללת עם IOF
-> Câmbio **R$ 5,40/US$** · **IOF 3,5%** sobre operação internacional (cartão). `Total = US$ × câmbio × (1 + IOF)`.
-> Este é o custo real que alimenta a base de rateio (`assinaturas_infra`). Preços aproximados — verifique os sites oficiais.
+> שער **R$ 5.40/US$** · **IOF 3.5%** על פעולה בינלאומית (כרטיס). `סה"כ = US$ × שער × (1 + IOF)`.
+> זו העלות האמיתית שמזינה את בסיס ההקצאה (`assinaturas_infra`). מחירים משוערים — בדקו באתרים הרשמיים.
 
 <DataTable data={planos} rows=all rowShading=true>
   <Column id=provedor title="ספק"/>
@@ -382,12 +384,12 @@ select * from bsc.decisao_mcda where rank_final = 1
   <img src="/gekko_photo.png" alt="Gordon Gekko fumando charuto (terno azul)" width="100" height="100" style="flex:0 0 auto;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.25);"/>
 </div>
 
-> **Escolha do MELHOR projeto** ponderando os indicadores como critérios. Pesos por **AHP**
+> **בחירת הפרויקט הטוב ביותר** על ידי שקלול המדדים כקריטריונים. משקלים לפי **AHP**
 > (VPL 37% · TIR 24% · ILL 14% · PSR 14% · IITA 5,6% · IDLS 5,6% — CR = 0,012, consistente).
 > Ranking por **TOPSIS** em **duas normalizações** (vetorial/Euclidiana + min-max/linear); o
-> **Ci final** é a média. Coluna **Robusto?** = as duas normalizações concordam na posição.
+> **Ci סופי** הוא הממוצע. עמודת **חסין?** = שתי הנרמולים מסכימים על המיקום.
 
-**🥇 Projeto vencedor (maior Ci final):**
+**🥇 הפרויקט המנצח (Ci סופי הגבוה ביותר):**
 <DataTable data={mcda_top}>
   <Column id=project_name title="🏆 הפרויקט הטוב ביותר"/>
   <Column id=ci_final title="Ci final" fmt=num4/>
@@ -404,98 +406,76 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=concordante title="חסין?" fmt=boolean/>
 </DataTable>
 
-> O vencedor tem **pitchdeck** gerado (ver pasta Projetos / `pitchdeck/`). Se as posições 6–7
-> divergem entre normalizações, é onde o ranking é mais sensível — decida com cautela ali.
+> למנצח נוצר **פיצ'דק** (ראו תיקיית פרויקטים / `pitchdeck/`). היכן שמיקומים 6–7 מתפצלים בין הנרמולים, הדירוג הכי רגיש — החליטו שם בזהירות.
 
 ### 📌 שורה תחתונה — תקציר מנהלים ותובנות דרג בכיר
 
-**Veredito.** O modelo **AHP-TOPSIS 2n** elege ****{mcda_top[0].project_name}**** como o melhor projeto do portfólio
-(**Ci = 0,96** de 1,00), com **robustez confirmada**: as duas normalizações (vetorial e min-max)
-concordam na **1ª posição** e em 8/10 do ranking — o topo é estável, não é artefato de método.
+**פסק דין.** המודל **AHP-TOPSIS 2n** בוחר ב-**{mcda_top[0].project_name}** כפרויקט הטוב בתיק (**Ci = 0.96** מתוך 1.00), עם **חוסן מאושר**: שני הנרמולים (וקטורי ו-min-max) מסכימים על **המקום ה-1** ועל 8/10 מהדירוג — הצמרת יציבה, לא תוצר שיטה.
 
-**Por que **{mcda_top[0].project_name}** venceu.** Os critérios **financeiros** (VPL R$ 5.973 · TIR 32,9% · ILL 1,75)
-estão **empatados** entre os projetos (fluxo de caixa ainda em *placeholder* uniforme). Com o
-financeiro neutralizado, a decisão migra para a **eficiência operacional**, e aí **{mcda_top[0].project_name}** domina:
-tem a **menor taxa de alucinação (IITA 9,1%)** e o **menor desperdício Lean (IDLS 15,0%)** de
-todo o portfólio — praticamente **metade** do desperdício do 2º colocado. Em outras palavras:
-**mesmo retorno projetado, executando com muito menos desperdício de tokens/caixa.**
+**מדוע {mcda_top[0].project_name} ניצח.** הקריטריונים ה**פיננסיים** (NPV R$ 5,973 · IRR 32.9% · ILL 1.75) **שווים** בין הפרויקטים (תזרים עדיין *מציין מיקום* אחיד). משנוטרל הפיננסי, ההחלטה עוברת ל**יעילות תפעולית**, ושם {mcda_top[0].project_name} שולט: **שיעור ההזיה הנמוך ביותר (IITA 9.1%)** וה**בזבוז הרזה הנמוך ביותר (IDLS 15.0%)** בתיק — כמעט **מחצית** מהמקום ה-2. במילים אחרות: **אותה תשואה צפויה, בביצוע עם הרבה פחות בזבוז טוקנים/מזומן.**
 
-**Insights C-Level.**
-- 🥇 **Eficiência é o desempate:** quando o retorno é parecido, quem **queima menos** (menor IITA/IDLS)
-  entrega o mesmo valor com maior margem — é o ativo mais escalável.
-- 🛡️ **Robustez decisória:** a concordância entre as duas normalizações (8/10) dá **segurança** ao board
-  para agir no topo do ranking; a zona sensível (posições 6–7) exige análise qualitativa antes de cortar.
-- 📉 **Cauda de risco:** **o último colocado** (Ci 0,01) reúne o pior desempenho combinado — candidato a
-  **refatoração ou descontinuação** (cruzar com a Matriz BCG).
+**תובנות דרג בכיר.**
+- 🥇 **היעילות היא השובר-שוויון:** כשהתשואה דומה, מי ש**שורף פחות** (IITA/IDLS נמוכים) מספק אותו ערך במרווח גבוה יותר — הנכס בר-ההרחבה ביותר.
+- 🛡️ **חוסן החלטה:** ההסכמה בין שני הנרמולים (8/10) מעניקה לדירקטוריון **ביטחון** לפעול בראש הדירוג; האזור הרגיש (מיקומים 6–7) דורש ניתוח איכותני לפני קיצוץ.
+- 📉 **זנב סיכון:** המדורג האחרון (Ci 0.01) בעל הביצוע המשולב הגרוע ביותר — מועמד ל**רפקטורינג או הפסקה** (הצלבה עם מטריצת BCG).
 
-**⚠️ Ressalva de honestidade decisória.** Os critérios financeiros carregam **75% do peso AHP**
-(VPL 37% + TIR 24% + ILL 14%), mas hoje **não diferenciam** porque o fluxo de caixa é placeholder.
-**O veredito só é definitivo com os fluxos de caixa REAIS por projeto** — ao inseri-los, o ranking
-pode mudar substancialmente (o financeiro voltará a dominar).
+**⚠️ הסתייגות של יושר החלטה.** הקריטריונים הפיננסיים נושאים **75% ממשקל ה-AHP** (NPV 37% + IRR 24% + ILL 14%), אך היום **אינם מבחינים** כי התזרים הוא מציין מיקום. **הפסיקה סופית רק עם תזרימי מזומנים אמיתיים לכל פרויקט** — עם הזנתם הדירוג עשוי להשתנות מהותית (הפיננסי ישוב לשלוט).
 
-**Recomendação.** (1) Aprovar **{mcda_top[0].project_name}** como **piloto de escala** pela eficiência comprovada; (2) inserir
-os **fluxos de caixa reais** e re-rodar o `ahp_topsis.py` para o veredito financeiro definitivo;
-(3) acionar plano de melhoria na cauda (**o último colocado**).
+**המלצה.** (1) לאשר את {mcda_top[0].project_name} כ**פיילוט הרחבה** בזכות היעילות המוכחת; (2) להזין את **תזרימי המזומנים האמיתיים** ולהריץ מחדש את `ahp_topsis.py` לפסיקה פיננסית סופית; (3) להפעיל תוכנית שיפור בזנב (המדורג האחרון).
 
 ---
 ## 👑 תיק מנהלי של **תכשיט הכתר** — {mcda_top[0].project_name}
 
-> Ferramentas administrativas clássicas aplicadas **exclusivamente ao projeto eleito** para
-> enriquecê-lo, enaltecê-lo e evidenciar seu **diferencial competitivo**. Todas são geradas
-> por **pipeline Python concorrente** (`gerar_admtools.py`) — não dependem de nenhum template
-> externo. Detalhamento e justificativa em `foundations/admtools/ferramentas_administrativas.md`.
+> כלים ניהוליים קלאסיים המיושמים **אך ורק על הפרויקט הנבחר** כדי להעשירו, להבליטו ולהדגיש את ה**יתרון התחרותי** שלו. כולם נוצרים על ידי **צינור Python מקבילי** (`gerar_admtools.py`) — ללא תבנית חיצונית. פירוט ונימוק ב-`foundations/admtools/ferramentas_administrativas.md`.
 
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.2rem;margin:1rem 0;">
 
 <div>
 
 **🎯 SWOT — מיצוב אסטרטגי**
-Forças/fraquezas/oportunidades/ameaças derivadas dos KPIs reais (menor IITA e IDLS = força dominante).
+חוזקות/חולשות/הזדמנויות/איומים מ-KPI אמיתיים (IITA ו-IDLS הנמוכים = חוזקה דומיננטית).
 <img src="/admtools/swot.png" alt="SWOT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🌐 PESTELC — סביבת מאקרו**
-Sete fatores externos (Político, Econômico, Social, Tecnológico, Ecológico, Legal, Cultural).
+שבעה גורמים חיצוניים (פוליטי, כלכלי, חברתי, טכנולוגי, אקולוגי, משפטי, תרבותי).
 <img src="/admtools/pestel.png" alt="PESTELC do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🗺️ 5W4H — תוכנית פעולה (5W + 4H)**
-What/Why/Where/When/Who + How/How much/How many/How long — roteiro de escala do eleito.
+What/Why/Where/When/Who + How/How much/How many/How long — מפת דרכים להרחבת הפרויקט הנבחר.
 <img src="/admtools/5w4h.png" alt="5W4H do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **📊 פארטו של כשלים (80/20)**
-Categorias de prompt que concentram 80% das falhas — onde atacar primeiro (dados reais do Langfuse).
+קטגוריות פרומפט המרכזות 80% מהכשלים — היכן לתקוף ראשון (נתוני Langfuse אמיתיים).
 <img src="/admtools/pareto.png" alt="Pareto de falhas do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🔥 מטריצת GUT — תעדוף (מפת חום)**
-Gravidade × Urgência × Tendência das ações; maior GUT = agir primeiro.
+חומרה × דחיפות × מגמה של הפעולות; GUT גבוה = לפעול ראשון.
 <img src="/admtools/gut.png" alt="Matriz GUT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🕸️ ראדאר תחרותי — בידול**
-Impressão digital do eleito **vs média do portfólio** (a área azul domina a cinza em quase todo eixo).
+טביעת האצבע של הנבחר **מול ממוצע התיק** (השטח הכחול שולט באפור כמעט בכל ציר).
 <img src="/admtools/radar.png" alt="Radar competitivo do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 
 </div>
 
-> **📌 Leitura executiva.** O **radar** é o retrato do diferencial competitivo: a Jóia da Coroa
-> supera a média em anti-alucinação, Lean e entrega útil. **SWOT/PESTEL/5W4H** transformam esse
-> diagnóstico em **estratégia e plano de ação**; **Pareto + GUT** dizem **exatamente onde** agir
-> primeiro para converter a liderança operacional em retorno financeiro definitivo.
+> **📌 קריאה ניהולית.** ה**ראדאר** מצייר את היתרון התחרותי: תכשיט הכתר עולה על הממוצע באנטי-הזיה, Lean ומסירה מועילה. **SWOT/PESTEL/5W4H** הופכים אבחון זה ל**אסטרטגיה ותוכנית פעולה**; **Pareto + GUT** אומרים **בדיוק היכן** לפעול ראשון כדי להמיר מנהיגות תפעולית לתשואה פיננסית סופית.
 
 ---
 ## 🔗 לוחות נפרדים לפי פרויקט

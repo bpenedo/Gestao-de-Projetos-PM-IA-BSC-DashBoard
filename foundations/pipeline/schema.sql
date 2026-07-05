@@ -1,6 +1,6 @@
 -- ============================================================================
--- Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard"
--- Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · (c) Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
+-- Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard
+-- Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 -- Schema do banco SQLite que alimenta o Balanced Scorecard de Projetos de IA.
 -- ============================================================================
 
@@ -95,7 +95,9 @@ CREATE TABLE IF NOT EXISTS vpl_resultado (
     us_rate                REAL,   -- benchmark Fed funds a.a.
     usd_brl                REAL,   -- câmbio usado
     supera_selic           INTEGER,-- 1 se TIR > SELIC
-    supera_us              INTEGER -- 1 se TIR > juros EUA
+    supera_us              INTEGER,-- 1 se TIR > juros EUA
+    tirm                   REAL,   -- TIRM (TIR Modificada / MIRR, %/período)
+    vul                    REAL    -- VUL (Valor Uniforme Líquido / anuidade equivalente do VPL, R$)
 );
 
 -- Fluxo período a período com acumulados (simples e descontado) para o gráfico.

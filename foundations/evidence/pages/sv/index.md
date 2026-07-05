@@ -1,17 +1,17 @@
 ---
-title: BSC-Panel — KI-Projektmanagement (PM)
+title: BSC-panel — AI-projektledning (PM)
 ---
 
-🌐 [Português](/) · [English](/en) · [Español](/es) · [Français](/fr) · **Deutsch** · [中文](/zh) · [한국어](/ko) · [हिन्दी](/hi) · [עברית](/he) · [Svenska](/sv) · [Русский](/ru) · [Suomi](/fi)
+🌐 [Português](/) · [English](/en) · [Español](/es) · [Français](/fr) · [Deutsch](/de) · [中文](/zh) · [한국어](/ko) · [हिन्दी](/hi) · [עברית](/he) · **Svenska** · [Русский](/ru) · [Suomi](/fi)
 
 
 🌐 **Português** · [English](/en) · [Español](/es) · [Français](/fr) · [Deutsch](/de) · [中文](/zh) · [한국어](/ko) · [हिन्दी](/hi)
 
 
 _Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com_
-**Wöchentlicher Checkpoint — jeden Freitag um 09:00 Uhr.**
+**Veckoavstämning — varje fredag kl. 09:00.**
 
-> ⚠️ **DEMO-Daten** (anonymisiertes Portfolio). Werden real, sobald Langfuse synchronisiert.
+> ⚠️ **DEMO-data** (anonymiserad portfölj). Blir verkliga när Langfuse synkroniserar.
 
 ```sql kpis
 select * from bsc.kpis_bsc_ia
@@ -74,22 +74,22 @@ select * from bsc.decisao_mcda order by rank_final
 select * from bsc.decisao_mcda where rank_final = 1
 ```
 
-## 📈 Portfolio-Zusammenfassung
+## 📈 Portföljens sammanfattning
 
-<BigValue data={kpis} value=total_tokens title="Tokens gesamt" agg=sum fmt=num0/>
-<BigValue data={kpis} value=kpi_psr title="Ø PSR (0-5)" agg=mean fmt=num1/>
-<BigValue data={kpis} value=kpi_idls_lean title="Ø Lean-Verschwendung %" agg=mean fmt=num1/>
-<BigValue data={kpis} value=burn_rate_ia title="Burn Rate gesamt" agg=sum fmt='$#,##0.00'/>
+<BigValue data={kpis} value=total_tokens title="Totala tokens" agg=sum fmt=num0/>
+<BigValue data={kpis} value=kpi_psr title="Snitt-PSR (0-5)" agg=mean fmt=num1/>
+<BigValue data={kpis} value=kpi_idls_lean title="Snitt Lean-slöseri %" agg=mean fmt=num1/>
+<BigValue data={kpis} value=burn_rate_ia title="Total Burn Rate" agg=sum fmt='$#,##0.00'/>
 
-## 🌐 5D-Portfoliokarte (C-Level-Sicht)
-> 3D-Kugeln (5dchart-Stil) — **5 Dimensionen je Projekt**: **X**=Volumen/Skala (Tokens) · **Y**=PEUC/Qualität (%) · **Z**=PSR/Gesundheit (0–5) · **Größe**=Burn Rate (R$) · **Farbe**=ICCA/Nachhaltigkeit (🟢 über 3x deckt Kosten · 🔴 unter 1x = Verlust).
+## 🌐 5D-karta över portföljen (C-nivå)
+> 3D-sfärer (5dchart-stil) — **5 dimensioner per projekt**: **X**=Volym/skala (tokens) · **Y**=PEUC/kvalitet (%) · **Z**=PSR/hälsa (0–5) · **storlek**=Burn Rate (R$) · **färg**=ICCA/hållbarhet (🟢 över 3x täcker kostnad · 🔴 under 1x = förlust).
 >
-> **Vorstands-Lesart:** das ideale Projekt liegt **rechts/hinten** (Skala+Qualität), **hoch** (PSR) und **grün** (nachhaltig). Große **rote** Kugel = viel Cash verbrannt ohne Deckung → vor dem Skalieren korrigieren.
+> **Styrelseläsning:** det ideala projektet ligger **höger/bak** (skala+kvalitet), **högt** (PSR) och **grönt** (hållbart). En **stor röd** sfär = mycket bränd kassa utan täckning → åtgärda före uppskalning.
 
 ![Mapa 5D do Portfólio de Projetos de IA](/5d_projetos.png?v=5)
 
-### 🖱️ Interaktive 5D-Karte — mit der Maus über jede Kugel fahren
-> **X** = Tokens (Skala) · **Y** = PEUC (%) · **Größe** = PSR (0–5) · **Farbe** = ICCA (🟢 nachhaltig · 🟠 grenzwertig · 🔴 Verlust). Mit der Maus über jede **glänzende Kugel** fahren, um **Projektname, PSR, PEUC und Tokens** zu sehen.
+### 🖱️ Interaktiv 5D-karta — hovra över varje sfär
+> **X** = Tokens (skala) · **Y** = PEUC (%) · **storlek** = PSR (0–5) · **färg** = ICCA (🟢 hållbar · 🟠 gräns · 🔴 förlust). Hovra över varje **glansig sfär** för att se **Projektnamn, PSR, PEUC och Tokens**.
 
 <ECharts config={{
   tooltip: {
@@ -157,18 +157,18 @@ select * from bsc.decisao_mcda where rank_final = 1
   }]
 }} />
 
-## 📉 Trend des Leitindikators (CPP) und Scores (PSR)
-> Was für das C-Level am wichtigsten ist: **die Richtung**. Sinkender CPP = effizienteres Portfolio.
+## 📉 Trend för nyckelindikator (CPP) och poäng (PSR)
+> Det viktigaste för C-nivån: **riktningen**. Fallande CPP = portföljen blir effektivare.
 
-<LineChart data={tendencia} x=data_snapshot y=cpp_medio yAxisTitle="CPP médio (R$/%)" title="Kosten je Fortschrittspunkt — Portfolio-Trend" markers=true/>
+<LineChart data={tendencia} x=data_snapshot y=cpp_medio yAxisTitle="CPP médio (R$/%)" title="Kostnad per framstegspoäng — portföljtrend" markers=true/>
 
-<LineChart data={tendencia} x=data_snapshot y=psr_medio yAxisTitle="PSR médio" yMin=0 yMax=5 title="Ø Portfolio-Score (PSR 0-5)" markers=true/>
+<LineChart data={tendencia} x=data_snapshot y=psr_medio yAxisTitle="PSR médio" yMin=0 yMax=5 title="Portföljens snittpoäng (PSR 0-5)" markers=true/>
 
-## ⭐ Score (PSR) je Projekt
+## ⭐ Poäng (PSR) per projekt
 
-<BarChart data={kpis} x=project_name y=kpi_psr swapXY=true title="PSR (0-5) je Projekt — sortiert" sort=true labels=true/>
+<BarChart data={kpis} x=project_name y=kpi_psr swapXY=true title="PSR (0-5) per projekt — sorterat" sort=true labels=true/>
 
-## 🍩 Zusammensetzung & Mix (Donut mit Tiefe)
+## 🍩 Sammansättning & mix (donut med djup)
 
 <Grid cols=2>
 <Group>
@@ -208,17 +208,17 @@ select * from bsc.decisao_mcda where rank_final = 1
 </Group>
 </Grid>
 
-## 🧭 Nachhaltigkeitsquadrant (skalieren oder korrigieren?)
-> X-Achse = **ICCA** (Deckung: über 3x = gesund) · Y-Achse = **IBMT** (marginaler Burn: unter 0,33 = gut) · Größe = Burn Rate.
-> Unten rechts = **profitabel skalieren**; oben links = **vor dem Wachstum korrigieren**.
+## 🧭 Hållbarhetskvadrant (skala upp eller åtgärda?)
+> X-axel = **ICCA** (täckning: över 3x = sund) · Y-axel = **IBMT** (marginell burn: under 0,33 = bra) · storlek = Burn Rate.
+> Nedre högra = **skala med vinst**; övre vänstra = **åtgärda före tillväxt**.
 
-<ScatterPlot data={kpis} x=kpi_icca y=kpi_ibmt series=project_name size=burn_rate_ia xAxisTitle="ICCA — cobertura de custo (x)" yAxisTitle="IBMT — burn marginal (x)" title="Finanzielle Nachhaltigkeit je Projekt"/>
+<ScatterPlot data={kpis} x=kpi_icca y=kpi_ibmt series=project_name size=burn_rate_ia xAxisTitle="ICCA — cobertura de custo (x)" yAxisTitle="IBMT — burn marginal (x)" title="Finansiell hållbarhet per projekt"/>
 
-## 📊 Fehler-Pareto je Projekt
+## 📊 Felpareto per projekt
 
-<BarChart data={falhas} x=project_name y=percentual_dominancia series=categoria_falha type=stacked100 swapXY=true title="Fehlerdominanz (%) je Projekt"/>
+<BarChart data={falhas} x=project_name y=percentual_dominancia series=categoria_falha type=stacked100 swapXY=true title="Feldominans (%) per projekt"/>
 
-## 🗂️ Score & finanzielle Gesundheit (Tabelle)
+## 🗂️ Poäng & finansiell hälsa (tabell)
 
 <DataTable data={kpis} rows=all rowShading=true>
   <Column id=project_name title="Projekt"/>
@@ -232,25 +232,25 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=kpi_cpp title="CPP R$/%" fmt='$#,##0.00'/>
 </DataTable>
 
-## 🚨 Kritische Warnungen
+## 🚨 Kritiska varningar
 
 <DataTable data={alertas} rows=8>
   <Column id=project_name title="Projekt"/>
-  <Column id=tipo_erro title="Fehler"/>
+  <Column id=tipo_erro title="Fel"/>
   <Column id=tokens_desperdicados title="Tokens" fmt=num0/>
-  <Column id=data_evento title="Wann"/>
+  <Column id=data_evento title="När"/>
 </DataTable>
 
-## 📅 Agenda des wöchentlichen Meetings
+## 📅 Agenda för veckomötet
 
 <DataTable data={reuniao} rows=all>
   <Column id=project_name title="Projekt"/>
-  <Column id=sumario_executivo title="Zusammenf."/>
-  <Column id=acoes_corretivas_lean title="Lean-Maßnahmen (PDCA)"/>
+  <Column id=sumario_executivo title="Sammanf."/>
+  <Column id=acoes_corretivas_lean title="Lean-åtgärder (PDCA)"/>
 </DataTable>
 
-## 🪙 Kostendeckung (VRT) — 5 Blöcke + Mittelwert (2. Sicht)
-> Gleiche Umlagebasis in **5 Granularitäten** (R$ pro 50/100/250/500/1.000 Tokens) + der **Blockdurchschnitt** — eine zweite Sicht auf den Verbrauch je Projekt.
+## 🪙 Kostnadsåtervinning (VRT) — 5 block + medel (andra vyn)
+> Samma fördelningsbas i **5 granulariteter** (R$ per 50/100/250/500/1 000 tokens) + **blockmedelvärdet** — en andra bild av förbrukningen per projekt.
 
 <DataTable data={kpis} rows=all rowShading=true>
   <Column id=project_name title="Projekt"/>
@@ -259,27 +259,27 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=vrt_250t title="250 tok" fmt='#,##0.00000'/>
   <Column id=vrt_500t title="500 tok" fmt='#,##0.00000'/>
   <Column id=vrt_por_ktoken title="1.000 tok" fmt='#,##0.00000'/>
-  <Column id=vrt_media_blocos title="Ø Blöcke" fmt='#,##0.00000' contentType=colorscale/>
+  <Column id=vrt_media_blocos title="MEDEL block" fmt='#,##0.00000' contentType=colorscale/>
 </DataTable>
 
-## ⏰ Kritische Unterbrechungs-/Auswirkungsstunde (HCI)
-> Zu welcher **Tagesstunde (BRT)** jedes Projekt am stärksten betroffen ist — um im richtigen Fenster zu handeln (Tier-Upgrade, Backoff, Planung).
+## ⏰ Kritisk avbrotts-/påverkanstimme (HCI)
+> Vid vilken **timme på dygnet (BRT)** varje projekt påverkas mest — för att agera i rätt fönster (Tier-uppgradering, backoff, schemaläggning).
 
-<BarChart data={hora_total} x=hora_brt y=interrupcoes title="Unterbrechungen nach Tagesstunde (BRT) — Portfolio" xAxisTitle="Hora (0-23, BRT)"/>
+<BarChart data={hora_total} x=hora_brt y=interrupcoes title="Avbrott per timme på dygnet (BRT) — portfölj" xAxisTitle="Hora (0-23, BRT)"/>
 
 <DataTable data={horario_critico} rows=all rowShading=true>
   <Column id=project_name title="Projekt"/>
-  <Column id=hora_pico title="Spitzenstunde (BRT)" fmt='0"h"'/>
-  <Column id=interrupcoes_pico title="Unterbrechungen im Peak" fmt=num0/>
+  <Column id=hora_pico title="Topptimme (BRT)" fmt='0"h"'/>
+  <Column id=interrupcoes_pico title="Avbrott vid topp" fmt=num0/>
 </DataTable>
 
-## ♻️ Verschwendungs-Taxonomie (Lean Six Sigma) — wo am meisten verschwendet wird
-> Verschwendung nach **gewichteten Tokens** (Defekt 2,0× · Quote 1,5× · Überverarbeitung 1,0× · Latenz 0,5×), nicht nur nach Anzahl.
+## ♻️ Slöseritaxonomi (Lean Six Sigma) — var mest slöseri sker
+> Slöseri mätt i **viktade tokens** (Defekt 2,0× · Kvot 1,5× · Överbearbetning 1,0× · Latens 0,5×), inte bara antal.
 
 <Grid cols=2>
 <Group>
 
-**Portfolio-Verschwendungsmix**
+**Portföljens slöserimix**
 <ECharts config={{
   tooltip: { trigger: 'item', valueFormatter: (v) => Number(v).toLocaleString() + ' tok' },
   legend: { type: 'scroll', bottom: 0, textStyle: { fontSize: 9 } },
@@ -295,41 +295,41 @@ select * from bsc.decisao_mcda where rank_final = 1
 </Group>
 <Group>
 
-**Dominante Verschwendung je Projekt**
+**Dominant slöseri per projekt**
 <DataTable data={waste_dom} rows=all>
   <Column id=project_name title="Projekt"/>
-  <Column id=waste_dominante title="Dominante Verschwendung"/>
-  <Column id=waste_tokens title="Verschw. Tokens" fmt=num0/>
+  <Column id=waste_dominante title="Dominant slöseri"/>
+  <Column id=waste_tokens title="Slösade tokens" fmt=num0/>
 </DataTable>
 
 </Group>
 </Grid>
 
-<BarChart data={wastes} x=project_name y=waste_tokens series=categoria_waste type=stacked swapXY=true title="Verschwendungszusammensetzung (gewichtete Tokens) je Projekt"/>
+<BarChart data={wastes} x=project_name y=waste_tokens series=categoria_waste type=stacked swapXY=true title="Slöserisammansättning (viktade tokens) per projekt"/>
 
-## 🔬 RCA — Halluzination nach Prompt-Typ (was jedes Projekt VERZÖGERT)
-> Root Cause Analysis: Wir klassifizieren Prompts in **Kategorien** und messen die Halluzination jeder.
-> Objektive Diagnose, **was jedes Projekt verzögert** und **was ALLE gemeinsam verzögert (Schnittmenge)**.
+## 🔬 RCA — hallucination per prompttyp (vad som FÖRSENAR varje projekt)
+> Root Cause Analysis: vi klassificerar prompterna i **kategorier** och mäter hallucinationen för var och en.
+> Objektiv diagnos av **vad som försenar varje projekt** och **vad som GEMENSAMT försenar alla (skärning)**.
 
-### 🎯 Schnittmenge — der portfolioweite Engpass
-> Der Prompt-Typ, der in den meisten Projekten der **Halluzinations-Engpass Nr. 1** ist. Ihn zuerst anzugehen hat den größten systemischen Effekt.
+### 🎯 Skärning — flaskhalsen gemensam för portföljen
+> Prompttypen som är **hallucinationsflaskhals nr 1** i flest projekt. Att angripa den först ger störst systemisk effekt.
 
-<BarChart data={rca_inter} x=prompt_categoria y=projetos_onde_e_top1 title="Prompt-Typ mit größter Verzögerung (Engpass #1 in N Projekten)" yAxisTitle="Nº de projetos onde é o gargalo #1" labels=true sort=true/>
+<BarChart data={rca_inter} x=prompt_categoria y=projetos_onde_e_top1 title="Prompttyp som mest försenar portföljen (flaskhals #1 i N projekt)" yAxisTitle="Nº de projetos onde é o gargalo #1" labels=true sort=true/>
 
-### 🧭 Halluzinations-Engpass je Projekt (individuelle RCA)
+### 🧭 Hallucinationsflaskhals per projekt (individuell RCA)
 
 <DataTable data={rca_proj} rows=all rowShading=true>
   <Column id=project_name title="Projekt"/>
-  <Column id=prompt_gargalo title="Am stärksten halluzinierender Prompt (Engpass)"/>
-  <Column id=alucinacoes title="Halluzinationen" fmt=num0/>
+  <Column id=prompt_gargalo title="Mest hallucinerande prompt (flaskhals)"/>
+  <Column id=alucinacoes title="Hallucinationer" fmt=num0/>
 </DataTable>
 
-### 📊 Halluzinations-Taxonomie nach Kategorie × Projekt
+### 📊 Hallucinationstaxonomi per kategori × projekt
 
-<BarChart data={aluc_cat} x=project_name y=alucinacoes series=prompt_categoria type=stacked swapXY=true title="Halluzinationen nach Prompt-Typ je Projekt"/>
+<BarChart data={aluc_cat} x=project_name y=alucinacoes series=prompt_categoria type=stacked swapXY=true title="Hallucinationer per prompttyp i varje projekt"/>
 
-## 💰 Kapitalwert, Amortisation & Portfolio-Cashflow
-> Berechnet aus **Ihrem Cashflow** (CSV/Tabelle — siehe `pipeline/fluxo_caixa_template.csv` und `python3 carregar_fluxo.py IHRE.csv`). Kapitalwert = Σ Fluss ÷ (1+i)ᵗ · Amortisation **einfach** (zeitliche Variation) und **diskontiert**, beide interpoliert. _Demodaten, bis Sie Ihre CSV bereitstellen._
+## 💰 NPV, återbetalning & portföljens kassaflöde
+> Beräknat från **ditt kassaflöde** (CSV/kalkylark — se `pipeline/fluxo_caixa_template.csv` och `python3 carregar_fluxo.py DITT.csv`). NPV = Σ flöde ÷ (1+i)ᵗ · Payback **enkel** (tidsvariation) och **diskonterad**, båda interpolerade. _Demodata tills du tillhandahåller din CSV._
 
 <DataTable data={vpl} rows=all rowShading=true>
   <Column id=project_name title="Projekt"/>
@@ -338,19 +338,19 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=tirm title="TIRM" fmt=pct1/>
   <Column id=ill title="ILL (PI)" fmt=num2/>
   <Column id=vul title="VUL (R$)" fmt='$#,##0'/>
-  <Column id=payback_simples title="PB einfach" fmt=num2/>
-  <Column id=payback_descontado title="PB diskontiert" fmt=num2/>
+  <Column id=payback_simples title="Enkel PB" fmt=num2/>
+  <Column id=payback_descontado title="Diskonterad PB" fmt=num2/>
   <Column id=supera_selic title="TIR>SELIC?" fmt=boolean/>
   <Column id=supera_us title="TIR>EUA?" fmt=boolean/>
   <Column id=vpl_usd title="VPL US$" fmt='$#,##0'/>
   <Column id=payback_desc_usd title="PB desc. US$" fmt=num2/>
 </DataTable>
 
-> 🆕 **TIRM** (modifizierter IRR) reinvestiert Zuflüsse zum Projektzins — realistischer als IRR. **VUL** (gleichmäßiger Nettowert) wandelt den Kapitalwert in eine äquivalente Jahresreihe um.
+> 🆕 **TIRM** (modifierad IRR) återinvesterar inflöden till projektets ränta — mer realistiskt än IRR. **VUL** (jämnt nettovärde) omvandlar NPV till en likvärdig årlig serie.
 
 > **TIR** = retorno do projeto · **ILL (PI)** acima de 1 = cria valor · comparados à **SELIC** e aos **juros dos EUA** (valores reais por projeto na tabela acima — colunas `TIR>SELIC?`/`TIR>EUA?`). O fluxo é **dolarizado** (USD/BRL) e descontado à taxa americana → colunas **VPL US$** e **PB desc. US$**. _Benchmarks (SELIC, juros EUA, câmbio) são placeholders — ajuste no `.env`._
 
-**IRR je Projekt vs. Opportunitätskosten (SELIC × USA)**
+**IRR per projekt vs. alternativkostnad (SELIC × USA)**
 
 <BarChart data={vpl} x=project_name y=tir title="TIR por projeto comparada à SELIC e aos juros dos EUA" yAxisTitle="TIR (por período)" sort=true>
   <ReferenceLine y=0.105 color=warning label="SELIC (BR) ~10,5%"/>
@@ -363,12 +363,12 @@ select * from bsc.decisao_mcda where rank_final = 1
   <ReferenceLine y=0 color=negative label="break-even"/>
 </LineChart>
 
-## 💳 KI-Abonnements — Gesamtkosten mit IOF
-> Wechselkurs **R$ 5,40/US$** · **IOF 3,5%** auf internationale Operationen (Karte). `Total = US$ × Kurs × (1 + IOF)`.
-> Dies sind die realen Kosten für die Umlagebasis (`assinaturas_infra`). Ungefähre Preise — offizielle Seiten prüfen.
+## 💳 AI-abonnemang — total kostnad med IOF
+> Växelkurs **R$ 5,40/US$** · **IOF 3,5%** på internationell transaktion (kort). `Total = US$ × kurs × (1 + IOF)`.
+> Detta är den verkliga kostnaden som matar fördelningsbasen (`assinaturas_infra`). Ungefärliga priser — kontrollera officiella sidor.
 
 <DataTable data={planos} rows=all rowShading=true>
-  <Column id=provedor title="Anbieter"/>
+  <Column id=provedor title="Leverantör"/>
   <Column id=plano title="Plan"/>
   <Column id=usd_mes title="US$/mês" fmt=num0/>
   <Column id=r_base title="R$ base" fmt='$#,##0.00'/>
@@ -380,18 +380,18 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 <div style="display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;margin:1.4rem 0 0.4rem;">
   <img src="/shark.svg" alt="tubarão investidor" width="120" height="82" style="flex:0 0 auto;"/>
-  <h2 style="text-align:center;margin:0;font-weight:800;">🏆 AHP-TOPSIS 2N — Multikriterielles Entscheidungsmodell (MCDM)</h2>
+  <h2 style="text-align:center;margin:0;font-weight:800;">🏆 AHP-TOPSIS 2N — flerkriteriebeslutsmodell (MCDM)</h2>
   <img src="/gekko_photo.png" alt="Gordon Gekko fumando charuto (terno azul)" width="100" height="100" style="flex:0 0 auto;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.25);"/>
 </div>
 
-> **Auswahl des BESTEN Projekts** durch Gewichtung der Indikatoren als Kriterien. Gewichte per **AHP**
+> **Val av det BÄSTA projektet** genom att vikta indikatorerna som kriterier. Vikter via **AHP**
 > (VPL 37% · TIR 24% · ILL 14% · PSR 14% · IITA 5,6% · IDLS 5,6% — CR = 0,012, consistente).
 > Ranking por **TOPSIS** em **duas normalizações** (vetorial/Euclidiana + min-max/linear); o
-> **Finaler Ci** ist der Durchschnitt. Spalte **Robust?** = beide Normalisierungen stimmen bei der Position überein.
+> **Slutlig Ci** är medelvärdet. Kolumnen **Robust?** = båda normaliseringarna är överens om positionen.
 
-**🥇 Siegerprojekt (höchster finaler Ci):**
+**🥇 Vinnande projekt (högsta slutliga Ci):**
 <DataTable data={mcda_top}>
-  <Column id=project_name title="🏆 Bestes Projekt"/>
+  <Column id=project_name title="🏆 Bästa projekt"/>
   <Column id=ci_final title="Ci final" fmt=num4/>
 </DataTable>
 
@@ -406,79 +406,79 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=concordante title="Robust?" fmt=boolean/>
 </DataTable>
 
-> Der Sieger hat ein **Pitch Deck** generiert (siehe Ordner Projekte / `pitchdeck/`). Wo die Positionen 6–7 zwischen Normalisierungen abweichen, ist das Ranking am empfindlichsten — dort mit Vorsicht entscheiden.
+> Vinnaren har ett genererat **pitch deck** (se mappen Projekt / `pitchdeck/`). Där positionerna 6–7 skiljer sig mellan normaliseringar är rankingen känsligast — besluta med försiktighet där.
 
-### 📌 Bottom-Line — Zusammenfassung & C-Level-Insights
+### 📌 Slutsats — sammanfattning & insikter för C-nivå
 
-**Urteil.** Das Modell **AHP-TOPSIS 2n** wählt **{mcda_top[0].project_name}** als bestes Projekt des Portfolios (**Ci = 0,96** von 1,00), mit **bestätigter Robustheit**: Beide Normalisierungen (Vektor und Min-Max) stimmen beim **1. Platz** und in 8/10 des Rankings überein — die Spitze ist stabil, kein Methodenartefakt.
+**Utlåtande.** Modellen **AHP-TOPSIS 2n** väljer **{mcda_top[0].project_name}** som portföljens bästa projekt (**Ci = 0,96** av 1,00), med **bekräftad robusthet**: båda normaliseringarna (vektor och min-max) är överens om **1:a platsen** och om 8/10 av rankingen — toppen är stabil, inte en metodartefakt.
 
-**Warum {mcda_top[0].project_name} gewann.** Die **finanziellen** Kriterien (Kapitalwert R$ 5.973 · IRR 32,9% · PI 1,75) sind projektübergreifend **gleichauf** (Cashflow noch ein einheitlicher *Platzhalter*). Mit neutralisiertem Finanzteil verlagert sich die Entscheidung auf die **operative Effizienz**, und dort dominiert {mcda_top[0].project_name}: niedrigste **Halluzinationsrate (IITA 9,1%)** und geringste **Lean-Verschwendung (IDLS 15,0%)** im Portfolio — fast **die Hälfte** des Zweitplatzierten. Mit anderen Worten: **gleiche projizierte Rendite bei weit weniger Token-/Cash-Verschwendung.**
+**Varför {mcda_top[0].project_name} vann.** De **finansiella** kriterierna (NPV R$ 5 973 · IRR 32,9% · ILL 1,75) är **lika** mellan projekten (kassaflödet fortfarande en enhetlig *platshållare*). Med det finansiella neutraliserat flyttas beslutet till **operativ effektivitet**, och där dominerar {mcda_top[0].project_name}: lägst **hallucinationsgrad (IITA 9,1%)** och lägst **Lean-slöseri (IDLS 15,0%)** i hela portföljen — nästan **hälften** av tvåans. Med andra ord: **samma projicerade avkastning, med långt mindre token-/kassaslöseri.**
 
-**C-Level-Insights.**
-- 🥇 **Effizienz ist der Tiebreaker:** bei ähnlicher Rendite liefert, wer **weniger verbrennt** (niedrigere IITA/IDLS), denselben Wert mit höherer Marge — das am besten skalierbare Asset.
-- 🛡️ **Entscheidungsrobustheit:** die Übereinstimmung beider Normalisierungen (8/10) gibt dem Board **Sicherheit**, an der Spitze des Rankings zu handeln; die sensible Zone (Positionen 6–7) erfordert qualitative Analyse vor dem Streichen.
-- 📉 **Risiko-Ausläufer:** der Letztplatzierte (Ci 0,01) hat die schlechteste Gesamtleistung — Kandidat für **Refactoring oder Einstellung** (mit der BCG-Matrix abgleichen).
+**Insikter för C-nivå.**
+- 🥇 **Effektivitet är avgörande:** vid liknande avkastning levererar den som **bränner mindre** (lägre IITA/IDLS) samma värde med högre marginal — den mest skalbara tillgången.
+- 🛡️ **Beslutsrobusthet:** samstämmigheten mellan de två normaliseringarna (8/10) ger styrelsen **trygghet** att agera i toppen av rankingen; den känsliga zonen (positioner 6–7) kräver kvalitativ analys innan man skär.
+- 📉 **Risksvans:** den sist rankade (Ci 0,01) har sämst kombinerad prestanda — kandidat för **refaktorering eller avveckling** (korskolla mot BCG-matrisen).
 
-**⚠️ Vorbehalt zur Entscheidungsehrlichkeit.** Die finanziellen Kriterien tragen **75% des AHP-Gewichts** (Kapitalwert 37% + IRR 24% + PI 14%), differenzieren aber heute **nicht**, da der Cashflow ein Platzhalter ist. **Das Urteil ist erst mit REALEN projektbezogenen Cashflows endgültig** — nach Eingabe kann sich das Ranking erheblich ändern (der Finanzteil wird wieder dominieren).
+**⚠️ Förbehåll om beslutsärlighet.** De finansiella kriterierna bär **75% av AHP-vikten** (NPV 37% + IRR 24% + ILL 14%), men idag **särskiljer de inte** eftersom kassaflödet är en platshållare. **Utlåtandet är definitivt först med VERKLIGA kassaflöden per projekt** — när de anges kan rankingen ändras väsentligt (det finansiella dominerar igen).
 
-**Empfehlung.** (1) {mcda_top[0].project_name} als **Skalierungs-Pilot** aufgrund nachgewiesener Effizienz genehmigen; (2) die **realen Cashflows** eingeben und `ahp_topsis.py` für das endgültige Finanzurteil erneut ausführen; (3) einen Verbesserungsplan für den Ausläufer (Letztplatzierten) anstoßen.
+**Rekommendation.** (1) Godkänn {mcda_top[0].project_name} som **uppskalningspilot** för dess bevisade effektivitet; (2) ange de **verkliga kassaflödena** och kör `ahp_topsis.py` igen för det definitiva finansiella utlåtandet; (3) initiera en förbättringsplan för svansen (den sist rankade).
 
 ---
-## 👑 Verwaltungsdossier des **Kronjuwels** — {mcda_top[0].project_name}
+## 👑 Administrativt dossier för **Kronjuvelen** — {mcda_top[0].project_name}
 
-> Klassische Verwaltungswerkzeuge, **ausschließlich auf das auserwählte Projekt** angewandt, um es zu bereichern, hervorzuheben und seinen **Wettbewerbsvorteil** sichtbar zu machen. Alle werden von einer **nebenläufigen Python-Pipeline** (`gerar_admtools.py`) erzeugt — ohne externe Vorlage. Details und Begründung in `foundations/admtools/ferramentas_administrativas.md`.
+> Klassiska administrativa verktyg tillämpade **uteslutande på det utvalda projektet** för att berika, lyfta fram och visa dess **konkurrensfördel**. Alla genereras av en **samtidig Python-pipeline** (`gerar_admtools.py`) — utan någon extern mall. Detaljer och motivering i `foundations/admtools/ferramentas_administrativas.md`.
 
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.2rem;margin:1rem 0;">
 
 <div>
 
-**🎯 SWOT — strategische Position**
-Stärken/Schwächen/Chancen/Risiken aus realen KPIs (niedrigste IITA und IDLS = dominante Stärke).
+**🎯 SWOT — strategisk position**
+Styrkor/svagheter/möjligheter/hot härledda från verkliga KPI:er (lägst IITA och IDLS = dominerande styrka).
 <img src="/admtools/swot.png" alt="SWOT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
-**🌐 PESTELC — Makroumfeld**
-Sieben externe Faktoren (Politisch, Ökonomisch, Sozial, Technologisch, Ökologisch, Rechtlich, Kulturell).
+**🌐 PESTELC — makromiljö**
+Sju externa faktorer (Politiska, Ekonomiska, Sociala, Teknologiska, Ekologiska, Legala, Kulturella).
 <img src="/admtools/pestel.png" alt="PESTELC do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
-**🗺️ 5W4H — Aktionsplan (5W + 4H)**
-What/Why/Where/When/Who + How/How much/How many/How long — Skalierungs-Fahrplan des Auserwählten.
+**🗺️ 5W4H — handlingsplan (5W + 4H)**
+What/Why/Where/When/Who + How/How much/How many/How long — det utvalda projektets uppskalningsplan.
 <img src="/admtools/5w4h.png" alt="5W4H do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
-**📊 Fehler-Pareto (80/20)**
-Prompt-Kategorien mit 80% der Fehler — wo zuerst anzugreifen (echte Langfuse-Daten).
+**📊 Felpareto (80/20)**
+Promptkategorier som står för 80% av felen — var man ska angripa först (verkliga Langfuse-data).
 <img src="/admtools/pareto.png" alt="Pareto de falhas do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
-**🔥 GUT-Matrix — Priorisierung (Heatmap)**
-Schwere × Dringlichkeit × Tendenz der Maßnahmen; höherer GUT = zuerst handeln.
+**🔥 GUT-matris — prioritering (värmekarta)**
+Allvar × Brådska × Tendens för åtgärderna; högre GUT = agera först.
 <img src="/admtools/gut.png" alt="Matriz GUT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
-**🕸️ Wettbewerbsradar — Differenzierung**
-Fingerabdruck des Auserwählten **vs Portfolio-Durchschnitt** (die blaue Fläche dominiert die graue auf fast jeder Achse).
+**🕸️ Konkurrensradar — särskiljande**
+Det utvalda projektets fingeravtryck **vs portföljsnittet** (det blå området dominerar det grå på nästan varje axel).
 <img src="/admtools/radar.png" alt="Radar competitivo do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 
 </div>
 
-> **📌 Executive-Lesart.** Das **Radar** zeigt den Wettbewerbsvorteil: das Kronjuwel übertrifft den Durchschnitt bei Anti-Halluzination, Lean und nützlicher Lieferung. **SWOT/PESTEL/5W4H** überführen diese Diagnose in **Strategie und Aktionsplan**; **Pareto + GUT** sagen **genau, wo** zuerst zu handeln ist, um operative Führung in eine endgültige finanzielle Rendite umzuwandeln.
+> **📌 Exekutiv läsning.** **Radarn** avbildar konkurrensfördelen: Kronjuvelen slår snittet i anti-hallucination, Lean och nyttig leverans. **SWOT/PESTEL/5W4H** omvandlar diagnosen till **strategi och handlingsplan**; **Pareto + GUT** anger **exakt var** man ska agera först för att omvandla operativt ledarskap till definitiv finansiell avkastning.
 
 ---
-## 🔗 Einzelpanels je Projekt
+## 🔗 Individuella paneler per projekt
 
 {#each kpis as p}
 <a href="/projetos/{p.project_name}">▶️ {p.project_name} — PSR {p.kpi_psr}</a>

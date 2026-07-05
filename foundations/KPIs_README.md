@@ -1,6 +1,6 @@
 # 📚 KPIs_README — Guia Prático dos Indicadores Implementados
 
-> **Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard"** · ©️ Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
+> **Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard** · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 
 Este documento **descreve cada KPI implementado** no pipeline ([`pipeline/queries/kpis_bsc_ia.sql`](pipeline/queries/kpis_bsc_ia.sql))
 com **exemplos práticos** no contexto deste projeto. Os números dos exemplos vêm da execução real

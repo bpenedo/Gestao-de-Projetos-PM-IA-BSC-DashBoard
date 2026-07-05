@@ -1,6 +1,6 @@
 # 🧭 Framework VPL — 基于 BSC 面板与仪表盘的 AI 项目管理（PM）
 
-🌐 [Português](README.md) · [English](README.en.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · **中文** · [한국어](README.ko.md) · [हिन्दी](README.hi.md) · [עברית](README.he.md)
+🌐 [Português](README.md) · [English](README.en.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · **中文** · [한국어](README.ko.md) · [हिन्दी](README.hi.md) · [עברית](README.he.md) · [Svenska](README.sv.md) · [Русский](README.ru.md) · [Suomi](README.fi.md)
 
 ![Method](https://img.shields.io/badge/method-Balanced%20Scorecard-1F3A5F)
 ![AI](https://img.shields.io/badge/AI-LLM%20observability-45a1bf)
@@ -61,11 +61,6 @@ foundations/
 `balanced-scorecard` · `llm` · `ai` · `llm-observability` · `llmops` · `langfuse` · `roi` ·
 `agile` · `scrum` · `python`
 
-## 🔒 隐私
-演示**100% 匿名**（Project A…J）。个人数据、对话和真实数据库均**不包含在
-软件包中**（`foundations/_private/`，已被 git-ignore）。发布前，请运行
-[`github_load.md`](foundations/github_load.md) 中的脱敏流程。
-
 ---
 
-**Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard"** · ©️ Bruno Teixeira Penedo — 2026. 保留所有权利。 E-mail: bpenedo@gmail.com
+**Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard** · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com

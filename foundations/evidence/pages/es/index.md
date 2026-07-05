@@ -2,13 +2,13 @@
 title: Panel BSC — Gestión de Proyectos (PM) de IA
 ---
 
-🌐 [Português](/) · [English](/en) · **Español** · [Français](/fr) · [Deutsch](/de) · [中文](/zh) · [한국어](/ko) · [हिन्दी](/hi) · [עברית](/he)
+🌐 [Português](/) · [English](/en) · **Español** · [Français](/fr) · [Deutsch](/de) · [中文](/zh) · [한국어](/ko) · [हिन्दी](/hi) · [עברית](/he) · [Svenska](/sv) · [Русский](/ru) · [Suomi](/fi)
 
 
 🌐 **Português** · [English](/en) · [Español](/es) · [Français](/fr) · [Deutsch](/de) · [中文](/zh) · [한국어](/ko) · [हिन्दी](/hi)
 
 
-_Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · ©️ Bruno Teixeira Penedo — 2026. Todos los derechos reservados. E-mail: bpenedo@gmail.com_
+_Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com_
 **Checkpoint Semanal — todos los viernes a las 09:00.**
 
 > ⚠️ **Datos DEMO** (portafolio anonimizado). Se vuelven reales cuando Langfuse sincroniza.
@@ -76,20 +76,20 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 ## 📈 Resumen Ejecutivo del Portafolio
 
-<BigValue data={kpis} value=total_tokens title="Tokens Totais" agg=sum fmt=num0/>
-<BigValue data={kpis} value=kpi_psr title="PSR Médio (0-5)" agg=mean fmt=num1/>
-<BigValue data={kpis} value=kpi_idls_lean title="Desperdício Lean Médio %" agg=mean fmt=num1/>
-<BigValue data={kpis} value=burn_rate_ia title="Burn Rate Total" agg=sum fmt='$#,##0.00'/>
+<BigValue data={kpis} value=total_tokens title="Tokens Totales" agg=sum fmt=num0/>
+<BigValue data={kpis} value=kpi_psr title="PSR promedio (0-5)" agg=mean fmt=num1/>
+<BigValue data={kpis} value=kpi_idls_lean title="Desperdicio Lean promedio %" agg=mean fmt=num1/>
+<BigValue data={kpis} value=burn_rate_ia title="Burn Rate total" agg=sum fmt='$#,##0.00'/>
 
 ## 🌐 Mapa 5D del Portafolio (visión C-Level)
-> Esferas 3D estilo 5dchart — **5 dimensões por projeto**: **X**=Volume/escala (tokens) · **Y**=PEUC/qualidade (%) · **Z**=PSR/saúde (0–5) · **tamanho**=Burn Rate (R$) · **cor**=ICCA/sustentabilidade (🟢 acima de 3x cobre custo · 🔴 abaixo de 1x = prejuízo).
+> Esferas 3D estilo 5dchart — **5 dimensiones por proyecto**: **X**=Volumen/escala (tokens) · **Y**=PEUC/calidad (%) · **Z**=PSR/salud (0–5) · **tamaño**=Burn Rate (R$) · **color**=ICCA/sostenibilidad (🟢 sobre 3x cubre costo · 🔴 bajo 1x = pérdida).
 >
-> **Leitura de conselho:** o projeto ideal fica à **direita/fundo** (escala+qualidade), **alto** (PSR) e **verde** (sustentável). Esfera **grande e vermelha** = muito caixa queimado sem cobertura → corrigir antes de escalar.
+> **Lectura de directorio:** el proyecto ideal está a la **derecha/fondo** (escala+calidad), **alto** (PSR) y **verde** (sostenible). Esfera **grande y roja** = mucho efectivo quemado sin cobertura → corregir antes de escalar.
 
 ![Mapa 5D do Portfólio de Projetos de IA](/5d_projetos.png?v=5)
 
 ### 🖱️ Mapa 5D Interactivo — pasa el mouse sobre cada esfera
-> **X** = Tokens (escala) · **Y** = PEUC (%) · **tamanho** = PSR (0–5) · **cor** = ICCA (🟢 sustentável · 🟠 limítrofe · 🔴 prejuízo). Ao passar o mouse em cada **esfera glossy**, aparece **Nome do projeto, PSR, PEUC e Tokens**.
+> **X** = Tokens (escala) · **Y** = PEUC (%) · **tamaño** = PSR (0–5) · **color** = ICCA (🟢 sostenible · 🟠 límite · 🔴 pérdida). Al pasar el mouse por cada **esfera glossy**, aparece **Nombre del proyecto, PSR, PEUC y Tokens**.
 
 <ECharts config={{
   tooltip: {
@@ -158,15 +158,15 @@ select * from bsc.decisao_mcda where rank_final = 1
 }} />
 
 ## 📉 Tendencia del Indicador Maestro (CPP) y del Score (PSR)
-> O que mais importa para o C-Level: **a direção**. CPP caindo = portfólio ficando mais eficiente.
+> Lo que más importa al C-Level: **la dirección**. CPP bajando = portafolio más eficiente.
 
-<LineChart data={tendencia} x=data_snapshot y=cpp_medio yAxisTitle="CPP médio (R$/%)" title="Custo por Ponto de Progresso — tendência do portfólio" markers=true/>
+<LineChart data={tendencia} x=data_snapshot y=cpp_medio yAxisTitle="CPP médio (R$/%)" title="Costo por Punto de Progreso — tendencia del portafolio" markers=true/>
 
-<LineChart data={tendencia} x=data_snapshot y=psr_medio yAxisTitle="PSR médio" yMin=0 yMax=5 title="Score médio do portfólio (PSR 0-5)" markers=true/>
+<LineChart data={tendencia} x=data_snapshot y=psr_medio yAxisTitle="PSR médio" yMin=0 yMax=5 title="Score promedio del portafolio (PSR 0-5)" markers=true/>
 
 ## ⭐ Score (PSR) por Proyecto
 
-<BarChart data={kpis} x=project_name y=kpi_psr swapXY=true title="PSR (0-5) por projeto — ordenado" sort=true labels=true/>
+<BarChart data={kpis} x=project_name y=kpi_psr swapXY=true title="PSR (0-5) por proyecto — ordenado" sort=true labels=true/>
 
 ## 🍩 Composición y Mix (donut con profundidad)
 
@@ -209,14 +209,14 @@ select * from bsc.decisao_mcda where rank_final = 1
 </Grid>
 
 ## 🧭 Cuadrante de Sostenibilidad (¿escalar o corregir?)
-> Eixo X = **ICCA** (cobertura: acima de 3x = saudável) · Eixo Y = **IBMT** (queima marginal: abaixo de 0,33 = bom) · tamanho = Burn Rate.
-> Canto inferior-direito = **escalar com lucro**; superior-esquerdo = **corrigir antes de crescer**.
+> Eje X = **ICCA** (cobertura: sobre 3x = sano) · Eje Y = **IBMT** (quema marginal: bajo 0,33 = bueno) · tamaño = Burn Rate.
+> Inferior derecha = **escalar con ganancia**; superior izquierda = **corregir antes de crecer**.
 
-<ScatterPlot data={kpis} x=kpi_icca y=kpi_ibmt series=project_name size=burn_rate_ia xAxisTitle="ICCA — cobertura de custo (x)" yAxisTitle="IBMT — burn marginal (x)" title="Sustentabilidade financeira por projeto"/>
+<ScatterPlot data={kpis} x=kpi_icca y=kpi_ibmt series=project_name size=burn_rate_ia xAxisTitle="ICCA — cobertura de custo (x)" yAxisTitle="IBMT — burn marginal (x)" title="Sostenibilidad financiera por proyecto"/>
 
 ## 📊 Pareto de Fallas por Proyecto
 
-<BarChart data={falhas} x=project_name y=percentual_dominancia series=categoria_falha type=stacked100 swapXY=true title="Dominância de falhas (%) por projeto"/>
+<BarChart data={falhas} x=project_name y=percentual_dominancia series=categoria_falha type=stacked100 swapXY=true title="Dominancia de fallas (%) por proyecto"/>
 
 ## 🗂️ Score y Salud Financiera (tabla)
 
@@ -250,7 +250,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 </DataTable>
 
 ## 🪙 Recuperación de Costos (VRT) — 5 bloques + promedio (2ª óptica)
-> Mesma base de rateio em **5 granularidades** (R$ por 50/100/250/500/1.000 tokens) + a **média dos blocos** — uma segunda percepção do consumo por projeto.
+> Misma base de prorrateo en **5 granularidades** (R$ por 50/100/250/500/1.000 tokens) + el **promedio de bloques** — una segunda percepción del consumo por proyecto.
 
 <DataTable data={kpis} rows=all rowShading=true>
   <Column id=project_name title="Proyecto"/>
@@ -259,13 +259,13 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=vrt_250t title="250 tok" fmt='#,##0.00000'/>
   <Column id=vrt_500t title="500 tok" fmt='#,##0.00000'/>
   <Column id=vrt_por_ktoken title="1.000 tok" fmt='#,##0.00000'/>
-  <Column id=vrt_media_blocos title="MÉDIA blocos" fmt='#,##0.00000' contentType=colorscale/>
+  <Column id=vrt_media_blocos title="PROM. bloques" fmt='#,##0.00000' contentType=colorscale/>
 </DataTable>
 
 ## ⏰ Hora Crítica de Interrupción/Impacto (HCI)
-> Em que **hora do dia (BRT)** cada projeto é mais impactado — para agir na janela certa (upgrade de Tier, backoff, agendamento).
+> En qué **hora del día (BRT)** cada proyecto es más impactado — para actuar en la ventana correcta (upgrade de Tier, backoff, programación).
 
-<BarChart data={hora_total} x=hora_brt y=interrupcoes title="Interrupções por hora do dia (BRT) — portfólio" xAxisTitle="Hora (0-23, BRT)"/>
+<BarChart data={hora_total} x=hora_brt y=interrupcoes title="Interrupciones por hora del día (BRT) — portafolio" xAxisTitle="Hora (0-23, BRT)"/>
 
 <DataTable data={horario_critico} rows=all rowShading=true>
   <Column id=project_name title="Proyecto"/>
@@ -274,12 +274,12 @@ select * from bsc.decisao_mcda where rank_final = 1
 </DataTable>
 
 ## ♻️ Taxonomía de Desperdicios (Lean Six Sigma) — dónde se desperdicia más
-> Desperdício medido por **tokens ponderados** (Defeito 2,0× · Cota 1,5× · Superproc. 1,0× · Latência 0,5×), não só por contagem.
+> Desperdicio medido por **tokens ponderados** (Defecto 2,0× · Cuota 1,5× · Sobreproc. 1,0× · Latencia 0,5×), no solo por conteo.
 
 <Grid cols=2>
 <Group>
 
-**Mix de waste do portfólio**
+**Mix de desperdicio del portafolio**
 <ECharts config={{
   tooltip: { trigger: 'item', valueFormatter: (v) => Number(v).toLocaleString() + ' tok' },
   legend: { type: 'scroll', bottom: 0, textStyle: { fontSize: 9 } },
@@ -295,7 +295,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 </Group>
 <Group>
 
-**Waste dominante por projeto**
+**Desperdicio dominante por proyecto**
 <DataTable data={waste_dom} rows=all>
   <Column id=project_name title="Proyecto"/>
   <Column id=waste_dominante title="Desperdicio dominante"/>
@@ -305,16 +305,16 @@ select * from bsc.decisao_mcda where rank_final = 1
 </Group>
 </Grid>
 
-<BarChart data={wastes} x=project_name y=waste_tokens series=categoria_waste type=stacked swapXY=true title="Composição de waste (tokens ponderados) por projeto"/>
+<BarChart data={wastes} x=project_name y=waste_tokens series=categoria_waste type=stacked swapXY=true title="Composición de desperdicio (tokens ponderados) por proyecto"/>
 
 ## 🔬 RCA — Alucinación por Tipo de Prompt (qué RETRASA cada proyecto)
-> Root Cause Analysis: classificamos os prompts em **categorias** e medimos a alucinação de cada uma.
-> Diagnóstico objetivo de **o que atrasa cada projeto** e **o que atrasa COMUMENTE a todos (interseção)**.
+> Root Cause Analysis: clasificamos los prompts en **categorías** y medimos la alucinación de cada una.
+> Diagnóstico objetivo de **qué retrasa cada proyecto** y **qué retrasa EN COMÚN a todos (intersección)**.
 
 ### 🎯 Intersección — el cuello de botella común al portafolio
-> O tipo de prompt que é o **gargalo nº1 de alucinação** no maior número de projetos. Atacar este primeiro tem o maior efeito sistêmico.
+> El tipo de prompt que es el **cuello de botella nº1 de alucinación** en el mayor número de proyectos. Atacar esto primero tiene el mayor efecto sistémico.
 
-<BarChart data={rca_inter} x=prompt_categoria y=projetos_onde_e_top1 title="Tipo de prompt que mais atrasa o portfólio (gargalo #1 em N projetos)" yAxisTitle="Nº de projetos onde é o gargalo #1" labels=true sort=true/>
+<BarChart data={rca_inter} x=prompt_categoria y=projetos_onde_e_top1 title="Tipo de prompt que más retrasa el portafolio (cuello de botella #1 en N proyectos)" yAxisTitle="Nº de projetos onde é o gargalo #1" labels=true sort=true/>
 
 ### 🧭 Cuello de botella de alucinación por proyecto (RCA individual)
 
@@ -326,19 +326,19 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 ### 📊 Taxonomía de alucinación por categoría × proyecto
 
-<BarChart data={aluc_cat} x=project_name y=alucinacoes series=prompt_categoria type=stacked swapXY=true title="Alucinações por tipo de prompt em cada projeto"/>
+<BarChart data={aluc_cat} x=project_name y=alucinacoes series=prompt_categoria type=stacked swapXY=true title="Alucinaciones por tipo de prompt en cada proyecto"/>
 
 ## 💰 VAN, Payback y Flujo de Caja del Portafolio
-> Calculado a partir do **seu fluxo de caixa** (CSV/planilha — ver `pipeline/fluxo_caixa_template.csv` e
-> `python3 carregar_fluxo.py SEU.csv`). VPL = Σ fluxo ÷ (1+i)ᵗ · Payback **simples** (variação temporal) e
-> **descontado**, ambos interpolados. _Dados de demonstração até você fornecer o seu CSV._
+> Calculado a partir de **tu flujo de caja** (CSV/planilla — ver `pipeline/fluxo_caixa_template.csv` y `python3 carregar_fluxo.py TUYO.csv`). VAN = Σ flujo ÷ (1+i)ᵗ · Payback **simple** (variación temporal) y **descontado**, ambos interpolados. _Datos de demostración hasta que proporciones tu CSV._
 
 <DataTable data={vpl} rows=all rowShading=true>
   <Column id=project_name title="Proyecto"/>
   <Column id=vpl title="VPL (R$)" fmt='$#,##0' contentType=colorscale/>
   <Column id=tir title="TIR" fmt=pct1/>
+  <Column id=tirm title="TIRM" fmt=pct1/>
   <Column id=ill title="ILL (PI)" fmt=num2/>
-  <Column id=payback_simples title="PB simples" fmt=num2/>
+  <Column id=vul title="VUL (R$)" fmt='$#,##0'/>
+  <Column id=payback_simples title="PB simple" fmt=num2/>
   <Column id=payback_descontado title="PB descontado" fmt=num2/>
   <Column id=supera_selic title="TIR>SELIC?" fmt=boolean/>
   <Column id=supera_us title="TIR>EUA?" fmt=boolean/>
@@ -346,9 +346,11 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=payback_desc_usd title="PB desc. US$" fmt=num2/>
 </DataTable>
 
+> 🆕 **TIRM** (TIR Modificada) reinvierte las entradas a la tasa del proyecto — más realista que la TIR. **VUL** (Valor Uniforme Neto) convierte el VAN en una serie anual equivalente.
+
 > **TIR** = retorno do projeto · **ILL (PI)** acima de 1 = cria valor · comparados à **SELIC** e aos **juros dos EUA** (valores reais por projeto na tabela acima — colunas `TIR>SELIC?`/`TIR>EUA?`). O fluxo é **dolarizado** (USD/BRL) e descontado à taxa americana → colunas **VPL US$** e **PB desc. US$**. _Benchmarks (SELIC, juros EUA, câmbio) são placeholders — ajuste no `.env`._
 
-**TIR por projeto vs. custo de oportunidade (SELIC × EUA)**
+**TIR por proyecto vs. costo de oportunidad (SELIC × EE. UU.)**
 
 <BarChart data={vpl} x=project_name y=tir title="TIR por projeto comparada à SELIC e aos juros dos EUA" yAxisTitle="TIR (por período)" sort=true>
   <ReferenceLine y=0.105 color=warning label="SELIC (BR) ~10,5%"/>
@@ -362,8 +364,8 @@ select * from bsc.decisao_mcda where rank_final = 1
 </LineChart>
 
 ## 💳 Planes de Suscripción de IA — Costo Total con IOF
-> Câmbio **R$ 5,40/US$** · **IOF 3,5%** sobre operação internacional (cartão). `Total = US$ × câmbio × (1 + IOF)`.
-> Este é o custo real que alimenta a base de rateio (`assinaturas_infra`). Preços aproximados — verifique os sites oficiais.
+> Cambio **R$ 5,40/US$** · **IOF 3,5%** sobre operación internacional (tarjeta). `Total = US$ × cambio × (1 + IOF)`.
+> Este es el costo real que alimenta la base de prorrateo (`assinaturas_infra`). Precios aproximados — verifica los sitios oficiales.
 
 <DataTable data={planos} rows=all rowShading=true>
   <Column id=provedor title="Proveedor"/>
@@ -382,12 +384,12 @@ select * from bsc.decisao_mcda where rank_final = 1
   <img src="/gekko_photo.png" alt="Gordon Gekko fumando charuto (terno azul)" width="100" height="100" style="flex:0 0 auto;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.25);"/>
 </div>
 
-> **Escolha do MELHOR projeto** ponderando os indicadores como critérios. Pesos por **AHP**
+> **Elección del MEJOR proyecto** ponderando los indicadores como criterios. Pesos por **AHP**
 > (VPL 37% · TIR 24% · ILL 14% · PSR 14% · IITA 5,6% · IDLS 5,6% — CR = 0,012, consistente).
 > Ranking por **TOPSIS** em **duas normalizações** (vetorial/Euclidiana + min-max/linear); o
-> **Ci final** é a média. Coluna **Robusto?** = as duas normalizações concordam na posição.
+> **Ci final** es el promedio. Columna **¿Robusto?** = ambas normalizaciones coinciden en la posición.
 
-**🥇 Projeto vencedor (maior Ci final):**
+**🥇 Proyecto ganador (mayor Ci final):**
 <DataTable data={mcda_top}>
   <Column id=project_name title="🏆 Mejor Proyecto"/>
   <Column id=ci_final title="Ci final" fmt=num4/>
@@ -404,98 +406,76 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=concordante title="¿Robusto?" fmt=boolean/>
 </DataTable>
 
-> O vencedor tem **pitchdeck** gerado (ver pasta Projetos / `pitchdeck/`). Se as posições 6–7
-> divergem entre normalizações, é onde o ranking é mais sensível — decida com cautela ali.
+> El ganador tiene un **pitch deck** generado (ver carpeta Proyectos / `pitchdeck/`). Donde las posiciones 6–7 divergen entre normalizaciones, el ranking es más sensible — decide con cautela ahí.
 
 ### 📌 Bottom-Line — Resumen Ejecutivo e Insights C-Level
 
-**Veredito.** O modelo **AHP-TOPSIS 2n** elege ****{mcda_top[0].project_name}**** como o melhor projeto do portfólio
-(**Ci = 0,96** de 1,00), com **robustez confirmada**: as duas normalizações (vetorial e min-max)
-concordam na **1ª posição** e em 8/10 do ranking — o topo é estável, não é artefato de método.
+**Veredicto.** El modelo **AHP-TOPSIS 2n** elige a **{mcda_top[0].project_name}** como el mejor proyecto del portafolio (**Ci = 0,96** de 1,00), con **robustez confirmada**: ambas normalizaciones (vectorial y min-max) coinciden en el **1.º puesto** y en 8/10 del ranking — la cima es estable, no un artefacto del método.
 
-**Por que **{mcda_top[0].project_name}** venceu.** Os critérios **financeiros** (VPL R$ 5.973 · TIR 32,9% · ILL 1,75)
-estão **empatados** entre os projetos (fluxo de caixa ainda em *placeholder* uniforme). Com o
-financeiro neutralizado, a decisão migra para a **eficiência operacional**, e aí **{mcda_top[0].project_name}** domina:
-tem a **menor taxa de alucinação (IITA 9,1%)** e o **menor desperdício Lean (IDLS 15,0%)** de
-todo o portfólio — praticamente **metade** do desperdício do 2º colocado. Em outras palavras:
-**mesmo retorno projetado, executando com muito menos desperdício de tokens/caixa.**
+**Por qué ganó {mcda_top[0].project_name}.** Los criterios **financieros** (VAN R$ 5.973 · TIR 32,9% · ILL 1,75) están **empatados** entre proyectos (flujo de caja aún en *placeholder* uniforme). Con lo financiero neutralizado, la decisión pasa a la **eficiencia operativa**, y ahí {mcda_top[0].project_name} domina: tiene la **menor tasa de alucinación (IITA 9,1%)** y el **menor desperdicio Lean (IDLS 15,0%)** del portafolio — casi **la mitad** del 2.º. En otras palabras: **mismo retorno proyectado, con mucho menos desperdicio de tokens/caja.**
 
 **Insights C-Level.**
-- 🥇 **Eficiência é o desempate:** quando o retorno é parecido, quem **queima menos** (menor IITA/IDLS)
-  entrega o mesmo valor com maior margem — é o ativo mais escalável.
-- 🛡️ **Robustez decisória:** a concordância entre as duas normalizações (8/10) dá **segurança** ao board
-  para agir no topo do ranking; a zona sensível (posições 6–7) exige análise qualitativa antes de cortar.
-- 📉 **Cauda de risco:** **o último colocado** (Ci 0,01) reúne o pior desempenho combinado — candidato a
-  **refatoração ou descontinuação** (cruzar com a Matriz BCG).
+- 🥇 **La eficiencia es el desempate:** cuando el retorno es parecido, quien **quema menos** (menor IITA/IDLS) entrega el mismo valor con mayor margen — el activo más escalable.
+- 🛡️ **Robustez decisoria:** la concordancia entre ambas normalizaciones (8/10) da **seguridad** al board para actuar en la cima del ranking; la zona sensible (posiciones 6–7) exige análisis cualitativo antes de cortar.
+- 📉 **Cola de riesgo:** el último clasificado (Ci 0,01) reúne el peor desempeño combinado — candidato a **refactorización o discontinuación** (cruzar con la Matriz BCG).
 
-**⚠️ Ressalva de honestidade decisória.** Os critérios financeiros carregam **75% do peso AHP**
-(VPL 37% + TIR 24% + ILL 14%), mas hoje **não diferenciam** porque o fluxo de caixa é placeholder.
-**O veredito só é definitivo com os fluxos de caixa REAIS por projeto** — ao inseri-los, o ranking
-pode mudar substancialmente (o financeiro voltará a dominar).
+**⚠️ Salvedad de honestidad decisoria.** Los criterios financieros cargan **75% del peso AHP** (VAN 37% + TIR 24% + ILL 14%), pero hoy **no diferencian** porque el flujo de caja es placeholder. **El veredicto solo es definitivo con los flujos de caja REALES por proyecto** — al ingresarlos, el ranking puede cambiar sustancialmente (lo financiero volverá a dominar).
 
-**Recomendação.** (1) Aprovar **{mcda_top[0].project_name}** como **piloto de escala** pela eficiência comprovada; (2) inserir
-os **fluxos de caixa reais** e re-rodar o `ahp_topsis.py` para o veredito financeiro definitivo;
-(3) acionar plano de melhoria na cauda (**o último colocado**).
+**Recomendación.** (1) Aprobar {mcda_top[0].project_name} como **piloto de escala** por su eficiencia comprobada; (2) ingresar los **flujos de caja reales** y re-ejecutar `ahp_topsis.py` para el veredicto financiero definitivo; (3) activar un plan de mejora en la cola (el último clasificado).
 
 ---
 ## 👑 Dossier Administrativo de la **Joya de la Corona** — {mcda_top[0].project_name}
 
-> Ferramentas administrativas clássicas aplicadas **exclusivamente ao projeto eleito** para
-> enriquecê-lo, enaltecê-lo e evidenciar seu **diferencial competitivo**. Todas são geradas
-> por **pipeline Python concorrente** (`gerar_admtools.py`) — não dependem de nenhum template
-> externo. Detalhamento e justificativa em `foundations/admtools/ferramentas_administrativas.md`.
+> Herramientas administrativas clásicas aplicadas **exclusivamente al proyecto electo** para enriquecerlo, enaltecerlo y evidenciar su **diferencial competitivo**. Todas se generan por **pipeline Python concurrente** (`gerar_admtools.py`) — sin ningún template externo. Detalle y justificación en `foundations/admtools/ferramentas_administrativas.md`.
 
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.2rem;margin:1rem 0;">
 
 <div>
 
 **🎯 SWOT — posición estratégica**
-Forças/fraquezas/oportunidades/ameaças derivadas dos KPIs reais (menor IITA e IDLS = força dominante).
+Fortalezas/debilidades/oportunidades/amenazas derivadas de KPIs reales (menor IITA e IDLS = fortaleza dominante).
 <img src="/admtools/swot.png" alt="SWOT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🌐 PESTELC — macroentorno**
-Sete fatores externos (Político, Econômico, Social, Tecnológico, Ecológico, Legal, Cultural).
+Siete factores externos (Político, Económico, Social, Tecnológico, Ecológico, Legal, Cultural).
 <img src="/admtools/pestel.png" alt="PESTELC do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🗺️ 5W4H — plan de acción (5W + 4H)**
-What/Why/Where/When/Who + How/How much/How many/How long — roteiro de escala do eleito.
+What/Why/Where/When/Who + How/How much/How many/How long — hoja de ruta de escalado del electo.
 <img src="/admtools/5w4h.png" alt="5W4H do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **📊 Pareto de fallas (80/20)**
-Categorias de prompt que concentram 80% das falhas — onde atacar primeiro (dados reais do Langfuse).
+Categorías de prompt que concentran 80% de las fallas — dónde atacar primero (datos reales de Langfuse).
 <img src="/admtools/pareto.png" alt="Pareto de falhas do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🔥 Matriz GUT — priorización (heatmap)**
-Gravidade × Urgência × Tendência das ações; maior GUT = agir primeiro.
+Gravedad × Urgencia × Tendencia de las acciones; mayor GUT = actuar primero.
 <img src="/admtools/gut.png" alt="Matriz GUT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🕸️ Radar competitivo — diferencial**
-Impressão digital do eleito **vs média do portfólio** (a área azul domina a cinza em quase todo eixo).
+Huella del electo **vs promedio del portafolio** (el área azul domina la gris en casi todo eje).
 <img src="/admtools/radar.png" alt="Radar competitivo do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 
 </div>
 
-> **📌 Leitura executiva.** O **radar** é o retrato do diferencial competitivo: a Jóia da Coroa
-> supera a média em anti-alucinação, Lean e entrega útil. **SWOT/PESTEL/5W4H** transformam esse
-> diagnóstico em **estratégia e plano de ação**; **Pareto + GUT** dizem **exatamente onde** agir
-> primeiro para converter a liderança operacional em retorno financeiro definitivo.
+> **📌 Lectura ejecutiva.** El **radar** retrata el diferencial competitivo: la Joya de la Corona supera la media en anti-alucinación, Lean y entrega útil. **SWOT/PESTEL/5W4H** convierten ese diagnóstico en **estrategia y plan de acción**; **Pareto + GUT** dicen **exactamente dónde** actuar primero para convertir el liderazgo operativo en retorno financiero definitivo.
 
 ---
 ## 🔗 Paneles Individuales por Proyecto

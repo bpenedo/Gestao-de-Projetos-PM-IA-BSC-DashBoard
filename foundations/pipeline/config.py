@@ -1,6 +1,6 @@
 """
 Configuração central do pipeline BSC de Projetos de IA.
-Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · (c) Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
+Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 Lê variáveis do ambiente (.env opcional) e expõe caminhos e parâmetros.
 """
 import os

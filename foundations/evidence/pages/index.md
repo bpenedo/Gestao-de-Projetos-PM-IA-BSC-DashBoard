@@ -5,10 +5,10 @@ title: Painel BSC — Gestão de Projetos (PM) IA
 🌐 **Português** · [English](/en) · [Español](/es) · [Français](/fr) · [Deutsch](/de) · [中文](/zh) · [한국어](/ko) · [हिन्दी](/hi)
 
 
-_Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · ©️ Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com_
+_Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com_
 **Weekly Checkpoint — toda sexta-feira às 09:00.**
 
-> ⚠️ **Dados DEMO** dos 10 projetos reais de `~/devparetoprojects/*`. Tornam-se reais quando o Langfuse sincronizar.
+> ⚠️ **Dados DEMO** (portfólio anonimizado). Tornam-se reais quando o Langfuse sincronizar.
 
 ```sql kpis
 select * from bsc.kpis_bsc_ia
@@ -334,7 +334,9 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=project_name title="Projeto"/>
   <Column id=vpl title="VPL (R$)" fmt='$#,##0' contentType=colorscale/>
   <Column id=tir title="TIR" fmt=pct1/>
+  <Column id=tirm title="TIRM" fmt=pct1/>
   <Column id=ill title="ILL (PI)" fmt=num2/>
+  <Column id=vul title="VUL (R$)" fmt='$#,##0'/>
   <Column id=payback_simples title="PB simples" fmt=num2/>
   <Column id=payback_descontado title="PB descontado" fmt=num2/>
   <Column id=supera_selic title="TIR>SELIC?" fmt=boolean/>
@@ -342,6 +344,8 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=vpl_usd title="VPL US$" fmt='$#,##0'/>
   <Column id=payback_desc_usd title="PB desc. US$" fmt=num2/>
 </DataTable>
+
+> 🆕 **TIRM** (TIR Modificada) reinveste as entradas à taxa do projeto — mais realista que a TIR. **VUL** (Valor Uniforme Líquido) converte o VPL em série anual equivalente.
 
 > **TIR** = retorno do projeto · **ILL (PI)** acima de 1 = cria valor · comparados à **SELIC** e aos **juros dos EUA** (valores reais por projeto na tabela acima — colunas `TIR>SELIC?`/`TIR>EUA?`). O fluxo é **dolarizado** (USD/BRL) e descontado à taxa americana → colunas **VPL US$** e **PB desc. US$**. _Benchmarks (SELIC, juros EUA, câmbio) são placeholders — ajuste no `.env`._
 
@@ -406,13 +410,13 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 ### 📌 Bottom-Line — Sumário Executivo & Insights C-Level
 
-**Veredito.** O modelo **AHP-TOPSIS 2n** elege **`Project F`** como o melhor projeto do portfólio
+**Veredito.** O modelo **AHP-TOPSIS 2n** elege **{mcda_top[0].project_name}** como o melhor projeto do portfólio
 (**Ci = 0,96** de 1,00), com **robustez confirmada**: as duas normalizações (vetorial e min-max)
 concordam na **1ª posição** e em 8/10 do ranking — o topo é estável, não é artefato de método.
 
-**Por que `Project F` venceu.** Os critérios **financeiros** (VPL R$ 5.973 · TIR 32,9% · ILL 1,75)
+**Por que {mcda_top[0].project_name} venceu.** Os critérios **financeiros** (VPL R$ 5.973 · TIR 32,9% · ILL 1,75)
 estão **empatados** entre os projetos (fluxo de caixa ainda em *placeholder* uniforme). Com o
-financeiro neutralizado, a decisão migra para a **eficiência operacional**, e aí `Project F` domina:
+financeiro neutralizado, a decisão migra para a **eficiência operacional**, e aí {mcda_top[0].project_name} domina:
 tem a **menor taxa de alucinação (IITA 9,1%)** e o **menor desperdício Lean (IDLS 15,0%)** de
 todo o portfólio — praticamente **metade** do desperdício do 2º colocado. Em outras palavras:
 **mesmo retorno projetado, executando com muito menos desperdício de tokens/caixa.**
@@ -422,7 +426,7 @@ todo o portfólio — praticamente **metade** do desperdício do 2º colocado. E
   entrega o mesmo valor com maior margem — é o ativo mais escalável.
 - 🛡️ **Robustez decisória:** a concordância entre as duas normalizações (8/10) dá **segurança** ao board
   para agir no topo do ranking; a zona sensível (posições 6–7) exige análise qualitativa antes de cortar.
-- 📉 **Cauda de risco:** `Project C` (Ci 0,01) reúne o pior desempenho combinado — candidato a
+- 📉 **Cauda de risco:** o último colocado (Ci 0,01) reúne o pior desempenho combinado — candidato a
   **refatoração ou descontinuação** (cruzar com a Matriz BCG).
 
 **⚠️ Ressalva de honestidade decisória.** Os critérios financeiros carregam **75% do peso AHP**
@@ -430,9 +434,9 @@ todo o portfólio — praticamente **metade** do desperdício do 2º colocado. E
 **O veredito só é definitivo com os fluxos de caixa REAIS por projeto** — ao inseri-los, o ranking
 pode mudar substancialmente (o financeiro voltará a dominar).
 
-**Recomendação.** (1) Aprovar `Project F` como **piloto de escala** pela eficiência comprovada; (2) inserir
+**Recomendação.** (1) Aprovar {mcda_top[0].project_name} como **piloto de escala** pela eficiência comprovada; (2) inserir
 os **fluxos de caixa reais** e re-rodar o `ahp_topsis.py` para o veredito financeiro definitivo;
-(3) acionar plano de melhoria na cauda (`Project C`).
+(3) acionar plano de melhoria na cauda (o último colocado).
 
 ---
 ## 👑 Dossiê Administrativo da **Jóia da Coroa** — {mcda_top[0].project_name}

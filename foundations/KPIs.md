@@ -1,6 +1,6 @@
 # KPIs — Framework de Mensuração de Projetos com IA
 
-> **Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard"** · ©️ Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
+> **Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard** · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 
 > **Princípio (Kaplan & Norton):** *"O que não é medido não pode ser gerenciado nem melhorado."*
 > Sem métrica não há eficiência — há opinião. Todo KPI aqui é **calculável** (fórmula explícita),
@@ -135,7 +135,7 @@ sobre os tokens da iteração defeituosa. **Latência excedente (Lean):** `LE = 
 
 # 🔬 Fronteira da Ciência de KPI
 
-> Conceitos proprietários deste framework. **©️ Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com**
+> Conceitos proprietários deste framework. **©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com**
 
 ## 5.A — Unidade de Recuperação Tokenizável (kTR) — "o m² da era da IA"
 

@@ -7,7 +7,7 @@ progresso e financeiro são placeholders a substituir pelos seus números reais.
 Remove o lote 'Projeto_Nao_Identificado' (traces enviados antes do tagueamento por metadata).
 
 Uso:  python3 seed_dimensoes.py
-Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · (c) Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
+Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 """
 from datetime import datetime, timedelta
 

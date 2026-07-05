@@ -21,7 +21,7 @@ def rodar_query(nome):
 def imprimir_kpis():
     rows = rodar_query("kpis_bsc_ia.sql")
     print("\n" + "=" * 78)
-    print("📊  KPIs BSC POR PROJETO  —  © Bruno Teixeira Penedo 2026 · bpenedo@gmail.com")
+    print("📊  KPIs BSC POR PROJETO  —  © Bruno Penedo 2026 · bpenedo@gmail.com")
     print("=" * 78)
     for r in rows:
         print(f"\n🎯 {r['project_name']}")

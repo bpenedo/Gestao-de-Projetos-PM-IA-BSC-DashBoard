@@ -1,5 +1,5 @@
 # ⚡ PERFORMANCE — Python tradicional vs Concorrente + Rust
-> **Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard"** · ©️ Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
+> **Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard** · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 > Classificacao e fetch MEDIDOS; cenario de producao modela
 > fetch por latencia/pagina (~100ms) e usa a vazao medida da classificacao.
 

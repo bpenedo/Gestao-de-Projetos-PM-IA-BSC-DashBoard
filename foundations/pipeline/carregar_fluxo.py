@@ -13,7 +13,7 @@ Uso:
     python3 carregar_fluxo.py caminho/do/arquivo.csv     # carrega o SEU CSV
     python3 carregar_fluxo.py --demo                      # gera fluxo de DEMO (Project A..J)
 Sem argumento, tenta 'fluxo_caixa.csv' no diretório; se não houver, usa --demo.
-Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · (c) Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
+Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 """
 import csv
 import sys
@@ -80,8 +80,35 @@ def _demo():
     return out
 
 
+def _tirm(fluxos, taxa):
+    """TIRM (TIR Modificada / MIRR): FV das entradas reinvestidas ÷ PV das saídas, à taxa do projeto."""
+    n = len(fluxos) - 1
+    if n <= 0:
+        return None
+    fv_pos = sum(f * (1 + taxa) ** (n - t) for t, f in enumerate(fluxos) if f > 0)
+    pv_neg = -sum(f / (1 + taxa) ** t for t, f in enumerate(fluxos) if f < 0)
+    if pv_neg <= 0 or fv_pos <= 0:
+        return None
+    return (fv_pos / pv_neg) ** (1.0 / n) - 1
+
+
+def _vul(vpl, taxa, n):
+    """VUL (Valor Uniforme Líquido / anuidade equivalente): VPL convertido em série uniforme por período."""
+    if n <= 0:
+        return None
+    if taxa == 0:
+        return vpl / n
+    crf = taxa / (1 - (1 + taxa) ** (-n))   # fator de recuperação de capital
+    return vpl * crf
+
+
 def _calcular(conn):
     cur = conn.cursor()
+    for col in ("tirm", "vul"):              # migração idempotente (bancos existentes)
+        try:
+            cur.execute(f"ALTER TABLE vpl_resultado ADD COLUMN {col} REAL")
+        except Exception:
+            pass
     cur.execute("DELETE FROM vpl_resultado")
     cur.execute("DELETE FROM vpl_fluxo")
     projetos = [r[0] for r in cur.execute(
@@ -114,13 +141,16 @@ def _calcular(conn):
         vp_entradas = sum(f / ((1 + taxa) ** t) for t, f in enumerate(fluxos) if t > 0 and f > 0)
         ill = (vp_entradas / invest) if invest else None          # Índice de Lucratividade Líquida (PI)
         tir = _tir(fluxos)                                          # TIR por período
+        tirm = _tirm(fluxos, taxa)                                  # TIRM (TIR Modificada / MIRR)
+        vul = _vul(cum_d, taxa, len(fluxos) - 1)                    # VUL (anuidade equivalente do VPL)
         fluxos_usd = [f / USD_BRL for f in fluxos]                  # dolarização
         vpl_usd = _vpl(fluxos_usd, US_RATE_ANUAL)                   # descontado à taxa dos EUA
         pb_usd = _payback_desc(fluxos_usd, US_RATE_ANUAL)
         cur.execute("""INSERT OR REPLACE INTO vpl_resultado
             (project_name, taxa, vpl, payback_simples, payback_descontado,
-             tir, ill, vpl_usd, payback_desc_usd, selic, us_rate, usd_brl, supera_selic, supera_us)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+             tir, ill, vpl_usd, payback_desc_usd, selic, us_rate, usd_brl, supera_selic, supera_us,
+             tirm, vul)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             (proj, taxa, round(cum_d, 2),
              round(pb_s, 2) if pb_s is not None else None,
              round(pb_d, 2) if pb_d is not None else None,
@@ -129,7 +159,9 @@ def _calcular(conn):
              round(vpl_usd, 2), round(pb_usd, 2) if pb_usd is not None else None,
              SELIC_ANUAL, US_RATE_ANUAL, USD_BRL,
              1 if (tir is not None and tir > SELIC_ANUAL) else 0,
-             1 if (tir is not None and tir > US_RATE_ANUAL) else 0))
+             1 if (tir is not None and tir > US_RATE_ANUAL) else 0,
+             round(tirm, 4) if tirm is not None else None,
+             round(vul, 2) if vul is not None else None))
     conn.commit()
     return projetos
 

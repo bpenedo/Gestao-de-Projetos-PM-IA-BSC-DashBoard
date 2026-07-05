@@ -1,7 +1,7 @@
 #!/bin/bash
 # ============================================================================
 # Esteira DataOps do BSC de Projetos de IA
-# Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · (c) Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
+# Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 # 1) Sincroniza dados (Langfuse real OU mock)  2) publica o .db no Evidence
 # 3) recompila o dashboard estático do Evidence.
 #

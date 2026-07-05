@@ -1,6 +1,6 @@
 # 🧭 Framework VPL — Gestion de Projets (PM) IA avec Panneau BSC et Dashboard
 
-🌐 [Português](README.md) · [English](README.en.md) · [Español](README.es.md) · **Français** · [Deutsch](README.de.md) · [中文](README.zh.md) · [한국어](README.ko.md) · [हिन्दी](README.hi.md) · [עברית](README.he.md)
+🌐 [Português](README.md) · [English](README.en.md) · [Español](README.es.md) · **Français** · [Deutsch](README.de.md) · [中文](README.zh.md) · [한국어](README.ko.md) · [हिन्दी](README.hi.md) · [עברית](README.he.md) · [Svenska](README.sv.md) · [Русский](README.ru.md) · [Suomi](README.fi.md)
 
 ![Method](https://img.shields.io/badge/method-Balanced%20Scorecard-1F3A5F)
 ![AI](https://img.shields.io/badge/AI-LLM%20observability-45a1bf)
@@ -61,11 +61,6 @@ foundations/
 `balanced-scorecard` · `llm` · `ai` · `llm-observability` · `llmops` · `langfuse` · `roi` ·
 `agile` · `scrum` · `python`
 
-## 🔒 Confidentialité
-La démo est **100 % anonyme** (Project A…J). Les données personnelles, conversations et bases de données réelles restent **hors du
-paquet** (`foundations/_private/`, git-ignored). Avant de publier, exécutez l'assainissement de
-[`github_load.md`](foundations/github_load.md).
-
 ---
 
-**Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard"** · ©️ Bruno Teixeira Penedo — 2026. Tous droits réservés. E-mail: bpenedo@gmail.com
+**Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard** · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com

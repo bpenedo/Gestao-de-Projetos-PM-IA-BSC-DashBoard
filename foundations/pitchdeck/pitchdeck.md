@@ -1,6 +1,6 @@
 # 📈 Pitch Deck — TEMPLATE PADRÃO (Standard)
 
-> **Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard"** · ©️ Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
+> **Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard** · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 >
 > Padrão canônico de geração de pitch deck. O gerador `pipeline/gerar_pitchdeck.py` produz, para cada
 > projeto **elegível**, os arquivos `pitchdeck_<nome_do_projeto>_DDMMAAAA.md` e `.pdf` (LaTeX/tectonic)
@@ -76,7 +76,7 @@ O pitch deck só é gerado se o projeto tiver **VPL > 0 e ILL (PI) > 1 em BRL e 
 ### Rodapé
 - Banner **FINANCIALS – Fluxo de Caixa Descontado** (centralizado).
 - Tabela **centralizada**: `Período | Fluxo | Fluxo desc. | Acum. desc.` (de `vpl_fluxo`).
-- Linha final **centralizada**: `Framework BSC PM IA ©Bruno Teixeira Penedo – 2026.`
+- Linha final **centralizada**: `Framework BSC PM IA ©Bruno Penedo – 2026.`
 
 ## ⚙️ Especificações de formatação (LaTeX)
 - A4, margens 1 cm · fonte `extarticle` 10pt · cor navy `#1F3A5F`.

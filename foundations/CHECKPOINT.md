@@ -1,6 +1,6 @@
 # 🧭 CHECKPOINT — Ponto de Retomada
 
-> **Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard"** · ©️ Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
+> **Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard** · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 >
 > Snapshot do estado do projeto para **continuar daqui**. Atualizado em **04/07/2026**.
 
@@ -8,7 +8,7 @@
 - **Pipeline completo:** Langfuse (async + Rust) → SQLite → Evidence; corrigido p/ SDK v4 (`fields=core,io,usage,metadata`, `project_name` via metadata).
 - **KPIs (70+):** 4 perspectivas BSC + economia de tokens (IEET/IOLI/ITR/IITA/PEUC/ICCA/IDLS/IBMT) + EVM + fronteira (VRT/kTR, PSR) + diagnóstico (HCI, Wastes Lean, RCA de alucinação).
 - **Financeiro:** VPL, TIR, ILL, Payback simples/descontado, dolarização vs SELIC/EUA.
-- **Decisão:** **AHP-TOPSIS 2n** (dupla normalização) — pesos AHP (CR=0,012) + ranking robusto (8/10). Vencedor atual: **`Project F`** (Ci=0,96) — *com ressalva* (financeiro placeholder empatado).
+- **Decisão:** **AHP-TOPSIS 2n** (dupla normalização) — pesos AHP (CR=0,012) + ranking robusto (8/10). Vencedor atual: **o projeto eleito** (Ci=0,96) — *com ressalva* (financeiro placeholder empatado).
 - **Visual:** dashboard Evidence, mapa 5D, donuts, quadrante, figuras estilizadas (gekko/shark) no MCDA, pitch decks (LaTeX).
 - **Planos & impostos:** `planos_assinatura_IA.md` + tabela no dashboard com câmbio + **IOF 3,5%**.
 - **Validação:** triple-check matemático (13 KPIs + VPL/TIR/ILL) — todos conferem à mão.

@@ -1,6 +1,6 @@
 # 🧭 Framework VPL — BSC 패널 및 대시보드를 갖춘 AI 프로젝트 관리(PM)
 
-🌐 [Português](README.md) · [English](README.en.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [中文](README.zh.md) · **한국어** · [हिन्दी](README.hi.md) · [עברית](README.he.md)
+🌐 [Português](README.md) · [English](README.en.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [中文](README.zh.md) · **한국어** · [हिन्दी](README.hi.md) · [עברית](README.he.md) · [Svenska](README.sv.md) · [Русский](README.ru.md) · [Suomi](README.fi.md)
 
 ![Method](https://img.shields.io/badge/method-Balanced%20Scorecard-1F3A5F)
 ![AI](https://img.shields.io/badge/AI-LLM%20observability-45a1bf)
@@ -61,11 +61,6 @@ foundations/
 `balanced-scorecard` · `llm` · `ai` · `llm-observability` · `llmops` · `langfuse` · `roi` ·
 `agile` · `scrum` · `python`
 
-## 🔒 개인정보 보호
-데모는 **100% 익명**입니다(Project A…J). 개인 데이터, 대화 및 실제 데이터베이스는 **패키지에
-포함되지 않습니다**(`foundations/_private/`, git-ignored). 게시하기 전에
-[`github_load.md`](foundations/github_load.md)의 정제 절차를 실행하세요.
-
 ---
 
-**Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard"** · ©️ Bruno Teixeira Penedo — 2026. 모든 권리 보유. E-mail: bpenedo@gmail.com
+**Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard** · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com

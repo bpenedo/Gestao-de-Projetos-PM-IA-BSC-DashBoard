@@ -10,7 +10,7 @@ gráficos de TENDÊNCIA do CPP/PSR.
    logs_langfuse passa a refletir o consumo verdadeiro.
 
 Uso:  python3 seed_from_folders.py
-Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · (c) Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
+Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 """
 import hashlib
 import random

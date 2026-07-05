@@ -2,13 +2,13 @@
 title: BSC पैनल — AI परियोजना प्रबंधन (PM)
 ---
 
-🌐 [Português](/) · [English](/en) · [Español](/es) · [Français](/fr) · [Deutsch](/de) · [中文](/zh) · [한국어](/ko) · **हिन्दी** · [עברית](/he)
+🌐 [Português](/) · [English](/en) · [Español](/es) · [Français](/fr) · [Deutsch](/de) · [中文](/zh) · [한국어](/ko) · **हिन्दी** · [עברית](/he) · [Svenska](/sv) · [Русский](/ru) · [Suomi](/fi)
 
 
 🌐 **Português** · [English](/en) · [Español](/es) · [Français](/fr) · [Deutsch](/de) · [中文](/zh) · [한국어](/ko) · [हिन्दी](/hi)
 
 
-_Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · ©️ Bruno Teixeira Penedo — 2026. सर्वाधिकार सुरक्षित। E-mail: bpenedo@gmail.com_
+_Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com_
 **साप्ताहिक चेकपॉइंट — हर शुक्रवार 09:00 बजे।**
 
 > ⚠️ **डेमो डेटा** (अनाम पोर्टफोलियो)। Langfuse सिंक होने पर वास्तविक बन जाता है।
@@ -76,20 +76,20 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 ## 📈 पोर्टफोलियो कार्यकारी सारांश
 
-<BigValue data={kpis} value=total_tokens title="Tokens Totais" agg=sum fmt=num0/>
-<BigValue data={kpis} value=kpi_psr title="PSR Médio (0-5)" agg=mean fmt=num1/>
-<BigValue data={kpis} value=kpi_idls_lean title="Desperdício Lean Médio %" agg=mean fmt=num1/>
-<BigValue data={kpis} value=burn_rate_ia title="Burn Rate Total" agg=sum fmt='$#,##0.00'/>
+<BigValue data={kpis} value=total_tokens title="कुल टोकन" agg=sum fmt=num0/>
+<BigValue data={kpis} value=kpi_psr title="औसत PSR (0-5)" agg=mean fmt=num1/>
+<BigValue data={kpis} value=kpi_idls_lean title="औसत लीन अपव्यय %" agg=mean fmt=num1/>
+<BigValue data={kpis} value=burn_rate_ia title="कुल बर्न रेट" agg=sum fmt='$#,##0.00'/>
 
 ## 🌐 पोर्टफोलियो 5D मानचित्र (C-लेवल दृश्य)
-> Esferas 3D estilo 5dchart — **5 dimensões por projeto**: **X**=Volume/escala (tokens) · **Y**=PEUC/qualidade (%) · **Z**=PSR/saúde (0–5) · **tamanho**=Burn Rate (R$) · **cor**=ICCA/sustentabilidade (🟢 acima de 3x cobre custo · 🔴 abaixo de 1x = prejuízo).
+> 3D गोले (5dchart शैली) — **प्रति परियोजना 5 आयाम**: **X**=आयतन (टोकन) · **Y**=PEUC/गुणवत्ता (%) · **Z**=PSR/स्वास्थ्य (0–5) · **आकार**=Burn Rate (R$) · **रंग**=ICCA/संधारणीयता (🟢 3x से ऊपर लागत कवर · 🔴 1x से नीचे = हानि)।
 >
-> **Leitura de conselho:** o projeto ideal fica à **direita/fundo** (escala+qualidade), **alto** (PSR) e **verde** (sustentável). Esfera **grande e vermelha** = muito caixa queimado sem cobertura → corrigir antes de escalar.
+> **बोर्ड की दृष्टि:** आदर्श परियोजना **दाएँ/पीछे** (पैमाना+गुणवत्ता), **ऊँची** (PSR) और **हरी** (संधारणीय) होती है। **बड़ा लाल** गोला = कवरेज बिना बहुत नकदी जली → स्केल से पहले सुधारें।
 
 ![Mapa 5D do Portfólio de Projetos de IA](/5d_projetos.png?v=5)
 
 ### 🖱️ इंटरैक्टिव 5D मानचित्र — प्रत्येक गोले पर माउस ले जाएँ
-> **X** = Tokens (escala) · **Y** = PEUC (%) · **tamanho** = PSR (0–5) · **cor** = ICCA (🟢 sustentável · 🟠 limítrofe · 🔴 prejuízo). Ao passar o mouse em cada **esfera glossy**, aparece **Nome do projeto, PSR, PEUC e Tokens**.
+> **X** = टोकन (पैमाना) · **Y** = PEUC (%) · **आकार** = PSR (0–5) · **रंग** = ICCA (🟢 संधारणीय · 🟠 सीमांत · 🔴 हानि)। प्रत्येक **ग्लॉसी गोले** पर माउस ले जाने पर **परियोजना नाम, PSR, PEUC और टोकन** दिखते हैं।
 
 <ECharts config={{
   tooltip: {
@@ -158,15 +158,15 @@ select * from bsc.decisao_mcda where rank_final = 1
 }} />
 
 ## 📉 मुख्य संकेतक (CPP) और स्कोर (PSR) की प्रवृत्ति
-> O que mais importa para o C-Level: **a direção**. CPP caindo = portfólio ficando mais eficiente.
+> C-लेवल के लिए सबसे महत्वपूर्ण: **दिशा**। CPP गिरना = पोर्टफोलियो अधिक कुशल।
 
-<LineChart data={tendencia} x=data_snapshot y=cpp_medio yAxisTitle="CPP médio (R$/%)" title="Custo por Ponto de Progresso — tendência do portfólio" markers=true/>
+<LineChart data={tendencia} x=data_snapshot y=cpp_medio yAxisTitle="CPP médio (R$/%)" title="प्रति प्रगति बिंदु लागत — पोर्टफोलियो प्रवृत्ति" markers=true/>
 
-<LineChart data={tendencia} x=data_snapshot y=psr_medio yAxisTitle="PSR médio" yMin=0 yMax=5 title="Score médio do portfólio (PSR 0-5)" markers=true/>
+<LineChart data={tendencia} x=data_snapshot y=psr_medio yAxisTitle="PSR médio" yMin=0 yMax=5 title="पोर्टफोलियो औसत स्कोर (PSR 0-5)" markers=true/>
 
 ## ⭐ प्रति परियोजना स्कोर (PSR)
 
-<BarChart data={kpis} x=project_name y=kpi_psr swapXY=true title="PSR (0-5) por projeto — ordenado" sort=true labels=true/>
+<BarChart data={kpis} x=project_name y=kpi_psr swapXY=true title="प्रति परियोजना PSR (0-5) — क्रमबद्ध" sort=true labels=true/>
 
 ## 🍩 संरचना और मिश्रण (गहराई वाला डोनट)
 
@@ -209,14 +209,14 @@ select * from bsc.decisao_mcda where rank_final = 1
 </Grid>
 
 ## 🧭 संधारणीयता चतुर्थांश (स्केल करें या सुधारें?)
-> Eixo X = **ICCA** (cobertura: acima de 3x = saudável) · Eixo Y = **IBMT** (queima marginal: abaixo de 0,33 = bom) · tamanho = Burn Rate.
-> Canto inferior-direito = **escalar com lucro**; superior-esquerdo = **corrigir antes de crescer**.
+> X अक्ष = **ICCA** (कवरेज: 3x से ऊपर = स्वस्थ) · Y अक्ष = **IBMT** (सीमांत बर्न: 0.33 से नीचे = अच्छा) · आकार = Burn Rate।
+> नीचे-दाएँ = **लाभ के साथ स्केल**; ऊपर-बाएँ = **बढ़ने से पहले सुधारें**।
 
-<ScatterPlot data={kpis} x=kpi_icca y=kpi_ibmt series=project_name size=burn_rate_ia xAxisTitle="ICCA — cobertura de custo (x)" yAxisTitle="IBMT — burn marginal (x)" title="Sustentabilidade financeira por projeto"/>
+<ScatterPlot data={kpis} x=kpi_icca y=kpi_ibmt series=project_name size=burn_rate_ia xAxisTitle="ICCA — cobertura de custo (x)" yAxisTitle="IBMT — burn marginal (x)" title="प्रति परियोजना वित्तीय संधारणीयता"/>
 
 ## 📊 प्रति परियोजना विफलता पैरेटो
 
-<BarChart data={falhas} x=project_name y=percentual_dominancia series=categoria_falha type=stacked100 swapXY=true title="Dominância de falhas (%) por projeto"/>
+<BarChart data={falhas} x=project_name y=percentual_dominancia series=categoria_falha type=stacked100 swapXY=true title="प्रति परियोजना विफलता प्रभुत्व (%)"/>
 
 ## 🗂️ स्कोर और वित्तीय स्वास्थ्य (तालिका)
 
@@ -250,7 +250,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 </DataTable>
 
 ## 🪙 लागत वसूली (VRT) — 5 ब्लॉक + औसत (दूसरा दृष्टिकोण)
-> Mesma base de rateio em **5 granularidades** (R$ por 50/100/250/500/1.000 tokens) + a **média dos blocos** — uma segunda percepção do consumo por projeto.
+> समान बंटवारा आधार **5 सूक्ष्मताओं** में (R$ प्रति 50/100/250/500/1,000 टोकन) + **ब्लॉक औसत** — प्रति परियोजना खपत का दूसरा दृष्टिकोण।
 
 <DataTable data={kpis} rows=all rowShading=true>
   <Column id=project_name title="परियोजना"/>
@@ -259,13 +259,13 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=vrt_250t title="250 tok" fmt='#,##0.00000'/>
   <Column id=vrt_500t title="500 tok" fmt='#,##0.00000'/>
   <Column id=vrt_por_ktoken title="1.000 tok" fmt='#,##0.00000'/>
-  <Column id=vrt_media_blocos title="MÉDIA blocos" fmt='#,##0.00000' contentType=colorscale/>
+  <Column id=vrt_media_blocos title="औसत ब्लॉक" fmt='#,##0.00000' contentType=colorscale/>
 </DataTable>
 
 ## ⏰ महत्वपूर्ण व्यवधान/प्रभाव समय (HCI)
-> Em que **hora do dia (BRT)** cada projeto é mais impactado — para agir na janela certa (upgrade de Tier, backoff, agendamento).
+> प्रत्येक परियोजना **दिन के किस घंटे (BRT)** सबसे अधिक प्रभावित होती है — सही विंडो में कार्रवाई हेतु (Tier अपग्रेड, बैकऑफ, शेड्यूलिंग)।
 
-<BarChart data={hora_total} x=hora_brt y=interrupcoes title="Interrupções por hora do dia (BRT) — portfólio" xAxisTitle="Hora (0-23, BRT)"/>
+<BarChart data={hora_total} x=hora_brt y=interrupcoes title="दिन के घंटे अनुसार व्यवधान (BRT) — पोर्टफोलियो" xAxisTitle="Hora (0-23, BRT)"/>
 
 <DataTable data={horario_critico} rows=all rowShading=true>
   <Column id=project_name title="परियोजना"/>
@@ -274,12 +274,12 @@ select * from bsc.decisao_mcda where rank_final = 1
 </DataTable>
 
 ## ♻️ अपव्यय वर्गीकरण (Lean Six Sigma) — सबसे अधिक अपव्यय कहाँ
-> Desperdício medido por **tokens ponderados** (Defeito 2,0× · Cota 1,5× · Superproc. 1,0× · Latência 0,5×), não só por contagem.
+> अपव्यय **भारित टोकन** से मापा गया (दोष 2.0× · कोटा 1.5× · अतिप्रसंस्करण 1.0× · विलंब 0.5×), केवल गिनती से नहीं।
 
 <Grid cols=2>
 <Group>
 
-**Mix de waste do portfólio**
+**पोर्टफोलियो अपव्यय मिश्रण**
 <ECharts config={{
   tooltip: { trigger: 'item', valueFormatter: (v) => Number(v).toLocaleString() + ' tok' },
   legend: { type: 'scroll', bottom: 0, textStyle: { fontSize: 9 } },
@@ -295,26 +295,26 @@ select * from bsc.decisao_mcda where rank_final = 1
 </Group>
 <Group>
 
-**Waste dominante por projeto**
+**प्रति परियोजना प्रमुख अपव्यय**
 <DataTable data={waste_dom} rows=all>
   <Column id=project_name title="परियोजना"/>
   <Column id=waste_dominante title="प्रमुख अपव्यय"/>
-  <Column id=waste_tokens title="Tokens desperd." fmt=num0/>
+  <Column id=waste_tokens title="बर्बाद टोकन" fmt=num0/>
 </DataTable>
 
 </Group>
 </Grid>
 
-<BarChart data={wastes} x=project_name y=waste_tokens series=categoria_waste type=stacked swapXY=true title="Composição de waste (tokens ponderados) por projeto"/>
+<BarChart data={wastes} x=project_name y=waste_tokens series=categoria_waste type=stacked swapXY=true title="अपव्यय संरचना (भारित टोकन) प्रति परियोजना"/>
 
 ## 🔬 RCA — प्रॉम्प्ट प्रकार अनुसार मतिभ्रम (हर परियोजना को क्या धीमा करता है)
-> Root Cause Analysis: classificamos os prompts em **categorias** e medimos a alucinação de cada uma.
-> Diagnóstico objetivo de **o que atrasa cada projeto** e **o que atrasa COMUMENTE a todos (interseção)**.
+> मूल कारण विश्लेषण: प्रॉम्प्ट्स को **श्रेणियों** में वर्गीकृत कर प्रत्येक का मतिभ्रम मापते हैं।
+> **हर परियोजना को क्या धीमा करता है** और **सभी को समान रूप से क्या धीमा करता है (प्रतिच्छेदन)** का वस्तुनिष्ठ निदान।
 
 ### 🎯 प्रतिच्छेदन — पोर्टफोलियो का साझा अड़चन
-> O tipo de prompt que é o **gargalo nº1 de alucinação** no maior número de projetos. Atacar este primeiro tem o maior efeito sistêmico.
+> सर्वाधिक परियोजनाओं में **#1 मतिभ्रम अड़चन** वाला प्रॉम्प्ट प्रकार। इसे पहले हल करने का सबसे बड़ा प्रणालीगत प्रभाव।
 
-<BarChart data={rca_inter} x=prompt_categoria y=projetos_onde_e_top1 title="Tipo de prompt que mais atrasa o portfólio (gargalo #1 em N projetos)" yAxisTitle="Nº de projetos onde é o gargalo #1" labels=true sort=true/>
+<BarChart data={rca_inter} x=prompt_categoria y=projetos_onde_e_top1 title="पोर्टफोलियो को सर्वाधिक धीमा करने वाला प्रॉम्प्ट प्रकार (N परियोजनाओं में #1 अड़चन)" yAxisTitle="Nº de projetos onde é o gargalo #1" labels=true sort=true/>
 
 ### 🧭 प्रति परियोजना मतिभ्रम अड़चन (व्यक्तिगत RCA)
 
@@ -326,29 +326,31 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 ### 📊 श्रेणी × परियोजना अनुसार मतिभ्रम वर्गीकरण
 
-<BarChart data={aluc_cat} x=project_name y=alucinacoes series=prompt_categoria type=stacked swapXY=true title="Alucinações por tipo de prompt em cada projeto"/>
+<BarChart data={aluc_cat} x=project_name y=alucinacoes series=prompt_categoria type=stacked swapXY=true title="प्रत्येक परियोजना में प्रॉम्प्ट प्रकार अनुसार मतिभ्रम"/>
 
 ## 💰 NPV, पेबैक और पोर्टफोलियो नकदी प्रवाह
-> Calculado a partir do **seu fluxo de caixa** (CSV/planilha — ver `pipeline/fluxo_caixa_template.csv` e
-> `python3 carregar_fluxo.py SEU.csv`). VPL = Σ fluxo ÷ (1+i)ᵗ · Payback **simples** (variação temporal) e
-> **descontado**, ambos interpolados. _Dados de demonstração até você fornecer o seu CSV._
+> **आपके नकदी प्रवाह** से गणना (CSV/स्प्रेडशीट — देखें `pipeline/fluxo_caixa_template.csv` और `python3 carregar_fluxo.py आपका.csv`)। NPV = Σ प्रवाह ÷ (1+i)ᵗ · पेबैक **सरल** (समय प्रक्षेप) और **छूटयुक्त**, दोनों प्रक्षेपित। _जब तक आप अपना CSV न दें, डेमो डेटा।_
 
 <DataTable data={vpl} rows=all rowShading=true>
   <Column id=project_name title="परियोजना"/>
   <Column id=vpl title="VPL (R$)" fmt='$#,##0' contentType=colorscale/>
   <Column id=tir title="TIR" fmt=pct1/>
+  <Column id=tirm title="TIRM" fmt=pct1/>
   <Column id=ill title="ILL (PI)" fmt=num2/>
-  <Column id=payback_simples title="PB simples" fmt=num2/>
-  <Column id=payback_descontado title="PB descontado" fmt=num2/>
+  <Column id=vul title="VUL (R$)" fmt='$#,##0'/>
+  <Column id=payback_simples title="सरल PB" fmt=num2/>
+  <Column id=payback_descontado title="छूटयुक्त PB" fmt=num2/>
   <Column id=supera_selic title="TIR>SELIC?" fmt=boolean/>
   <Column id=supera_us title="TIR>EUA?" fmt=boolean/>
   <Column id=vpl_usd title="VPL US$" fmt='$#,##0'/>
   <Column id=payback_desc_usd title="PB desc. US$" fmt=num2/>
 </DataTable>
 
+> 🆕 **TIRM** (संशोधित IRR) आवक को परियोजना दर पर पुनर्निवेश करता है — IRR से अधिक यथार्थवादी। **VUL** (शुद्ध समान मूल्य) NPV को समतुल्य वार्षिक श्रृंखला में बदलता है।
+
 > **TIR** = retorno do projeto · **ILL (PI)** acima de 1 = cria valor · comparados à **SELIC** e aos **juros dos EUA** (valores reais por projeto na tabela acima — colunas `TIR>SELIC?`/`TIR>EUA?`). O fluxo é **dolarizado** (USD/BRL) e descontado à taxa americana → colunas **VPL US$** e **PB desc. US$**. _Benchmarks (SELIC, juros EUA, câmbio) são placeholders — ajuste no `.env`._
 
-**TIR por projeto vs. custo de oportunidade (SELIC × EUA)**
+**प्रति परियोजना IRR बनाम अवसर लागत (SELIC × अमेरिका)**
 
 <BarChart data={vpl} x=project_name y=tir title="TIR por projeto comparada à SELIC e aos juros dos EUA" yAxisTitle="TIR (por período)" sort=true>
   <ReferenceLine y=0.105 color=warning label="SELIC (BR) ~10,5%"/>
@@ -362,8 +364,8 @@ select * from bsc.decisao_mcda where rank_final = 1
 </LineChart>
 
 ## 💳 AI सदस्यता योजनाएँ — IOF सहित कुल लागत
-> Câmbio **R$ 5,40/US$** · **IOF 3,5%** sobre operação internacional (cartão). `Total = US$ × câmbio × (1 + IOF)`.
-> Este é o custo real que alimenta a base de rateio (`assinaturas_infra`). Preços aproximados — verifique os sites oficiais.
+> विनिमय **R$ 5.40/US$** · अंतरराष्ट्रीय लेनदेन (कार्ड) पर **IOF 3.5%**। `कुल = US$ × विनिमय × (1 + IOF)`।
+> यह वास्तविक लागत है जो बंटवारा आधार (`assinaturas_infra`) में जाती है। मूल्य अनुमानित — आधिकारिक साइट देखें।
 
 <DataTable data={planos} rows=all rowShading=true>
   <Column id=provedor title="प्रदाता"/>
@@ -382,12 +384,12 @@ select * from bsc.decisao_mcda where rank_final = 1
   <img src="/gekko_photo.png" alt="Gordon Gekko fumando charuto (terno azul)" width="100" height="100" style="flex:0 0 auto;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.25);"/>
 </div>
 
-> **Escolha do MELHOR projeto** ponderando os indicadores como critérios. Pesos por **AHP**
+> संकेतकों को मानदंड मानकर **सर्वश्रेष्ठ परियोजना का चयन**। भार **AHP**
 > (VPL 37% · TIR 24% · ILL 14% · PSR 14% · IITA 5,6% · IDLS 5,6% — CR = 0,012, consistente).
 > Ranking por **TOPSIS** em **duas normalizações** (vetorial/Euclidiana + min-max/linear); o
-> **Ci final** é a média. Coluna **Robusto?** = as duas normalizações concordam na posição.
+> **अंतिम Ci** औसत है। **मज़बूत?** स्तंभ = दोनों सामान्यीकरण स्थिति पर सहमत।
 
-**🥇 Projeto vencedor (maior Ci final):**
+**🥇 विजेता परियोजना (उच्चतम अंतिम Ci):**
 <DataTable data={mcda_top}>
   <Column id=project_name title="🏆 सर्वश्रेष्ठ परियोजना"/>
   <Column id=ci_final title="Ci final" fmt=num4/>
@@ -404,98 +406,76 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=concordante title="मज़बूत?" fmt=boolean/>
 </DataTable>
 
-> O vencedor tem **pitchdeck** gerado (ver pasta Projetos / `pitchdeck/`). Se as posições 6–7
-> divergem entre normalizações, é onde o ranking é mais sensível — decida com cautela ali.
+> विजेता का **पिच डेक** जनरेट हुआ (परियोजनाएँ फ़ोल्डर / `pitchdeck/` देखें)। जहाँ स्थिति 6–7 सामान्यीकरणों में भिन्न होती है, रैंकिंग सबसे संवेदनशील है — वहाँ सावधानी से निर्णय लें।
 
 ### 📌 निष्कर्ष — कार्यकारी सारांश और C-लेवल इनसाइट्स
 
-**Veredito.** O modelo **AHP-TOPSIS 2n** elege ****{mcda_top[0].project_name}**** como o melhor projeto do portfólio
-(**Ci = 0,96** de 1,00), com **robustez confirmada**: as duas normalizações (vetorial e min-max)
-concordam na **1ª posição** e em 8/10 do ranking — o topo é estável, não é artefato de método.
+**निर्णय।** **AHP-TOPSIS 2n** मॉडल **{mcda_top[0].project_name}** को पोर्टफोलियो की सर्वश्रेष्ठ परियोजना चुनता है (**Ci = 0.96**/1.00), **पुष्ट मज़बूती** के साथ: दोनों सामान्यीकरण (वेक्टर और min-max) **पहले स्थान** व रैंकिंग के 8/10 पर सहमत — शीर्ष स्थिर, विधि का कृत्रिम परिणाम नहीं।
 
-**Por que **{mcda_top[0].project_name}** venceu.** Os critérios **financeiros** (VPL R$ 5.973 · TIR 32,9% · ILL 1,75)
-estão **empatados** entre os projetos (fluxo de caixa ainda em *placeholder* uniforme). Com o
-financeiro neutralizado, a decisão migra para a **eficiência operacional**, e aí **{mcda_top[0].project_name}** domina:
-tem a **menor taxa de alucinação (IITA 9,1%)** e o **menor desperdício Lean (IDLS 15,0%)** de
-todo o portfólio — praticamente **metade** do desperdício do 2º colocado. Em outras palavras:
-**mesmo retorno projetado, executando com muito menos desperdício de tokens/caixa.**
+**{mcda_top[0].project_name} क्यों जीता।** **वित्तीय** मानदंड (NPV R$ 5,973 · IRR 32.9% · ILL 1.75) परियोजनाओं में **बराबर** हैं (नकदी प्रवाह अब भी एकसमान *प्लेसहोल्डर*)। वित्तीय निष्प्रभावी होने पर निर्णय **परिचालन दक्षता** पर जाता है, और वहाँ {mcda_top[0].project_name} हावी: पूरे पोर्टफोलियो में सबसे कम **मतिभ्रम दर (IITA 9.1%)** व सबसे कम **लीन अपव्यय (IDLS 15.0%)** — दूसरे स्थान का लगभग **आधा**। अर्थात्: **समान अनुमानित प्रतिफल, बहुत कम टोकन/नकदी अपव्यय के साथ।**
 
-**Insights C-Level.**
-- 🥇 **Eficiência é o desempate:** quando o retorno é parecido, quem **queima menos** (menor IITA/IDLS)
-  entrega o mesmo valor com maior margem — é o ativo mais escalável.
-- 🛡️ **Robustez decisória:** a concordância entre as duas normalizações (8/10) dá **segurança** ao board
-  para agir no topo do ranking; a zona sensível (posições 6–7) exige análise qualitativa antes de cortar.
-- 📉 **Cauda de risco:** **o último colocado** (Ci 0,01) reúne o pior desempenho combinado — candidato a
-  **refatoração ou descontinuação** (cruzar com a Matriz BCG).
+**C-लेवल इनसाइट्स।**
+- 🥇 **दक्षता ही निर्णायक:** प्रतिफल समान होने पर जो **कम जलाता है** (कम IITA/IDLS) वही उच्च मार्जिन पर समान मूल्य देता है — सबसे स्केलेबल परिसंपत्ति।
+- 🛡️ **निर्णय मज़बूती:** दोनों सामान्यीकरणों की सहमति (8/10) बोर्ड को रैंकिंग के शीर्ष पर कार्रवाई का **भरोसा** देती है; संवेदनशील क्षेत्र (स्थिति 6–7) कटौती से पहले गुणात्मक विश्लेषण माँगता है।
+- 📉 **जोखिम पूँछ:** अंतिम स्थान (Ci 0.01) का संयुक्त प्रदर्शन सबसे खराब — **रीफैक्टरिंग या बंद करने** का उम्मीदवार (BCG मैट्रिक्स से मिलान)।
 
-**⚠️ Ressalva de honestidade decisória.** Os critérios financeiros carregam **75% do peso AHP**
-(VPL 37% + TIR 24% + ILL 14%), mas hoje **não diferenciam** porque o fluxo de caixa é placeholder.
-**O veredito só é definitivo com os fluxos de caixa REAIS por projeto** — ao inseri-los, o ranking
-pode mudar substancialmente (o financeiro voltará a dominar).
+**⚠️ निर्णय-ईमानदारी चेतावनी।** वित्तीय मानदंड **AHP भार का 75%** (NPV 37% + IRR 24% + ILL 14%) रखते हैं, पर आज **भेद नहीं करते** क्योंकि नकदी प्रवाह प्लेसहोल्डर है। **निर्णय केवल प्रति-परियोजना वास्तविक नकदी प्रवाह से निश्चित** — दर्ज करते ही रैंकिंग काफ़ी बदल सकती है (वित्तीय फिर हावी होगा)।
 
-**Recomendação.** (1) Aprovar **{mcda_top[0].project_name}** como **piloto de escala** pela eficiência comprovada; (2) inserir
-os **fluxos de caixa reais** e re-rodar o `ahp_topsis.py` para o veredito financeiro definitivo;
-(3) acionar plano de melhoria na cauda (**o último colocado**).
+**अनुशंसा।** (1) सिद्ध दक्षता के लिए {mcda_top[0].project_name} को **स्केल पायलट** के रूप में मंज़ूरी; (2) **वास्तविक नकदी प्रवाह** दर्ज कर `ahp_topsis.py` पुनः चलाकर अंतिम वित्तीय निर्णय; (3) पूँछ (अंतिम स्थान) पर सुधार योजना सक्रिय करें।
 
 ---
 ## 👑 **ताज के रत्न** का प्रशासनिक डोसियर — {mcda_top[0].project_name}
 
-> Ferramentas administrativas clássicas aplicadas **exclusivamente ao projeto eleito** para
-> enriquecê-lo, enaltecê-lo e evidenciar seu **diferencial competitivo**. Todas são geradas
-> por **pipeline Python concorrente** (`gerar_admtools.py`) — não dependem de nenhum template
-> externo. Detalhamento e justificativa em `foundations/admtools/ferramentas_administrativas.md`.
+> क्लासिक प्रशासनिक उपकरण **केवल चयनित परियोजना पर** लागू — इसे समृद्ध करने, उभारने और इसके **प्रतिस्पर्धात्मक अंतर** को दर्शाने हेतु। सभी **समवर्ती Python पाइपलाइन** (`gerar_admtools.py`) से जनरेट — किसी बाहरी टेम्पलेट पर निर्भर नहीं। विवरण व औचित्य `foundations/admtools/ferramentas_administrativas.md` में।
 
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.2rem;margin:1rem 0;">
 
 <div>
 
 **🎯 SWOT — रणनीतिक स्थिति**
-Forças/fraquezas/oportunidades/ameaças derivadas dos KPIs reais (menor IITA e IDLS = força dominante).
+वास्तविक KPI से व्युत्पन्न शक्ति/कमजोरी/अवसर/खतरे (न्यूनतम IITA व IDLS = प्रमुख शक्ति)।
 <img src="/admtools/swot.png" alt="SWOT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🌐 PESTELC — वृहद परिवेश**
-Sete fatores externos (Político, Econômico, Social, Tecnológico, Ecológico, Legal, Cultural).
+सात बाहरी कारक (राजनीतिक, आर्थिक, सामाजिक, तकनीकी, पारिस्थितिक, कानूनी, सांस्कृतिक)।
 <img src="/admtools/pestel.png" alt="PESTELC do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🗺️ 5W4H — कार्य योजना (5W + 4H)**
-What/Why/Where/When/Who + How/How much/How many/How long — roteiro de escala do eleito.
+What/Why/Where/When/Who + How/How much/How many/How long — चयनित परियोजना का स्केल-अप रोडमैप।
 <img src="/admtools/5w4h.png" alt="5W4H do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **📊 विफलता पैरेटो (80/20)**
-Categorias de prompt que concentram 80% das falhas — onde atacar primeiro (dados reais do Langfuse).
+80% विफलताओं वाली प्रॉम्प्ट श्रेणियाँ — पहले कहाँ हमला करें (Langfuse वास्तविक डेटा)।
 <img src="/admtools/pareto.png" alt="Pareto de falhas do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🔥 GUT मैट्रिक्स — प्राथमिकता (हीटमैप)**
-Gravidade × Urgência × Tendência das ações; maior GUT = agir primeiro.
+क्रियाओं की गंभीरता × तात्कालिकता × प्रवृत्ति; अधिक GUT = पहले कार्य करें।
 <img src="/admtools/gut.png" alt="Matriz GUT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🕸️ प्रतिस्पर्धी रडार — विभेदक**
-Impressão digital do eleito **vs média do portfólio** (a área azul domina a cinza em quase todo eixo).
+चयनित का फिंगरप्रिंट **बनाम पोर्टफोलियो औसत** (नीला क्षेत्र लगभग हर अक्ष पर ग्रे पर हावी)।
 <img src="/admtools/radar.png" alt="Radar competitivo do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 
 </div>
 
-> **📌 Leitura executiva.** O **radar** é o retrato do diferencial competitivo: a Jóia da Coroa
-> supera a média em anti-alucinação, Lean e entrega útil. **SWOT/PESTEL/5W4H** transformam esse
-> diagnóstico em **estratégia e plano de ação**; **Pareto + GUT** dizem **exatamente onde** agir
-> primeiro para converter a liderança operacional em retorno financeiro definitivo.
+> **📌 कार्यकारी पठन।** **रडार** प्रतिस्पर्धात्मक अंतर दर्शाता है: ताज का रत्न एंटी-मतिभ्रम, लीन व उपयोगी वितरण में औसत से बेहतर। **SWOT/PESTEL/5W4H** इस निदान को **रणनीति व कार्य-योजना** में बदलते हैं; **Pareto + GUT** बताते हैं कि परिचालन नेतृत्व को निश्चित वित्तीय प्रतिफल में बदलने हेतु **पहले कहाँ** कार्य करें।
 
 ---
 ## 🔗 प्रति परियोजना अलग पैनल

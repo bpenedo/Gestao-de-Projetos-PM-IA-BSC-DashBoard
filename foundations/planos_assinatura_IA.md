@@ -1,6 +1,6 @@
 # 💳 Planos de Assinatura de IA — Base de Rateio & Referência de Preços
 
-> **Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard"** · ©️ Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
+> **Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard** · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 
 > ⚠️ **Preços aproximados** (referência jul/2026, base de conhecimento). Provedores cobram em **USD**;
 > o valor em **R$** é indicativo (câmbio ≈ **R$ 5,40/US$**, ajustável em `USD_BRL` no `.env`).

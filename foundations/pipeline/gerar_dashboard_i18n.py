@@ -12,8 +12,8 @@ Também DES-IDENTIFICA: as traduções do Bottom-Line no cadastro usam o binding
 
 Saída: pages/<lang>/index.md  (rotas /en, /es, /fr, /de, /zh, /ko, /hi)
 
-Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · (c) Bruno Teixeira Penedo — 2026.
-Todos os direitos reservados. E-mail: bpenedo@gmail.com
+Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard · ©️ Bruno Penedo — 2026.
+https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 """
 import json
 import os
@@ -25,25 +25,34 @@ TRANS = os.path.join(BASE, "..", "translation.md")
 PAGES = os.path.join(BASE, "..", "evidence", "pages")
 
 ROUTES = {"pt": "/", "en": "/en", "es": "/es", "fr": "/fr",
-          "de": "/de", "zh": "/zh", "ko": "/ko", "hi": "/hi", "he": "/he"}
-ORDER = ["pt", "en", "es", "fr", "de", "zh", "ko", "hi", "he"]
+          "de": "/de", "zh": "/zh", "ko": "/ko", "hi": "/hi", "he": "/he", "sv": "/sv", "ru": "/ru", "fi": "/fi"}
+ORDER = ["pt", "en", "es", "fr", "de", "zh", "ko", "hi", "he", "sv", "ru", "fi"]
 
-# DES-IDENTIFICAÇÃO (privacidade): páginas localizadas são ANÔNIMAS — nenhum nome real de projeto.
-# O vencedor vira binding dinâmico; nomes citados no Bottom-Line viram termos genéricos.
-# (mais longos primeiro para evitar substituição parcial)
-DEIDENT = [
-    ("`Project F`", "**{mcda_top[0].project_name}**"),
-    ("`Project C`", "**o último colocado**"),
-    ("Project F", "{mcda_top[0].project_name}"),
-    ("Project C", "o último colocado"),
-]
+# DES-IDENTIFICAÇÃO (privacidade): o index.md JÁ é anônimo na fonte (usa {mcda_top[0].project_name}).
+# Isto é apenas uma REDE DE SEGURANÇA local: pares real->anônimo vindos de _private/deident.json
+# (git-ignored). Ausente => lista vazia. NENHUM nome real fica no código versionado.
+def _load_deident():
+    p = os.path.join(BASE, "..", "_private", "deident.json")
+    try:
+        return [tuple(x) for x in json.load(open(p, encoding="utf-8"))]
+    except Exception:
+        return []
 
+
+DEIDENT = _load_deident()
+
+
+# TM (Translation Memory) PRIVADA — fora do pacote público (git-ignored).
+TM_PRIVATE = os.path.join(BASE, "..", "_private", "translation_memory.json")
 
 def load_registry():
+    if os.path.exists(TM_PRIVATE):
+        return json.load(open(TM_PRIVATE, encoding="utf-8"))
+    # fallback legado: bloco JSON embutido no translation.md
     txt = open(TRANS, encoding="utf-8").read()
     m = re.search(r"<!--\s*i18n:dashboard\s*-->\s*```json\s*(\{.*?\})\s*```", txt, re.S)
     if not m:
-        raise SystemExit("⚠️  Bloco `<!-- i18n:dashboard -->` + JSON não encontrado em translation.md")
+        raise SystemExit("⚠️  TM não encontrada: falta _private/translation_memory.json (ou bloco em translation.md)")
     return json.loads(m.group(1))
 
 

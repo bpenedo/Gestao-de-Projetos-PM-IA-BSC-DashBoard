@@ -1,6 +1,6 @@
 # 🛠️ Ferramentas Administrativas — Dossiê da Jóia da Coroa
 
-> **Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard"** · ©️ Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
+> **Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard** · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 
 Este documento descreve o **conjunto de ferramentas administrativas** aplicadas **exclusivamente ao
 Projeto Eleito** ("Jóia da Coroa") — o vencedor do modelo multicritério **AHP-TOPSIS 2n**. O objetivo é

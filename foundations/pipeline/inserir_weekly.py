@@ -4,7 +4,7 @@ Grava em reuniao_weekly (SQLite) e gera um Markdown padronizado em weekly_report
 Opcionalmente faz git add/commit/push do relatório (DataOps).
 
 Uso:  python3 inserir_weekly.py
-Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · (c) Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
+Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 """
 import os
 import subprocess
@@ -36,7 +36,7 @@ def main():
     init_schema()
     OUTPUT_DIR.mkdir(exist_ok=True)
     print("=" * 60)
-    print("📝 CENTRAL WEEKLY C-LEVEL — ECOSSISTEMA IA (© Bruno Teixeira Penedo 2026)")
+    print("📝 CENTRAL WEEKLY C-LEVEL — ECOSSISTEMA IA (© Bruno Penedo 2026)")
     print("=" * 60)
 
     projeto = input("📌 Nome do Projeto: ").strip()
@@ -66,7 +66,7 @@ def main():
     arquivo.write_text(f"""# 📝 Relatório Semanal de Projeto IA
 > **Projeto:** {projeto}
 > **Data:** {dt:%d/%m/%Y} · **Classificação:** Confidencial / C-Level
-> **Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard"** · ©️ Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
+> **Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard** · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 
 ---
 ## 📊 1. Sumário Executivo

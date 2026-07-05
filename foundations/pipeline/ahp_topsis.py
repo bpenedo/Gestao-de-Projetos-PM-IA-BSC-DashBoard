@@ -11,7 +11,7 @@ Decisão multicritério AHP-TOPSIS com DUPLA NORMALIZAÇÃO (2n) — escolha do 
 Critérios (dos KPIs já calculados): VPL, TIR, ILL (benefício ↑), PSR (↑),
                                     IITA, IDLS (custo ↓).
 Grava em decisao_mcda. Uso:  python3 ahp_topsis.py
-Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · (c) Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
+Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 """
 import numpy as np
 

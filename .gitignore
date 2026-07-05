@@ -32,3 +32,6 @@ foundations/pipeline/analise_rs/target/
 
 # Pitch decks gerados (regeneráveis; evita vazar projetos reais)
 foundations/pitchdeck/pitchdeck_*
+
+# Qualquer pasta _private (dados/segredos locais)
+**/_private/

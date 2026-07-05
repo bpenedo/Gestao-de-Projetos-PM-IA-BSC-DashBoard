@@ -14,8 +14,8 @@ As 6 ferramentas são renderizadas EM PARALELO (ProcessPoolExecutor):
 
 Saída: ../evidence/static/admtools/*.png  (regeneráveis; git-ignored p/ privacidade).
 
-Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · (c) Bruno Teixeira Penedo — 2026.
-Todos os direitos reservados. E-mail: bpenedo@gmail.com
+Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard · ©️ Bruno Penedo — 2026.
+https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 """
 import os
 import sqlite3
@@ -35,8 +35,8 @@ GLOW = [pe.withStroke(linewidth=2.4, foreground="#12202f")]
 BASE = os.path.dirname(os.path.abspath(__file__))
 DB = os.path.join(BASE, "bsc_ia.db")
 OUT = os.path.join(BASE, "..", "evidence", "static", "admtools")
-STAMP = ("Framework \"Gestão de Projetos (PM) IA com Painel BSC e DashBoard\"  ·  "
-         "© Bruno Teixeira Penedo — 2026 · bpenedo@gmail.com")
+STAMP = ("Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard  ·  "
+         "©️ Bruno Penedo — 2026 · linkedin.com/in/bpenedo · bpenedo@gmail.com")
 
 # Paleta institucional (coerente com os templates conhecidos)
 AZUL, VERM, AMAR, VERD = "#2E75B6", "#C00000", "#FFC000", "#548235"

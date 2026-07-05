@@ -6,7 +6,7 @@ ponta a ponta quando ainda não há aplicações instrumentadas.
 Depois rode `./run_all.sh` → o ETL puxa esses dados de volta → dashboard com dados reais.
 
 Uso:  python3 popular_langfuse_teste.py [N_por_projeto]   (default 60)
-Framework "Gestão de Projetos (PM) IA com Painel BSC e DashBoard" · (c) Bruno Teixeira Penedo — 2026. Todos os direitos reservados. E-mail: bpenedo@gmail.com
+Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard · ©️ Bruno Penedo — 2026. https://linkedin.com/in/bpenedo - E-mail: bpenedo@gmail.com
 """
 import random
 import sys
