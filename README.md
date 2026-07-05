@@ -1,5 +1,7 @@
 # 🧭 Framework VPL — Gestão de Projetos (PM) IA com Painel BSC e DashBoard
 
+🌐 **Português** · [English](README.en.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [中文](README.zh.md) · [한국어](README.ko.md) · [हिन्दी](README.hi.md)
+
 ![Method](https://img.shields.io/badge/method-Balanced%20Scorecard-1F3A5F)
 ![AI](https://img.shields.io/badge/AI-LLM%20observability-45a1bf)
 ![Finance](https://img.shields.io/badge/finance-VPL%20·%20TIR%20·%20ILL-46a485)
