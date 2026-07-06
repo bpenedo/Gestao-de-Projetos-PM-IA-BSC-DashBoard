@@ -452,42 +452,42 @@ os **fluxos de caixa reais** e re-rodar o `ahp_topsis.py` para o veredito financ
 
 **🎯 SWOT — posição estratégica**
 Forças/fraquezas/oportunidades/ameaças derivadas dos KPIs reais (menor IITA e IDLS = força dominante).
-<img src="/admtools/swot.png" alt="SWOT do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/pt/swot.png" alt="SWOT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🌐 PESTELC — macroambiente**
 Sete fatores externos (Político, Econômico, Social, Tecnológico, Ecológico, Legal, Cultural).
-<img src="/admtools/pestel.png" alt="PESTELC do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/pt/pestel.png" alt="PESTELC do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🗺️ 5W4H — plano de ação (5W + 4H)**
 What/Why/Where/When/Who + How/How much/How many/How long — roteiro de escala do eleito.
-<img src="/admtools/5w4h.png" alt="5W4H do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/pt/5w4h.png" alt="5W4H do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **📊 Pareto de falhas (80/20)**
 Categorias de prompt que concentram 80% das falhas — onde atacar primeiro (dados reais do Langfuse).
-<img src="/admtools/pareto.png" alt="Pareto de falhas do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/pt/pareto.png" alt="Pareto de falhas do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🔥 Matriz GUT — priorização (heatmap)**
 Gravidade × Urgência × Tendência das ações; maior GUT = agir primeiro.
-<img src="/admtools/gut.png" alt="Matriz GUT do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/pt/gut.png" alt="Matriz GUT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🕸️ Radar competitivo — diferencial**
 Impressão digital do eleito **vs média do portfólio** (a área azul domina a cinza em quase todo eixo).
-<img src="/admtools/radar.png" alt="Radar competitivo do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/pt/radar.png" alt="Radar competitivo do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 

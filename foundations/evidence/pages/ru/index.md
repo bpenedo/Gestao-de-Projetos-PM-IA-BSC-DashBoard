@@ -47,13 +47,13 @@ select * from bsc.waste_dominante
 select categoria_waste, sum(waste_tokens) as waste_tokens from bsc.wastes_lean group by categoria_waste order by waste_tokens desc
 ```
 ```sql aluc_cat
-select * from bsc.alucinacao_categoria
+select * exclude (prompt_categoria), CASE prompt_categoria WHEN 'Conversa/Aberto' THEN 'Диалог/Открытый' WHEN 'RAG/Busca' THEN 'RAG/Поиск' WHEN 'Transformacao/Formato' THEN 'Преобразование/Формат' WHEN 'Raciocinio/Analise' THEN 'Рассуждение/Анализ' WHEN 'Sumarizacao' THEN 'Резюмирование' WHEN 'Geracao de Codigo' THEN 'Генерация кода' WHEN 'Extracao de Dados' THEN 'Извлечение данных' ELSE prompt_categoria END as prompt_categoria from bsc.alucinacao_categoria
 ```
 ```sql rca_proj
-select * from bsc.rca_projeto
+select * exclude (prompt_gargalo), CASE prompt_gargalo WHEN 'Conversa/Aberto' THEN 'Диалог/Открытый' WHEN 'RAG/Busca' THEN 'RAG/Поиск' WHEN 'Transformacao/Formato' THEN 'Преобразование/Формат' WHEN 'Raciocinio/Analise' THEN 'Рассуждение/Анализ' WHEN 'Sumarizacao' THEN 'Резюмирование' WHEN 'Geracao de Codigo' THEN 'Генерация кода' WHEN 'Extracao de Dados' THEN 'Извлечение данных' ELSE prompt_gargalo END as prompt_gargalo from bsc.rca_projeto
 ```
 ```sql rca_inter
-select * from bsc.rca_intersecao
+select * exclude (prompt_categoria), CASE prompt_categoria WHEN 'Conversa/Aberto' THEN 'Диалог/Открытый' WHEN 'RAG/Busca' THEN 'RAG/Поиск' WHEN 'Transformacao/Formato' THEN 'Преобразование/Формат' WHEN 'Raciocinio/Analise' THEN 'Рассуждение/Анализ' WHEN 'Sumarizacao' THEN 'Резюмирование' WHEN 'Geracao de Codigo' THEN 'Генерация кода' WHEN 'Extracao de Dados' THEN 'Извлечение данных' ELSE prompt_categoria END as prompt_categoria from bsc.rca_intersecao
 ```
 ```sql vpl
 select * from bsc.vpl_resultado
@@ -86,7 +86,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 >
 > **Взгляд совета:** идеальный проект — **справа/в глубине** (масштаб+качество), **высоко** (PSR) и **зелёный** (устойчивый). **Большая красная** сфера = много сожжённых денег без покрытия → исправить до масштабирования.
 
-![Mapa 5D do Portfólio de Projetos de IA](/5d_projetos.png?v=5)
+![Mapa 5D do Portfólio de Projetos de IA](/5d_ru.png?v=5)
 
 ### 🖱️ Интерактивная 5D-карта — наведите курсор на каждую сферу
 > **X** = токены (масштаб) · **Y** = PEUC (%) · **размер** = PSR (0–5) · **цвет** = ICCA (🟢 устойчиво · 🟠 на грани · 🔴 убыток). Наведите курсор на каждую **глянцевую сферу**, чтобы увидеть **название проекта, PSR, PEUC и токены**.
@@ -173,7 +173,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 <Grid cols=2>
 <Group>
 
-**Onde o caixa de IA está sendo queimado** (Burn Rate por projeto)
+**Где сжигается денежная масса ИИ** (Burn Rate по проектам)
 
 <ECharts config={{
   tooltip: { trigger: 'item', valueFormatter: (v) => 'R$ ' + Number(v).toFixed(2) },
@@ -191,7 +191,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 </Group>
 <Group>
 
-**Mix global de falhas** (Pareto em donut)
+**Глобальная структура сбоев** (Парето-донат)
 
 <ECharts config={{
   tooltip: { trigger: 'item' },
@@ -348,18 +348,18 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 > 🆕 **TIRM** (модифицированная IRR) реинвестирует притоки по ставке проекта — реалистичнее IRR. **VUL** (чистая равномерная стоимость) переводит NPV в эквивалентный годовой ряд.
 
-> **TIR** = retorno do projeto · **ILL (PI)** acima de 1 = cria valor · comparados à **SELIC** e aos **juros dos EUA** (valores reais por projeto na tabela acima — colunas `TIR>SELIC?`/`TIR>EUA?`). O fluxo é **dolarizado** (USD/BRL) e descontado à taxa americana → colunas **VPL US$** e **PB desc. US$**. _Benchmarks (SELIC, juros EUA, câmbio) são placeholders — ajuste no `.env`._
+> **TIR** = доходность проекта · **ILL (PI)** больше 1 = создаёт ценность · в сравнении с **SELIC** и **ставкой США** (реальные значения по проектам в таблице выше — столбцы `TIR>SELIC?`/`TIR>EUA?`). Поток **долларизирован** (USD/BRL) и дисконтирован по ставке США → столбцы **VPL US$** и **PB desc. US$**. _Бенчмарки (SELIC, ставка США, курс) — заполнители, настройте в `.env`._
 
 **IRR по проектам vs. альтернативные издержки (SELIC × США)**
 
-<BarChart data={vpl} x=project_name y=tir title="TIR por projeto comparada à SELIC e aos juros dos EUA" yAxisTitle="TIR (por período)" sort=true>
+<BarChart data={vpl} x=project_name y=tir title="TIR по проектам vs. SELIC и ставка США" yAxisTitle="TIR (за период)" sort=true>
   <ReferenceLine y=0.105 color=warning label="SELIC (BR) ~10,5%"/>
-  <ReferenceLine y=0.045 color=info label="Juros EUA ~4,5%"/>
+  <ReferenceLine y=0.045 color=info label="Ставка США ~4,5%"/>
 </BarChart>
 
-**Recuperação do investimento ao longo do tempo** (acumulado descontado — cruza zero = payback descontado)
+**Возврат инвестиций во времени** (дисконт. накопл. — пересечение нуля = дисконт. окупаемость)
 
-<LineChart data={vpl_fluxo} x=periodo y=cum_desc series=project_name title="Fluxo de caixa acumulado descontado por período" yAxisTitle="Acumulado descontado (R$)" markers=true>
+<LineChart data={vpl_fluxo} x=periodo y=cum_desc series=project_name title="Дисконт. накопленный денежный поток по периодам" yAxisTitle="Дисконт. накопл. (R$)" markers=true>
   <ReferenceLine y=0 color=negative label="break-even"/>
 </LineChart>
 
@@ -376,7 +376,7 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=total_iof title="Total c/ IOF (R$)" fmt='$#,##0.00'/>
 </DataTable>
 
-<BarChart data={planos_pagos} x=plano y=total_iof title="Custo total mensal com IOF por plano (R$)" swapXY=true sort=true/>
+<BarChart data={planos_pagos} x=plano y=total_iof title="Полная месячная стоимость с IOF по плану (R$)" swapXY=true sort=true/>
 
 <div style="display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;margin:1.4rem 0 0.4rem;">
   <img src="/shark.svg" alt="tubarão investidor" width="120" height="82" style="flex:0 0 auto;"/>
@@ -386,7 +386,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 > **Выбор ЛУЧШЕГО проекта** путём взвешивания индикаторов как критериев. Веса через **AHP**
 > (VPL 37% · TIR 24% · ILL 14% · PSR 14% · IITA 5,6% · IDLS 5,6% — CR = 0,012, consistente).
-> Ranking por **TOPSIS** em **duas normalizações** (vetorial/Euclidiana + min-max/linear); o
+> Ранжирование по **TOPSIS** в **двух нормализациях** (векторная/евклидова + min-max/линейная); 
 > **Итоговый Ci** — среднее. Столбец **Устойчиво?** = обе нормализации согласны в позиции.
 
 **🥇 Проект-победитель (наибольший итоговый Ci):**
@@ -434,42 +434,42 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 **🎯 SWOT — стратегическая позиция**
 Сильные/слабые стороны/возможности/угрозы, выведенные из реальных KPI (наименьшие IITA и IDLS = доминирующая сила).
-<img src="/admtools/swot.png" alt="SWOT do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/ru/swot.png" alt="SWOT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🌐 PESTELC — макросреда**
 Семь внешних факторов (политические, экономические, социальные, технологические, экологические, правовые, культурные).
-<img src="/admtools/pestel.png" alt="PESTELC do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/ru/pestel.png" alt="PESTELC do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🗺️ 5W4H — план действий (5W + 4H)**
 What/Why/Where/When/Who + How/How much/How many/How long — дорожная карта масштабирования выбранного проекта.
-<img src="/admtools/5w4h.png" alt="5W4H do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/ru/5w4h.png" alt="5W4H do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **📊 Парето сбоев (80/20)**
 Категории промптов, дающие 80% сбоев — куда бить в первую очередь (реальные данные Langfuse).
-<img src="/admtools/pareto.png" alt="Pareto de falhas do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/ru/pareto.png" alt="Pareto de falhas do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🔥 Матрица GUT — приоритизация (тепловая карта)**
 Тяжесть × Срочность × Тенденция действий; выше GUT = действовать первым.
-<img src="/admtools/gut.png" alt="Matriz GUT do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/ru/gut.png" alt="Matriz GUT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🕸️ Конкурентный радар — отличие**
 Отпечаток выбранного проекта **против среднего по портфелю** (синяя область доминирует над серой почти по каждой оси).
-<img src="/admtools/radar.png" alt="Radar competitivo do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/ru/radar.png" alt="Radar competitivo do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 
@@ -481,5 +481,5 @@ What/Why/Where/When/Who + How/How much/How many/How long — дорожная к
 ## 🔗 Отдельные панели по проектам
 
 {#each kpis as p}
-<a href="/projetos/{p.project_name}">▶️ {p.project_name} — PSR {p.kpi_psr}</a>
+<a href="/ru/projetos/{p.project_name}">▶️ {p.project_name} — PSR {p.kpi_psr}</a>
 {/each}

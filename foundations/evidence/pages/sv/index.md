@@ -47,13 +47,13 @@ select * from bsc.waste_dominante
 select categoria_waste, sum(waste_tokens) as waste_tokens from bsc.wastes_lean group by categoria_waste order by waste_tokens desc
 ```
 ```sql aluc_cat
-select * from bsc.alucinacao_categoria
+select * exclude (prompt_categoria), CASE prompt_categoria WHEN 'Conversa/Aberto' THEN 'Chatt/Öppen' WHEN 'RAG/Busca' THEN 'RAG/Sökning' WHEN 'Transformacao/Formato' THEN 'Transformation/Format' WHEN 'Raciocinio/Analise' THEN 'Resonemang/Analys' WHEN 'Sumarizacao' THEN 'Sammanfattning' WHEN 'Geracao de Codigo' THEN 'Kodgenerering' WHEN 'Extracao de Dados' THEN 'Datautvinning' ELSE prompt_categoria END as prompt_categoria from bsc.alucinacao_categoria
 ```
 ```sql rca_proj
-select * from bsc.rca_projeto
+select * exclude (prompt_gargalo), CASE prompt_gargalo WHEN 'Conversa/Aberto' THEN 'Chatt/Öppen' WHEN 'RAG/Busca' THEN 'RAG/Sökning' WHEN 'Transformacao/Formato' THEN 'Transformation/Format' WHEN 'Raciocinio/Analise' THEN 'Resonemang/Analys' WHEN 'Sumarizacao' THEN 'Sammanfattning' WHEN 'Geracao de Codigo' THEN 'Kodgenerering' WHEN 'Extracao de Dados' THEN 'Datautvinning' ELSE prompt_gargalo END as prompt_gargalo from bsc.rca_projeto
 ```
 ```sql rca_inter
-select * from bsc.rca_intersecao
+select * exclude (prompt_categoria), CASE prompt_categoria WHEN 'Conversa/Aberto' THEN 'Chatt/Öppen' WHEN 'RAG/Busca' THEN 'RAG/Sökning' WHEN 'Transformacao/Formato' THEN 'Transformation/Format' WHEN 'Raciocinio/Analise' THEN 'Resonemang/Analys' WHEN 'Sumarizacao' THEN 'Sammanfattning' WHEN 'Geracao de Codigo' THEN 'Kodgenerering' WHEN 'Extracao de Dados' THEN 'Datautvinning' ELSE prompt_categoria END as prompt_categoria from bsc.rca_intersecao
 ```
 ```sql vpl
 select * from bsc.vpl_resultado
@@ -86,7 +86,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 >
 > **Styrelseläsning:** det ideala projektet ligger **höger/bak** (skala+kvalitet), **högt** (PSR) och **grönt** (hållbart). En **stor röd** sfär = mycket bränd kassa utan täckning → åtgärda före uppskalning.
 
-![Mapa 5D do Portfólio de Projetos de IA](/5d_projetos.png?v=5)
+![Mapa 5D do Portfólio de Projetos de IA](/5d_sv.png?v=5)
 
 ### 🖱️ Interaktiv 5D-karta — hovra över varje sfär
 > **X** = Tokens (skala) · **Y** = PEUC (%) · **storlek** = PSR (0–5) · **färg** = ICCA (🟢 hållbar · 🟠 gräns · 🔴 förlust). Hovra över varje **glansig sfär** för att se **Projektnamn, PSR, PEUC och Tokens**.
@@ -173,7 +173,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 <Grid cols=2>
 <Group>
 
-**Onde o caixa de IA está sendo queimado** (Burn Rate por projeto)
+**Var AI-kassan bränns** (Burn Rate per projekt)
 
 <ECharts config={{
   tooltip: { trigger: 'item', valueFormatter: (v) => 'R$ ' + Number(v).toFixed(2) },
@@ -191,7 +191,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 </Group>
 <Group>
 
-**Mix global de falhas** (Pareto em donut)
+**Global felmix** (Pareto-donut)
 
 <ECharts config={{
   tooltip: { trigger: 'item' },
@@ -348,18 +348,18 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 > 🆕 **TIRM** (modifierad IRR) återinvesterar inflöden till projektets ränta — mer realistiskt än IRR. **VUL** (jämnt nettovärde) omvandlar NPV till en likvärdig årlig serie.
 
-> **TIR** = retorno do projeto · **ILL (PI)** acima de 1 = cria valor · comparados à **SELIC** e aos **juros dos EUA** (valores reais por projeto na tabela acima — colunas `TIR>SELIC?`/`TIR>EUA?`). O fluxo é **dolarizado** (USD/BRL) e descontado à taxa americana → colunas **VPL US$** e **PB desc. US$**. _Benchmarks (SELIC, juros EUA, câmbio) são placeholders — ajuste no `.env`._
+> **TIR** = projektets avkastning · **ILL (PI)** över 1 = skapar värde · jämfört med **SELIC** och **USA:s ränta** (verkliga värden per projekt i tabellen ovan — kolumner `TIR>SELIC?`/`TIR>EUA?`). Flödet är **dollariserat** (USD/BRL) och diskonterat till USA-räntan → kolumner **VPL US$** och **PB desc. US$**. _Benchmarks (SELIC, USA-ränta, växelkurs) är platshållare — justera i `.env`._
 
 **IRR per projekt vs. alternativkostnad (SELIC × USA)**
 
-<BarChart data={vpl} x=project_name y=tir title="TIR por projeto comparada à SELIC e aos juros dos EUA" yAxisTitle="TIR (por período)" sort=true>
+<BarChart data={vpl} x=project_name y=tir title="TIR per projekt vs. SELIC och USA:s ränta" yAxisTitle="TIR (per period)" sort=true>
   <ReferenceLine y=0.105 color=warning label="SELIC (BR) ~10,5%"/>
-  <ReferenceLine y=0.045 color=info label="Juros EUA ~4,5%"/>
+  <ReferenceLine y=0.045 color=info label="USA-ränta ~4,5%"/>
 </BarChart>
 
-**Recuperação do investimento ao longo do tempo** (acumulado descontado — cruza zero = payback descontado)
+**Investeringsåtervinning över tid** (diskonterat kumulativt — nollpassage = diskonterad payback)
 
-<LineChart data={vpl_fluxo} x=periodo y=cum_desc series=project_name title="Fluxo de caixa acumulado descontado por período" yAxisTitle="Acumulado descontado (R$)" markers=true>
+<LineChart data={vpl_fluxo} x=periodo y=cum_desc series=project_name title="Diskonterat kumulativt kassaflöde per period" yAxisTitle="Diskonterat kumulativt (R$)" markers=true>
   <ReferenceLine y=0 color=negative label="break-even"/>
 </LineChart>
 
@@ -376,7 +376,7 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=total_iof title="Total c/ IOF (R$)" fmt='$#,##0.00'/>
 </DataTable>
 
-<BarChart data={planos_pagos} x=plano y=total_iof title="Custo total mensal com IOF por plano (R$)" swapXY=true sort=true/>
+<BarChart data={planos_pagos} x=plano y=total_iof title="Total månadskostnad med IOF per plan (R$)" swapXY=true sort=true/>
 
 <div style="display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;margin:1.4rem 0 0.4rem;">
   <img src="/shark.svg" alt="tubarão investidor" width="120" height="82" style="flex:0 0 auto;"/>
@@ -386,7 +386,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 > **Val av det BÄSTA projektet** genom att vikta indikatorerna som kriterier. Vikter via **AHP**
 > (VPL 37% · TIR 24% · ILL 14% · PSR 14% · IITA 5,6% · IDLS 5,6% — CR = 0,012, consistente).
-> Ranking por **TOPSIS** em **duas normalizações** (vetorial/Euclidiana + min-max/linear); o
+> Rankning med **TOPSIS** i **två normaliseringar** (vektor/euklidisk + min-max/linjär); det
 > **Slutlig Ci** är medelvärdet. Kolumnen **Robust?** = båda normaliseringarna är överens om positionen.
 
 **🥇 Vinnande projekt (högsta slutliga Ci):**
@@ -434,42 +434,42 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 **🎯 SWOT — strategisk position**
 Styrkor/svagheter/möjligheter/hot härledda från verkliga KPI:er (lägst IITA och IDLS = dominerande styrka).
-<img src="/admtools/swot.png" alt="SWOT do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/sv/swot.png" alt="SWOT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🌐 PESTELC — makromiljö**
 Sju externa faktorer (Politiska, Ekonomiska, Sociala, Teknologiska, Ekologiska, Legala, Kulturella).
-<img src="/admtools/pestel.png" alt="PESTELC do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/sv/pestel.png" alt="PESTELC do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🗺️ 5W4H — handlingsplan (5W + 4H)**
 What/Why/Where/When/Who + How/How much/How many/How long — det utvalda projektets uppskalningsplan.
-<img src="/admtools/5w4h.png" alt="5W4H do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/sv/5w4h.png" alt="5W4H do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **📊 Felpareto (80/20)**
 Promptkategorier som står för 80% av felen — var man ska angripa först (verkliga Langfuse-data).
-<img src="/admtools/pareto.png" alt="Pareto de falhas do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/sv/pareto.png" alt="Pareto de falhas do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🔥 GUT-matris — prioritering (värmekarta)**
 Allvar × Brådska × Tendens för åtgärderna; högre GUT = agera först.
-<img src="/admtools/gut.png" alt="Matriz GUT do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/sv/gut.png" alt="Matriz GUT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🕸️ Konkurrensradar — särskiljande**
 Det utvalda projektets fingeravtryck **vs portföljsnittet** (det blå området dominerar det grå på nästan varje axel).
-<img src="/admtools/radar.png" alt="Radar competitivo do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/sv/radar.png" alt="Radar competitivo do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 
@@ -481,5 +481,5 @@ Det utvalda projektets fingeravtryck **vs portföljsnittet** (det blå området 
 ## 🔗 Individuella paneler per projekt
 
 {#each kpis as p}
-<a href="/projetos/{p.project_name}">▶️ {p.project_name} — PSR {p.kpi_psr}</a>
+<a href="/sv/projetos/{p.project_name}">▶️ {p.project_name} — PSR {p.kpi_psr}</a>
 {/each}

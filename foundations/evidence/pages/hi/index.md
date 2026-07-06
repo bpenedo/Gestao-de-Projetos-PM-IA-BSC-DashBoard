@@ -47,13 +47,13 @@ select * from bsc.waste_dominante
 select categoria_waste, sum(waste_tokens) as waste_tokens from bsc.wastes_lean group by categoria_waste order by waste_tokens desc
 ```
 ```sql aluc_cat
-select * from bsc.alucinacao_categoria
+select * exclude (prompt_categoria), CASE prompt_categoria WHEN 'Conversa/Aberto' THEN 'वार्ता/खुला' WHEN 'RAG/Busca' THEN 'RAG/खोज' WHEN 'Transformacao/Formato' THEN 'रूपांतरण/प्रारूप' WHEN 'Raciocinio/Analise' THEN 'तर्क/विश्लेषण' WHEN 'Sumarizacao' THEN 'सारांश' WHEN 'Geracao de Codigo' THEN 'कोड जनरेशन' WHEN 'Extracao de Dados' THEN 'डेटा निष्कर्षण' ELSE prompt_categoria END as prompt_categoria from bsc.alucinacao_categoria
 ```
 ```sql rca_proj
-select * from bsc.rca_projeto
+select * exclude (prompt_gargalo), CASE prompt_gargalo WHEN 'Conversa/Aberto' THEN 'वार्ता/खुला' WHEN 'RAG/Busca' THEN 'RAG/खोज' WHEN 'Transformacao/Formato' THEN 'रूपांतरण/प्रारूप' WHEN 'Raciocinio/Analise' THEN 'तर्क/विश्लेषण' WHEN 'Sumarizacao' THEN 'सारांश' WHEN 'Geracao de Codigo' THEN 'कोड जनरेशन' WHEN 'Extracao de Dados' THEN 'डेटा निष्कर्षण' ELSE prompt_gargalo END as prompt_gargalo from bsc.rca_projeto
 ```
 ```sql rca_inter
-select * from bsc.rca_intersecao
+select * exclude (prompt_categoria), CASE prompt_categoria WHEN 'Conversa/Aberto' THEN 'वार्ता/खुला' WHEN 'RAG/Busca' THEN 'RAG/खोज' WHEN 'Transformacao/Formato' THEN 'रूपांतरण/प्रारूप' WHEN 'Raciocinio/Analise' THEN 'तर्क/विश्लेषण' WHEN 'Sumarizacao' THEN 'सारांश' WHEN 'Geracao de Codigo' THEN 'कोड जनरेशन' WHEN 'Extracao de Dados' THEN 'डेटा निष्कर्षण' ELSE prompt_categoria END as prompt_categoria from bsc.rca_intersecao
 ```
 ```sql vpl
 select * from bsc.vpl_resultado
@@ -86,7 +86,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 >
 > **बोर्ड की दृष्टि:** आदर्श परियोजना **दाएँ/पीछे** (पैमाना+गुणवत्ता), **ऊँची** (PSR) और **हरी** (संधारणीय) होती है। **बड़ा लाल** गोला = कवरेज बिना बहुत नकदी जली → स्केल से पहले सुधारें।
 
-![Mapa 5D do Portfólio de Projetos de IA](/5d_projetos.png?v=5)
+![Mapa 5D do Portfólio de Projetos de IA](/5d_hi.png?v=5)
 
 ### 🖱️ इंटरैक्टिव 5D मानचित्र — प्रत्येक गोले पर माउस ले जाएँ
 > **X** = टोकन (पैमाना) · **Y** = PEUC (%) · **आकार** = PSR (0–5) · **रंग** = ICCA (🟢 संधारणीय · 🟠 सीमांत · 🔴 हानि)। प्रत्येक **ग्लॉसी गोले** पर माउस ले जाने पर **परियोजना नाम, PSR, PEUC और टोकन** दिखते हैं।
@@ -173,7 +173,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 <Grid cols=2>
 <Group>
 
-**Onde o caixa de IA está sendo queimado** (Burn Rate por projeto)
+**AI नकदी कहाँ जल रही है** (प्रति परियोजना Burn Rate)
 
 <ECharts config={{
   tooltip: { trigger: 'item', valueFormatter: (v) => 'R$ ' + Number(v).toFixed(2) },
@@ -191,7 +191,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 </Group>
 <Group>
 
-**Mix global de falhas** (Pareto em donut)
+**वैश्विक विफलता मिश्रण** (पैरेटो डोनट)
 
 <ECharts config={{
   tooltip: { trigger: 'item' },
@@ -348,18 +348,18 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 > 🆕 **TIRM** (संशोधित IRR) आवक को परियोजना दर पर पुनर्निवेश करता है — IRR से अधिक यथार्थवादी। **VUL** (शुद्ध समान मूल्य) NPV को समतुल्य वार्षिक श्रृंखला में बदलता है।
 
-> **TIR** = retorno do projeto · **ILL (PI)** acima de 1 = cria valor · comparados à **SELIC** e aos **juros dos EUA** (valores reais por projeto na tabela acima — colunas `TIR>SELIC?`/`TIR>EUA?`). O fluxo é **dolarizado** (USD/BRL) e descontado à taxa americana → colunas **VPL US$** e **PB desc. US$**. _Benchmarks (SELIC, juros EUA, câmbio) são placeholders — ajuste no `.env`._
+> **TIR** = परियोजना प्रतिफल · **ILL (PI)** 1 से ऊपर = मूल्य सृजन · **SELIC** और **अमेरिकी ब्याज** से तुलना (ऊपर तालिका में प्रति परियोजना वास्तविक मान — स्तंभ `TIR>SELIC?`/`TIR>EUA?`)। प्रवाह **डॉलरीकृत** (USD/BRL) और अमेरिकी दर पर छूटयुक्त → स्तंभ **VPL US$** और **PB desc. US$**। _बेंचमार्क (SELIC, अमेरिकी ब्याज, विनिमय) प्लेसहोल्डर हैं — `.env` में समायोजित करें।_
 
 **प्रति परियोजना IRR बनाम अवसर लागत (SELIC × अमेरिका)**
 
-<BarChart data={vpl} x=project_name y=tir title="TIR por projeto comparada à SELIC e aos juros dos EUA" yAxisTitle="TIR (por período)" sort=true>
+<BarChart data={vpl} x=project_name y=tir title="प्रति परियोजना TIR बनाम SELIC व अमेरिकी ब्याज" yAxisTitle="TIR (प्रति अवधि)" sort=true>
   <ReferenceLine y=0.105 color=warning label="SELIC (BR) ~10,5%"/>
-  <ReferenceLine y=0.045 color=info label="Juros EUA ~4,5%"/>
+  <ReferenceLine y=0.045 color=info label="अमेरिकी ब्याज ~4.5%"/>
 </BarChart>
 
-**Recuperação do investimento ao longo do tempo** (acumulado descontado — cruza zero = payback descontado)
+**समय के साथ निवेश वसूली** (छूटयुक्त संचयी — शून्य पार = छूटयुक्त पेबैक)
 
-<LineChart data={vpl_fluxo} x=periodo y=cum_desc series=project_name title="Fluxo de caixa acumulado descontado por período" yAxisTitle="Acumulado descontado (R$)" markers=true>
+<LineChart data={vpl_fluxo} x=periodo y=cum_desc series=project_name title="प्रति अवधि छूटयुक्त संचयी नकदी प्रवाह" yAxisTitle="छूटयुक्त संचयी (R$)" markers=true>
   <ReferenceLine y=0 color=negative label="break-even"/>
 </LineChart>
 
@@ -376,7 +376,7 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=total_iof title="Total c/ IOF (R$)" fmt='$#,##0.00'/>
 </DataTable>
 
-<BarChart data={planos_pagos} x=plano y=total_iof title="Custo total mensal com IOF por plano (R$)" swapXY=true sort=true/>
+<BarChart data={planos_pagos} x=plano y=total_iof title="प्रति योजना IOF सहित मासिक कुल लागत (R$)" swapXY=true sort=true/>
 
 <div style="display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;margin:1.4rem 0 0.4rem;">
   <img src="/shark.svg" alt="tubarão investidor" width="120" height="82" style="flex:0 0 auto;"/>
@@ -386,7 +386,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 > संकेतकों को मानदंड मानकर **सर्वश्रेष्ठ परियोजना का चयन**। भार **AHP**
 > (VPL 37% · TIR 24% · ILL 14% · PSR 14% · IITA 5,6% · IDLS 5,6% — CR = 0,012, consistente).
-> Ranking por **TOPSIS** em **duas normalizações** (vetorial/Euclidiana + min-max/linear); o
+> **TOPSIS** द्वारा **दो सामान्यीकरणों** (वेक्टर/यूक्लिडियन + min-max/रैखिक) में रैंकिंग; 
 > **अंतिम Ci** औसत है। **मज़बूत?** स्तंभ = दोनों सामान्यीकरण स्थिति पर सहमत।
 
 **🥇 विजेता परियोजना (उच्चतम अंतिम Ci):**
@@ -434,42 +434,42 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 **🎯 SWOT — रणनीतिक स्थिति**
 वास्तविक KPI से व्युत्पन्न शक्ति/कमजोरी/अवसर/खतरे (न्यूनतम IITA व IDLS = प्रमुख शक्ति)।
-<img src="/admtools/swot.png" alt="SWOT do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/hi/swot.png" alt="SWOT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🌐 PESTELC — वृहद परिवेश**
 सात बाहरी कारक (राजनीतिक, आर्थिक, सामाजिक, तकनीकी, पारिस्थितिक, कानूनी, सांस्कृतिक)।
-<img src="/admtools/pestel.png" alt="PESTELC do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/hi/pestel.png" alt="PESTELC do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🗺️ 5W4H — कार्य योजना (5W + 4H)**
 What/Why/Where/When/Who + How/How much/How many/How long — चयनित परियोजना का स्केल-अप रोडमैप।
-<img src="/admtools/5w4h.png" alt="5W4H do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/hi/5w4h.png" alt="5W4H do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **📊 विफलता पैरेटो (80/20)**
 80% विफलताओं वाली प्रॉम्प्ट श्रेणियाँ — पहले कहाँ हमला करें (Langfuse वास्तविक डेटा)।
-<img src="/admtools/pareto.png" alt="Pareto de falhas do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/hi/pareto.png" alt="Pareto de falhas do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🔥 GUT मैट्रिक्स — प्राथमिकता (हीटमैप)**
 क्रियाओं की गंभीरता × तात्कालिकता × प्रवृत्ति; अधिक GUT = पहले कार्य करें।
-<img src="/admtools/gut.png" alt="Matriz GUT do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/hi/gut.png" alt="Matriz GUT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🕸️ प्रतिस्पर्धी रडार — विभेदक**
 चयनित का फिंगरप्रिंट **बनाम पोर्टफोलियो औसत** (नीला क्षेत्र लगभग हर अक्ष पर ग्रे पर हावी)।
-<img src="/admtools/radar.png" alt="Radar competitivo do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/hi/radar.png" alt="Radar competitivo do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 
@@ -481,5 +481,5 @@ What/Why/Where/When/Who + How/How much/How many/How long — चयनित प
 ## 🔗 प्रति परियोजना अलग पैनल
 
 {#each kpis as p}
-<a href="/projetos/{p.project_name}">▶️ {p.project_name} — PSR {p.kpi_psr}</a>
+<a href="/hi/projetos/{p.project_name}">▶️ {p.project_name} — PSR {p.kpi_psr}</a>
 {/each}

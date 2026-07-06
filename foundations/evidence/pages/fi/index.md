@@ -47,13 +47,13 @@ select * from bsc.waste_dominante
 select categoria_waste, sum(waste_tokens) as waste_tokens from bsc.wastes_lean group by categoria_waste order by waste_tokens desc
 ```
 ```sql aluc_cat
-select * from bsc.alucinacao_categoria
+select * exclude (prompt_categoria), CASE prompt_categoria WHEN 'Conversa/Aberto' THEN 'Keskustelu/Avoin' WHEN 'RAG/Busca' THEN 'RAG/Haku' WHEN 'Transformacao/Formato' THEN 'Muunnos/Muoto' WHEN 'Raciocinio/Analise' THEN 'Päättely/Analyysi' WHEN 'Sumarizacao' THEN 'Tiivistäminen' WHEN 'Geracao de Codigo' THEN 'Koodin luonti' WHEN 'Extracao de Dados' THEN 'Tietojen poiminta' ELSE prompt_categoria END as prompt_categoria from bsc.alucinacao_categoria
 ```
 ```sql rca_proj
-select * from bsc.rca_projeto
+select * exclude (prompt_gargalo), CASE prompt_gargalo WHEN 'Conversa/Aberto' THEN 'Keskustelu/Avoin' WHEN 'RAG/Busca' THEN 'RAG/Haku' WHEN 'Transformacao/Formato' THEN 'Muunnos/Muoto' WHEN 'Raciocinio/Analise' THEN 'Päättely/Analyysi' WHEN 'Sumarizacao' THEN 'Tiivistäminen' WHEN 'Geracao de Codigo' THEN 'Koodin luonti' WHEN 'Extracao de Dados' THEN 'Tietojen poiminta' ELSE prompt_gargalo END as prompt_gargalo from bsc.rca_projeto
 ```
 ```sql rca_inter
-select * from bsc.rca_intersecao
+select * exclude (prompt_categoria), CASE prompt_categoria WHEN 'Conversa/Aberto' THEN 'Keskustelu/Avoin' WHEN 'RAG/Busca' THEN 'RAG/Haku' WHEN 'Transformacao/Formato' THEN 'Muunnos/Muoto' WHEN 'Raciocinio/Analise' THEN 'Päättely/Analyysi' WHEN 'Sumarizacao' THEN 'Tiivistäminen' WHEN 'Geracao de Codigo' THEN 'Koodin luonti' WHEN 'Extracao de Dados' THEN 'Tietojen poiminta' ELSE prompt_categoria END as prompt_categoria from bsc.rca_intersecao
 ```
 ```sql vpl
 select * from bsc.vpl_resultado
@@ -86,7 +86,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 >
 > **Hallituksen näkökulma:** ihanteellinen projekti on **oikealla/takana** (mittakaava+laatu), **korkealla** (PSR) ja **vihreä** (kestävä). **Suuri punainen** pallo = paljon poltettua rahaa ilman katetta → korjaa ennen skaalausta.
 
-![Mapa 5D do Portfólio de Projetos de IA](/5d_projetos.png?v=5)
+![Mapa 5D do Portfólio de Projetos de IA](/5d_fi.png?v=5)
 
 ### 🖱️ Interaktiivinen 5D-kartta — vie hiiri kunkin pallon päälle
 > **X** = tokenit (mittakaava) · **Y** = PEUC (%) · **koko** = PSR (0–5) · **väri** = ICCA (🟢 kestävä · 🟠 rajalla · 🔴 tappio). Vie hiiri kunkin **kiiltävän pallon** päälle nähdäksesi **projektin nimen, PSR, PEUC ja tokenit**.
@@ -173,7 +173,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 <Grid cols=2>
 <Group>
 
-**Onde o caixa de IA está sendo queimado** (Burn Rate por projeto)
+**Missä tekoälyn kassa palaa** (Burn Rate projekteittain)
 
 <ECharts config={{
   tooltip: { trigger: 'item', valueFormatter: (v) => 'R$ ' + Number(v).toFixed(2) },
@@ -191,7 +191,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 </Group>
 <Group>
 
-**Mix global de falhas** (Pareto em donut)
+**Globaali vikajakauma** (Pareto-donitsi)
 
 <ECharts config={{
   tooltip: { trigger: 'item' },
@@ -348,18 +348,18 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 > 🆕 **TIRM** (muokattu IRR) sijoittaa tulovirrat uudelleen projektin korolla — realistisempi kuin IRR. **VUL** (tasainen nettoarvo) muuntaa NPV:n vastaavaksi vuosisarjaksi.
 
-> **TIR** = retorno do projeto · **ILL (PI)** acima de 1 = cria valor · comparados à **SELIC** e aos **juros dos EUA** (valores reais por projeto na tabela acima — colunas `TIR>SELIC?`/`TIR>EUA?`). O fluxo é **dolarizado** (USD/BRL) e descontado à taxa americana → colunas **VPL US$** e **PB desc. US$**. _Benchmarks (SELIC, juros EUA, câmbio) são placeholders — ajuste no `.env`._
+> **TIR** = projektin tuotto · **ILL (PI)** yli 1 = luo arvoa · verrattuna **SELIC**-korkoon ja **USA:n korkoon** (todelliset arvot projekteittain yllä olevassa taulukossa — sarakkeet `TIR>SELIC?`/`TIR>EUA?`). Virta on **dollarisoitu** (USD/BRL) ja diskontattu USA:n korolla → sarakkeet **VPL US$** ja **PB desc. US$**. _Vertailuarvot (SELIC, USA:n korko, valuuttakurssi) ovat paikkamerkkejä — säädä `.env`-tiedostossa._
 
 **IRR projekteittain vs. vaihtoehtoiskustannus (SELIC × USA)**
 
-<BarChart data={vpl} x=project_name y=tir title="TIR por projeto comparada à SELIC e aos juros dos EUA" yAxisTitle="TIR (por período)" sort=true>
+<BarChart data={vpl} x=project_name y=tir title="TIR projekteittain vs. SELIC ja USA:n korko" yAxisTitle="TIR (per jakso)" sort=true>
   <ReferenceLine y=0.105 color=warning label="SELIC (BR) ~10,5%"/>
-  <ReferenceLine y=0.045 color=info label="Juros EUA ~4,5%"/>
+  <ReferenceLine y=0.045 color=info label="USA:n korko ~4,5%"/>
 </BarChart>
 
-**Recuperação do investimento ao longo do tempo** (acumulado descontado — cruza zero = payback descontado)
+**Investoinnin takaisinmaksu ajan myötä** (diskontattu kumulatiivinen — nollan ylitys = diskontattu takaisinmaksu)
 
-<LineChart data={vpl_fluxo} x=periodo y=cum_desc series=project_name title="Fluxo de caixa acumulado descontado por período" yAxisTitle="Acumulado descontado (R$)" markers=true>
+<LineChart data={vpl_fluxo} x=periodo y=cum_desc series=project_name title="Diskontattu kumulatiivinen kassavirta jaksoittain" yAxisTitle="Diskontattu kumulatiivinen (R$)" markers=true>
   <ReferenceLine y=0 color=negative label="break-even"/>
 </LineChart>
 
@@ -376,7 +376,7 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=total_iof title="Total c/ IOF (R$)" fmt='$#,##0.00'/>
 </DataTable>
 
-<BarChart data={planos_pagos} x=plano y=total_iof title="Custo total mensal com IOF por plano (R$)" swapXY=true sort=true/>
+<BarChart data={planos_pagos} x=plano y=total_iof title="Kuukausikokonaiskustannus IOF:llä per suunnitelma (R$)" swapXY=true sort=true/>
 
 <div style="display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;margin:1.4rem 0 0.4rem;">
   <img src="/shark.svg" alt="tubarão investidor" width="120" height="82" style="flex:0 0 auto;"/>
@@ -386,7 +386,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 > **Parhaan projektin valinta** painottamalla indikaattoreita kriteereinä. Painot **AHP**:lla
 > (VPL 37% · TIR 24% · ILL 14% · PSR 14% · IITA 5,6% · IDLS 5,6% — CR = 0,012, consistente).
-> Ranking por **TOPSIS** em **duas normalizações** (vetorial/Euclidiana + min-max/linear); o
+> Sijoitus **TOPSIS**-menetelmällä **kahdella normalisoinnilla** (vektori/euklidinen + min-max/lineaarinen); 
 > **Lopullinen Ci** on keskiarvo. Sarake **Vankka?** = molemmat normalisoinnit ovat samaa mieltä sijainnista.
 
 **🥇 Voittajaprojekti (korkein lopullinen Ci):**
@@ -434,42 +434,42 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 **🎯 SWOT — strateginen asema**
 Vahvuudet/heikkoudet/mahdollisuudet/uhat johdettuina todellisista KPI:istä (matalimmat IITA ja IDLS = hallitseva vahvuus).
-<img src="/admtools/swot.png" alt="SWOT do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/fi/swot.png" alt="SWOT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🌐 PESTELC — makroympäristö**
 Seitsemän ulkoista tekijää (poliittiset, taloudelliset, sosiaaliset, teknologiset, ekologiset, oikeudelliset, kulttuuriset).
-<img src="/admtools/pestel.png" alt="PESTELC do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/fi/pestel.png" alt="PESTELC do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🗺️ 5W4H — toimintasuunnitelma (5W + 4H)**
 What/Why/Where/When/Who + How/How much/How many/How long — valitun projektin skaalaussuunnitelma.
-<img src="/admtools/5w4h.png" alt="5W4H do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/fi/5w4h.png" alt="5W4H do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **📊 Vikojen Pareto (80/20)**
 Prompttikategoriat, jotka muodostavat 80% vioista — mihin hyökätä ensin (todelliset Langfuse-tiedot).
-<img src="/admtools/pareto.png" alt="Pareto de falhas do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/fi/pareto.png" alt="Pareto de falhas do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🔥 GUT-matriisi — priorisointi (lämpökartta)**
 Vakavuus × Kiireellisyys × Suuntaus toimille; korkeampi GUT = toimi ensin.
-<img src="/admtools/gut.png" alt="Matriz GUT do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/fi/gut.png" alt="Matriz GUT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🕸️ Kilpailututka — erottautuminen**
 Valitun projektin sormenjälki **vs salkun keskiarvo** (sininen alue hallitsee harmaata lähes joka akselilla).
-<img src="/admtools/radar.png" alt="Radar competitivo do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/fi/radar.png" alt="Radar competitivo do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 
@@ -481,5 +481,5 @@ Valitun projektin sormenjälki **vs salkun keskiarvo** (sininen alue hallitsee h
 ## 🔗 Projektikohtaiset paneelit
 
 {#each kpis as p}
-<a href="/projetos/{p.project_name}">▶️ {p.project_name} — PSR {p.kpi_psr}</a>
+<a href="/fi/projetos/{p.project_name}">▶️ {p.project_name} — PSR {p.kpi_psr}</a>
 {/each}

@@ -47,13 +47,13 @@ select * from bsc.waste_dominante
 select categoria_waste, sum(waste_tokens) as waste_tokens from bsc.wastes_lean group by categoria_waste order by waste_tokens desc
 ```
 ```sql aluc_cat
-select * from bsc.alucinacao_categoria
+select * exclude (prompt_categoria), CASE prompt_categoria WHEN 'Conversa/Aberto' THEN 'Conversación/Abierto' WHEN 'RAG/Busca' THEN 'RAG/Búsqueda' WHEN 'Transformacao/Formato' THEN 'Transformación/Formato' WHEN 'Raciocinio/Analise' THEN 'Razonamiento/Análisis' WHEN 'Sumarizacao' THEN 'Resumen' WHEN 'Geracao de Codigo' THEN 'Generación de Código' WHEN 'Extracao de Dados' THEN 'Extracción de Datos' ELSE prompt_categoria END as prompt_categoria from bsc.alucinacao_categoria
 ```
 ```sql rca_proj
-select * from bsc.rca_projeto
+select * exclude (prompt_gargalo), CASE prompt_gargalo WHEN 'Conversa/Aberto' THEN 'Conversación/Abierto' WHEN 'RAG/Busca' THEN 'RAG/Búsqueda' WHEN 'Transformacao/Formato' THEN 'Transformación/Formato' WHEN 'Raciocinio/Analise' THEN 'Razonamiento/Análisis' WHEN 'Sumarizacao' THEN 'Resumen' WHEN 'Geracao de Codigo' THEN 'Generación de Código' WHEN 'Extracao de Dados' THEN 'Extracción de Datos' ELSE prompt_gargalo END as prompt_gargalo from bsc.rca_projeto
 ```
 ```sql rca_inter
-select * from bsc.rca_intersecao
+select * exclude (prompt_categoria), CASE prompt_categoria WHEN 'Conversa/Aberto' THEN 'Conversación/Abierto' WHEN 'RAG/Busca' THEN 'RAG/Búsqueda' WHEN 'Transformacao/Formato' THEN 'Transformación/Formato' WHEN 'Raciocinio/Analise' THEN 'Razonamiento/Análisis' WHEN 'Sumarizacao' THEN 'Resumen' WHEN 'Geracao de Codigo' THEN 'Generación de Código' WHEN 'Extracao de Dados' THEN 'Extracción de Datos' ELSE prompt_categoria END as prompt_categoria from bsc.rca_intersecao
 ```
 ```sql vpl
 select * from bsc.vpl_resultado
@@ -86,7 +86,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 >
 > **Lectura de directorio:** el proyecto ideal está a la **derecha/fondo** (escala+calidad), **alto** (PSR) y **verde** (sostenible). Esfera **grande y roja** = mucho efectivo quemado sin cobertura → corregir antes de escalar.
 
-![Mapa 5D do Portfólio de Projetos de IA](/5d_projetos.png?v=5)
+![Mapa 5D do Portfólio de Projetos de IA](/5d_es.png?v=5)
 
 ### 🖱️ Mapa 5D Interactivo — pasa el mouse sobre cada esfera
 > **X** = Tokens (escala) · **Y** = PEUC (%) · **tamaño** = PSR (0–5) · **color** = ICCA (🟢 sostenible · 🟠 límite · 🔴 pérdida). Al pasar el mouse por cada **esfera glossy**, aparece **Nombre del proyecto, PSR, PEUC y Tokens**.
@@ -173,7 +173,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 <Grid cols=2>
 <Group>
 
-**Onde o caixa de IA está sendo queimado** (Burn Rate por projeto)
+**Dónde se está quemando el efectivo de IA** (Burn Rate por proyecto)
 
 <ECharts config={{
   tooltip: { trigger: 'item', valueFormatter: (v) => 'R$ ' + Number(v).toFixed(2) },
@@ -191,7 +191,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 </Group>
 <Group>
 
-**Mix global de falhas** (Pareto em donut)
+**Mix global de fallas** (Pareto en donut)
 
 <ECharts config={{
   tooltip: { trigger: 'item' },
@@ -348,18 +348,18 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 > 🆕 **TIRM** (TIR Modificada) reinvierte las entradas a la tasa del proyecto — más realista que la TIR. **VUL** (Valor Uniforme Neto) convierte el VAN en una serie anual equivalente.
 
-> **TIR** = retorno do projeto · **ILL (PI)** acima de 1 = cria valor · comparados à **SELIC** e aos **juros dos EUA** (valores reais por projeto na tabela acima — colunas `TIR>SELIC?`/`TIR>EUA?`). O fluxo é **dolarizado** (USD/BRL) e descontado à taxa americana → colunas **VPL US$** e **PB desc. US$**. _Benchmarks (SELIC, juros EUA, câmbio) são placeholders — ajuste no `.env`._
+> **TIR** = retorno del proyecto · **ILL (PI)** por encima de 1 = crea valor · comparados con **SELIC** y con los **intereses de EE. UU.** (valores reales por proyecto en la tabla de arriba — columnas `TIR>SELIC?`/`TIR>EUA?`). El flujo está **dolarizado** (USD/BRL) y descontado a la tasa estadounidense → columnas **VPL US$** y **PB desc. US$**. _Los benchmarks (SELIC, interés EE. UU., cambio) son placeholders — ajusta en `.env`._
 
 **TIR por proyecto vs. costo de oportunidad (SELIC × EE. UU.)**
 
-<BarChart data={vpl} x=project_name y=tir title="TIR por projeto comparada à SELIC e aos juros dos EUA" yAxisTitle="TIR (por período)" sort=true>
+<BarChart data={vpl} x=project_name y=tir title="TIR por proyecto vs. SELIC e intereses de EE. UU." yAxisTitle="TIR (por período)" sort=true>
   <ReferenceLine y=0.105 color=warning label="SELIC (BR) ~10,5%"/>
-  <ReferenceLine y=0.045 color=info label="Juros EUA ~4,5%"/>
+  <ReferenceLine y=0.045 color=info label="Interés EE. UU. ~4,5%"/>
 </BarChart>
 
-**Recuperação do investimento ao longo do tempo** (acumulado descontado — cruza zero = payback descontado)
+**Recuperación de la inversión en el tiempo** (acumulado descontado — cruza cero = payback descontado)
 
-<LineChart data={vpl_fluxo} x=periodo y=cum_desc series=project_name title="Fluxo de caixa acumulado descontado por período" yAxisTitle="Acumulado descontado (R$)" markers=true>
+<LineChart data={vpl_fluxo} x=periodo y=cum_desc series=project_name title="Flujo de caja acumulado descontado por período" yAxisTitle="Acumulado descontado (R$)" markers=true>
   <ReferenceLine y=0 color=negative label="break-even"/>
 </LineChart>
 
@@ -376,7 +376,7 @@ select * from bsc.decisao_mcda where rank_final = 1
   <Column id=total_iof title="Total c/ IOF (R$)" fmt='$#,##0.00'/>
 </DataTable>
 
-<BarChart data={planos_pagos} x=plano y=total_iof title="Custo total mensal com IOF por plano (R$)" swapXY=true sort=true/>
+<BarChart data={planos_pagos} x=plano y=total_iof title="Costo mensual total con IOF por plan (R$)" swapXY=true sort=true/>
 
 <div style="display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;margin:1.4rem 0 0.4rem;">
   <img src="/shark.svg" alt="tubarão investidor" width="120" height="82" style="flex:0 0 auto;"/>
@@ -386,7 +386,7 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 > **Elección del MEJOR proyecto** ponderando los indicadores como criterios. Pesos por **AHP**
 > (VPL 37% · TIR 24% · ILL 14% · PSR 14% · IITA 5,6% · IDLS 5,6% — CR = 0,012, consistente).
-> Ranking por **TOPSIS** em **duas normalizações** (vetorial/Euclidiana + min-max/linear); o
+> Ranking por **TOPSIS** en **dos normalizaciones** (vectorial/Euclidiana + min-max/lineal); el
 > **Ci final** es el promedio. Columna **¿Robusto?** = ambas normalizaciones coinciden en la posición.
 
 **🥇 Proyecto ganador (mayor Ci final):**
@@ -434,42 +434,42 @@ select * from bsc.decisao_mcda where rank_final = 1
 
 **🎯 SWOT — posición estratégica**
 Fortalezas/debilidades/oportunidades/amenazas derivadas de KPIs reales (menor IITA e IDLS = fortaleza dominante).
-<img src="/admtools/swot.png" alt="SWOT do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/es/swot.png" alt="SWOT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🌐 PESTELC — macroentorno**
 Siete factores externos (Político, Económico, Social, Tecnológico, Ecológico, Legal, Cultural).
-<img src="/admtools/pestel.png" alt="PESTELC do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/es/pestel.png" alt="PESTELC do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🗺️ 5W4H — plan de acción (5W + 4H)**
 What/Why/Where/When/Who + How/How much/How many/How long — hoja de ruta de escalado del electo.
-<img src="/admtools/5w4h.png" alt="5W4H do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/es/5w4h.png" alt="5W4H do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **📊 Pareto de fallas (80/20)**
 Categorías de prompt que concentran 80% de las fallas — dónde atacar primero (datos reales de Langfuse).
-<img src="/admtools/pareto.png" alt="Pareto de falhas do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/es/pareto.png" alt="Pareto de falhas do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🔥 Matriz GUT — priorización (heatmap)**
 Gravedad × Urgencia × Tendencia de las acciones; mayor GUT = actuar primero.
-<img src="/admtools/gut.png" alt="Matriz GUT do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/es/gut.png" alt="Matriz GUT do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 <div>
 
 **🕸️ Radar competitivo — diferencial**
 Huella del electo **vs promedio del portafolio** (el área azul domina la gris en casi todo eje).
-<img src="/admtools/radar.png" alt="Radar competitivo do projeto eleito" style="width:100%;border-radius:8px;"/>
+<img src="/admtools/es/radar.png" alt="Radar competitivo do projeto eleito" style="width:100%;border-radius:8px;"/>
 
 </div>
 
@@ -481,5 +481,5 @@ Huella del electo **vs promedio del portafolio** (el área azul domina la gris e
 ## 🔗 Paneles Individuales por Proyecto
 
 {#each kpis as p}
-<a href="/projetos/{p.project_name}">▶️ {p.project_name} — PSR {p.kpi_psr}</a>
+<a href="/es/projetos/{p.project_name}">▶️ {p.project_name} — PSR {p.kpi_psr}</a>
 {/each}
