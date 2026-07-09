@@ -40,3 +40,7 @@ foundations/pitchdeck/pitchdeck_*
 foundations/mc/
 foundations/mcda/
 *:Zone.Identifier
+
+# Gráficos gerados pela esteira (recriados por run_all.sh). As telas usadas
+# nos READMEs vivem versionadas em docs/screenshots/.
+foundations/evidence/static/mc/
