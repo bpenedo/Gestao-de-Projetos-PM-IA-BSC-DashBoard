@@ -71,6 +71,7 @@ d'investissement de niveau Wall Street** et de la **décision multicritère**. C
 - [🎲 Monte-Carlo — le risque que la moyenne cache](#-monte-carlo--le-risque-que-la-moyenne-cache)
 - [🧮 Cinq écoles de décision. Un seul verdict.](#-cinq-écoles-de-décision-un-seul-verdict)
 - [🔬 Le signal est en amont — et c'est là que réside le levier](#-le-signal-est-en-amont--et-cest-là-que-réside-le-levier)
+- [🎓 Fondements : ce qu'est Monte-Carlo et ce qu'est la décision multicritère](#-fondements--ce-quest-monte-carlo-et-ce-quest-la-décision-multicritère)
 - [🌐 12 langues](#-12-langues)
 - [🙋 Objections (les questions que vous vous posez maintenant)](#-objections-les-questions-que-vous-vous-posez-maintenant)
 - [🧩 Skills incluses](#-skills-incluses-build--analyze-your-own)
@@ -454,6 +455,67 @@ défendables, et la seule école dissidente est le surclassement, sur le critèr
 
 > **Le basculement final :** le framework cesse de mesurer le risque de l'**argent** et se met à mesurer le risque de
 > la **décision elle-même**. Très peu d'endroits au monde le font.
+
+---
+
+## 🎓 Fondements : ce qu'est Monte-Carlo et ce qu'est la décision multicritère
+
+### 🎲 Simulation mathématique de Monte-Carlo
+
+**Ce que c'est.** Une méthode qui répond aux questions difficiles **par tirage au sort**. Au lieu de résoudre sous
+forme fermée les mathématiques d'un système incertain — souvent impossible —, on attribue des **lois de
+probabilité** aux variables d'entrée, on tire des milliers de scénarios, on calcule le résultat de chacun et l'on
+observe la **distribution entière** des sorties. La loi des grands nombres garantit la convergence ; l'erreur décroît
+en `1/√N`, autrement dit **quadrupler les itérations divise l'erreur par deux**.
+
+**Comment c'est né.** Los Alamos, 1946. **Stanisław Ulam**, en convalescence, jouait au solitaire et se demanda
+quelle était la probabilité de gagner. Il comprit que résoudre la combinatoire était brutal — mais que **simuler**
+des centaines de parties et simplement compter était trivial. Il porta l'idée à **John von Neumann**, et tous deux
+l'appliquèrent au problème qui les occupait dans le projet Manhattan : la **diffusion des neutrons** dans un matériau
+fissile. **Nicholas Metropolis** baptisa la méthode « Monte-Carlo », en référence au casino monégasque où un oncle
+d'Ulam jouait. L'**ENIAC** rendit les premiers calculs possibles. La méthode est née, littéralement, de la rencontre
+entre un jeu de cartes et la bombe atomique.
+
+**Où l'utilise-t-on aujourd'hui.** Valorisation d'options et calcul de **VaR** en finance ; fiabilité structurelle en
+ingénierie ; risque de délai et de coût en gestion de projet ; physique des particules ; chaînes d'approvisionnement ;
+épidémiologie. Et au sein même de l'IA : **MCMC** (inférence bayésienne) et **MCTS** — la recherche arborescente qui
+a mené AlphaGo à battre Lee Sedol.
+
+**Ce que cela nous apporte ici.** Chaque flux de trésorerie devient une variable aléatoire, et la consommation de
+tokens reçoit la loi **ajustée à vos données réelles**. Nous lançons 10 000 scénarios et, au bout, vous n'avez pas une
+VAN — vous avez la **distribution de votre argent** : `P(VAN < 0)` (la vraie probabilité de perte), **VaR 5 %** (le
+pire scénario plausible), **CVaR 5 %** (ce que cela coûte quand le désastre survient) et le **tornado** (quelle
+variable meut réellement le résultat). La moyenne ment ; la queue décide.
+
+### 🧮 Analyse de décision multicritère (MCDA)
+
+**Ce que c'est et à quoi ça sert.** Lorsque vous choisissez entre des projets, les critères **s'opposent** (une VAN
+élevée s'accompagne souvent d'un risque élevé) et sont **incommensurables** (comment additionner des euros et un
+pourcentage d'hallucination ?). La MCDA est le champ qui rend ce choix explicite, auditable et défendable. Sa thèse
+fondatrice est inconfortable et libératrice : **il n'existe pas de « meilleur » dans le vide.** Il existe un meilleur
+*étant donné un système de préférences que vous avez explicité*. Échanger l'opinion implicite contre un modèle
+explicite : voilà tout le gain.
+
+**Les trois écoles.** L'**américaine**, de valeur et d'utilité (AHP, MAUT) : agrège tout en un seul nombre.
+L'**européenne**, du surclassement (ELECTRE, PROMETHEE), de Bernard Roy : admet que deux alternatives puissent être
+**incomparables** et autorise le **veto** — une note désastreuse sur un critère ne s'achète pas avec d'excellentes
+notes ailleurs. La **constructiviste** (MCDA-C) : le modèle n'est pas découvert, il est **construit avec le décideur**.
+
+| Méthode | Origine | Question centrale | Ce qu'elle seule apporte | Dans le portefeuille d'IA |
+|---|---|---|---|---|
+| **DEMATEL** | Gabus & Fontela, Battelle (1972-73) | *« Qui influence qui ? »* | sépare **cause** et **effet** et dérive les **poids** de la structure d'influence elle-même | montre que réduire l'hallucination (IITA) est une **cause** — agissez là et VAN, TRI et risque s'améliorent ensemble |
+| **AHP-TOPSIS 2n** | Saaty (1977) · Hwang & Yoon (1981) | *« Qui est le plus proche de la solution idéale ? »* | poids par comparaisons par paires avec **test de cohérence** (CR ≤ 0,10) | classe sous **deux normalisations** et rapporte leur concordance |
+| **ELECTRE I** | Bernard Roy (1968) | *« Qui surclasse qui — et qui survit sans être dominé ? »* | **incomparabilité** et **veto** : un critère désastreux ne s'achète pas | isole le **noyau** des projets qu'aucun autre ne domine |
+| **PROMETHEE II** | Brans & Vincke (1985) | *« Quel est le flux net de préférence ? »* | **six fonctions de préférence** avec seuils d'indifférence et de préférence | gradue *de combien* un projet est meilleur, pas seulement *s'il* l'est |
+| **MAUT** | Keeney & Raiffa (1976) | *« Qu'est-ce qui maximise l'utilité du décideur ? »* | modélise l'**aversion au risque** par une utilité concave | pénalise les gains incertains — un décideur prudent ne les paie pas au même prix |
+| **MCDA-C** | Ensslin, Montibeller & Noronha (2001) | *« Où est le niveau Bon, et où le Neutre ? »* | **fonction de valeur ancrée** : `V=0` au Neutre, `V=100` au Bon, avec extrapolation | classe en **compromettant / compétitif / excellence** au lieu de seulement ordonner |
+
+**Pourquoi cinq, et non une.** Chaque école se trompe autrement. Une méthode seule renvoie un gagnant avec une
+**confiance implicite de 100 %** — toujours un mensonge. En lançant les cinq et en concluant par un **consensus de
+Borda**, la divergence devient de l'**information** : quand quatre s'accordent et qu'une dissent frontalement, ce
+n'est pas du bruit — c'est l'avertissement que votre choix dépend de votre préférence pour le *surclassement* plutôt
+que l'*utilité*. Et la **perturbation de Dirichlet** sur les poids répond à la question finale : *« la 1re place
+survit-elle à une erreur de deux points de pourcentage dans le calibrage ? »*
 
 ---
 

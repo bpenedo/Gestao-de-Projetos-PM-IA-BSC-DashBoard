@@ -68,6 +68,7 @@ Norton), **Wall-Street-grade investment analysis** and **multi-criteria decision
 - [🎲 Monte Carlo — the risk the average hides](#-monte-carlo--the-risk-the-average-hides)
 - [🧮 Five schools of decision. One verdict.](#-five-schools-of-decision-one-verdict)
 - [🔬 The signal is upstream — and that is where the leverage lives](#-the-signal-is-upstream--and-that-is-where-the-leverage-lives)
+- [🎓 Foundations: what Monte Carlo is, and what Multi-Criteria Decision is](#-foundations-what-monte-carlo-is-and-what-multi-criteria-decision-is)
 - [🌐 12 languages](#-12-languages)
 - [🙋 Objections (the questions you're asking right now)](#-objections-the-questions-youre-asking-right-now)
 - [🧩 Bundled skills](#-bundled-skills-build--analyze-your-own)
@@ -440,6 +441,65 @@ that survives audit.
 
 > **The final turn:** the framework stops measuring the risk of the **money** and starts measuring the risk of the
 > **decision itself**. Very few places in the world do this.
+
+---
+
+## 🎓 Foundations: what Monte Carlo is, and what Multi-Criteria Decision is
+
+### 🎲 Monte Carlo mathematical simulation
+
+**What it is.** A method that answers hard questions **by drawing lots**. Instead of solving the mathematics of an
+uncertain system in closed form — often impossible — you assign **probability distributions** to the input
+variables, draw thousands of scenarios, compute the outcome in each one and observe the **entire distribution** of
+outputs. The Law of Large Numbers guarantees convergence; the error falls as `1/√N`, meaning **quadrupling the
+iterations halves the error**.
+
+**How it was born.** Los Alamos, 1946. **Stanisław Ulam**, convalescing from an illness, was playing solitaire and
+wondered what the probability of winning was. He realized that solving the combinatorics was brutal — but
+**simulating** hundreds of games and simply counting was trivial. He took the idea to **John von Neumann**, and the
+two applied it to the problem occupying them in the Manhattan Project: **neutron diffusion** in fissile material.
+**Nicholas Metropolis** named the method "Monte Carlo", after the Monaco casino where an uncle of Ulam's used to
+gamble. The **ENIAC** made the first computations feasible. The method was born, literally, from the meeting of a
+card game and the atomic bomb.
+
+**Where it is used today.** Option pricing and **VaR** in finance; structural reliability in engineering; schedule
+and cost risk in project management; particle physics; supply chains; epidemiology. And inside AI itself: **MCMC**
+(Bayesian inference) and **MCTS** — the tree search that took AlphaGo past Lee Sedol.
+
+**How it serves us here.** Every cash flow of your project becomes a random variable, and token consumption gets the
+distribution **fitted to your real data**. We run 10,000 scenarios and, in the end, you don't have an NPV — you have
+**the distribution of your money**: `P(NPV < 0)` (the real chance of loss), **VaR 5%** (the worst plausible
+scenario), **CVaR 5%** (what it costs when disaster strikes) and the **tornado** (which variable actually moves the
+result). The mean lies; the tail decides.
+
+### 🧮 Multi-Criteria Decision Analysis (MCDA)
+
+**What it is and what it's for.** When you choose between projects, the criteria **conflict** (high NPV usually
+comes with high risk) and are **incommensurable** (how do you add dollars to a hallucination percentage?). MCDA is
+the field that makes that choice explicit, auditable and defensible. Its founding thesis is uncomfortable and
+liberating: **there is no "best" in a vacuum.** There is a best *given a preference system you made explicit*.
+Trading implicit opinion for an explicit model is the whole gain.
+
+**The three schools.** The **American** one, of value and utility (AHP, MAUT): aggregates everything into a single
+number. The **European** one, of outranking (ELECTRE, PROMETHEE), from Bernard Roy: accepts that two alternatives
+may be **incomparable** and allows a **veto** — a terrible score on one criterion is not bought off by great scores
+elsewhere. The **constructivist** one (MCDA-C): the model is not discovered, it is **built together with the
+decision-maker**.
+
+| Method | Origin | Central question | What only it brings | In the AI portfolio |
+|---|---|---|---|---|
+| **DEMATEL** | Gabus & Fontela, Battelle (1972-73) | *"Who influences whom?"* | separates **cause** from **effect** and derives the **weights** from the influence structure itself | shows that cutting hallucination (IITA) is a **cause** — act there and NPV, IRR and risk improve together |
+| **AHP-TOPSIS 2n** | Saaty (1977) · Hwang & Yoon (1981) | *"Who is closest to the ideal solution?"* | pairwise-comparison weights with a **consistency test** (CR ≤ 0.10) | ranks under **two normalizations** and reports the agreement between them |
+| **ELECTRE I** | Bernard Roy (1968) | *"Who outranks whom — and who survives undominated?"* | **incomparability** and **veto**: one terrible criterion is not bought off by great ones | isolates the **kernel** of projects no other project dominates |
+| **PROMETHEE II** | Brans & Vincke (1985) | *"What is the net preference flow?"* | **six preference functions** with indifference and preference thresholds | grades *how much* better a project is, not merely *whether* it is |
+| **MAUT** | Keeney & Raiffa (1976) | *"What maximizes the decision-maker's utility?"* | models **risk aversion** through concave utility | penalizes uncertain gains — a prudent decider does not pay the same for them |
+| **MCDA-C** | Ensslin, Montibeller & Noronha (2001) | *"Where is the Good level, and where is Neutral?"* | **anchored value function**: `V=0` at Neutral, `V=100` at Good, with extrapolation | classifies into **compromising / competitive / excellence** rather than merely ordering |
+
+**Why five, and not one.** Each school fails in a different way. A single method returns a winner with an **implicit
+100% confidence** — always a lie. Running all five and closing with a **Borda consensus** turns the disagreement
+between them into **information**: when four agree and one flatly dissents, that is not noise — it is the warning
+that your choice depends on whether you prefer *outranking* over *utility*. And the **Dirichlet perturbation** of
+the weights answers the final question: *"does 1st place survive a two-percentage-point error in the calibration?"*
 
 ---
 

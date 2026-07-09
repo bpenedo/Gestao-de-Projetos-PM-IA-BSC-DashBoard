@@ -68,6 +68,7 @@ Tekoälystä maksamisen ja sillä **ansaitsemisen** välillä.
 - [🎲 Monte Carlo — riski, jonka keskiarvo kätkee](#-monte-carlo--riski-jonka-keskiarvo-kätkee)
 - [🧮 Viisi päätöksenteon koulukuntaa. Yksi tuomio.](#-viisi-päätöksenteon-koulukuntaa-yksi-tuomio)
 - [🔬 Signaali on ylävirrassa — ja siellä asuu vipuvarsi](#-signaali-on-ylävirrassa--ja-siellä-asuu-vipuvarsi)
+- [🎓 Perusteet: mikä on Monte Carlo ja mikä on monikriteeripäätös](#-perusteet-mikä-on-monte-carlo-ja-mikä-on-monikriteeripäätös)
 - [🌐 12 kieltä](#-12-kieltä)
 - [🙋 Vastaväitteet (kysymykset, joita kysyt itseltäsi juuri nyt)](#-vastaväitteet-kysymykset-joita-kysyt-itseltäsi-juuri-nyt)
 - [🧩 Mukana tulevat Skillit](#-mukana-tulevat-skillit-build--analyze-your-own)
@@ -441,6 +442,66 @@ luvun, joka kestää tilintarkastuksen.
 
 > **Viimeinen käänne:** kehys lakkaa mittaamasta **rahan** riskiä ja alkaa mitata **itse päätöksen** riskiä.
 > Hyvin harvat paikat maailmassa tekevät tämän.
+
+---
+
+## 🎓 Perusteet: mikä on Monte Carlo ja mikä on monikriteeripäätös
+
+### 🎲 Matemaattinen Monte Carlo -simulaatio
+
+**Mikä se on.** Menetelmä, joka vastaa vaikeisiin kysymyksiin **arpomalla**. Sen sijaan että ratkaisisit epävarman
+järjestelmän matematiikan suljetussa muodossa — usein mahdotonta — annat syötemuuttujille
+**todennäköisyysjakaumat**, arvot tuhansia skenaarioita, lasket tuloksen kussakin ja katsot tulosten **koko
+jakaumaa**. Suurten lukujen laki takaa suppenemisen; virhe pienenee kuin `1/√N`, eli **iteraatioiden
+nelinkertaistaminen puolittaa virheen**.
+
+**Miten se syntyi.** Los Alamos, 1946. **Stanisław Ulam**, toipuessaan sairaudesta, pelasi pasianssia ja mietti,
+mikä olisi todennäköisyys voittaa. Hän tajusi, että kombinatoriikan ratkaiseminen oli raakaa — mutta satojen
+pelien **simulointi** ja pelkkä laskeminen oli triviaalia. Hän vei idean **John von Neumannille**, ja he sovelsivat
+sitä ongelmaan, joka heitä Manhattan-projektissa askarrutti: **neutronidiffuusioon** fissiilissä materiaalissa.
+**Nicholas Metropolis** nimesi menetelmän "Monte Carloksi" Monacon kasinon mukaan, jossa Ulamin setä pelasi.
+**ENIAC** teki ensimmäiset laskelmat mahdollisiksi. Menetelmä syntyi kirjaimellisesti korttipelin ja atomipommin
+kohtaamisesta.
+
+**Missä sitä käytetään nykyään.** Optioiden hinnoittelu ja **VaR** rahoituksessa; rakenteellinen luotettavuus
+tekniikassa; aikataulu- ja kustannusriski projektinhallinnassa; hiukkasfysiikka; toimitusketjut; epidemiologia.
+Ja tekoälyn sisällä: **MCMC** (bayesilainen päättely) ja **MCTS** — puuhaku, joka vei AlphaGon Lee Sedolin ohi.
+
+**Miten se palvelee meitä täällä.** Jokainen projektisi kassavirta muuttuu satunnaismuuttujaksi, ja tokenien
+kulutus saa jakauman, joka on **sovitettu oikeaan dataasi**. Ajamme 10 000 skenaariota, ja lopussa sinulla ei ole
+NPV:tä — sinulla on **rahojesi jakauma**: `P(NPV < 0)` (todellinen tappion todennäköisyys), **VaR 5 %** (pahin
+uskottava skenaario), **CVaR 5 %** (mitä katastrofi maksaa) ja **tornado** (mikä muuttuja todella liikuttaa
+tulosta). Keskiarvo valehtelee; häntä ratkaisee.
+
+### 🧮 Monikriteerinen päätösanalyysi (MCDA)
+
+**Mikä se on ja mihin sitä tarvitaan.** Kun valitset projektien välillä, kriteerit **ovat ristiriidassa** (korkea
+NPV tulee yleensä korkean riskin kera) ja ovat **yhteismitattomia** (miten lasket euroja yhteen
+hallusinaatioprosentin kanssa?). MCDA on ala, joka tekee tuosta valinnasta eksplisiittisen, auditoitavan ja
+puolustettavan. Sen perustava teesi on epämukava ja vapauttava: **"parasta" ei ole tyhjiössä.** On paras *annetulla
+preferenssijärjestelmällä, jonka teit eksplisiittiseksi*. Implisiittisen mielipiteen vaihtaminen eksplisiittiseen
+malliin — siinä on koko hyöty.
+
+**Kolme koulukuntaa.** **Amerikkalainen**, arvon ja hyödyn (AHP, MAUT): kokoaa kaiken yhdeksi luvuksi.
+**Eurooppalainen**, ylivertaisuuden (ELECTRE, PROMETHEE), Bernard Royn: hyväksyy, että kaksi vaihtoehtoa voivat olla
+**vertailukelvottomia**, ja sallii **veton** — surkeaa arvosanaa yhdessä kriteerissä ei osteta pois loistavilla
+muualla. **Konstruktivistinen** (MCDA-C): mallia ei löydetä, se **rakennetaan yhdessä päättäjän kanssa**.
+
+| Menetelmä | Alkuperä | Keskeinen kysymys | Mitä vain se tuo | Tekoälysalkussa |
+|---|---|---|---|---|
+| **DEMATEL** | Gabus & Fontela, Battelle (1972-73) | *"Kuka vaikuttaa keneen?"* | erottaa **syyn** **seurauksesta** ja johtaa **painot** itse vaikutusrakenteesta | näyttää, että hallusinaation vähentäminen (IITA) on **syy** — toimi siellä, niin NPV, IRR ja riski paranevat yhdessä |
+| **AHP-TOPSIS 2n** | Saaty (1977) · Hwang & Yoon (1981) | *"Kuka on lähinnä ideaaliratkaisua?"* | painot parivertailuista **johdonmukaisuustestin** kera (CR ≤ 0,10) | järjestää **kahdella normalisoinnilla** ja raportoi niiden yksimielisyyden |
+| **ELECTRE I** | Bernard Roy (1968) | *"Kuka ylittää kenet — ja kuka selviää hallitsemattomana?"* | **vertailukelvottomuus** ja **veto**: surkeaa kriteeriä ei osteta pois | eristää **ytimen**: projektit, joita mikään muu ei hallitse |
+| **PROMETHEE II** | Brans & Vincke (1985) | *"Mikä on nettopreferenssivirta?"* | **kuusi preferenssifunktiota** yhdentekevyys- ja preferenssikynnyksin | asteikoi, *kuinka paljon* parempi projekti on, ei vain *onko* |
+| **MAUT** | Keeney & Raiffa (1976) | *"Mikä maksimoi päättäjän hyödyn?"* | mallintaa **riskin karttamisen** konkaavilla hyödyllä | rankaisee epävarmoja voittoja — varovainen päättäjä ei maksa niistä samaa |
+| **MCDA-C** | Ensslin, Montibeller & Noronha (2001) | *"Missä on taso Hyvä ja missä Neutraali?"* | **ankkuroitu arvofunktio**: `V=0` Neutraalissa, `V=100` Hyvässä, ekstrapoloiden | luokittelee **vaarantavaan / kilpailukykyiseen / erinomaisuuteen** pelkän järjestämisen sijaan |
+
+**Miksi viisi eikä yksi.** Jokainen koulukunta erehtyy eri tavalla. Yksittäinen menetelmä palauttaa voittajan
+**implisiittisellä 100 %:n varmuudella** — mikä on aina valhe. Ajamalla kaikki viisi ja sulkemalla
+**Borda-konsensuksella** menetelmien erimielisyys muuttuu **informaatioksi**: kun neljä on samaa mieltä ja yksi on
+suoraan eri mieltä, se ei ole kohinaa — se on varoitus, että valintasi riippuu siitä, suositko *ylivertaisuutta*
+vai *hyötyä*. Ja painojen **Dirichlet-häirintä** vastaa viimeiseen kysymykseen: *"kestääkö ykkössija kahden
+prosenttiyksikön virheen kalibroinnissa?"*
 
 ---
 

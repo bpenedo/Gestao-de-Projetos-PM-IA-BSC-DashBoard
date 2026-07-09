@@ -68,6 +68,7 @@ inversiones de nivel Wall Street** y de la **decisión multicriterio**. Es la di
 - [🎲 Monte Carlo — el riesgo que la media esconde](#-monte-carlo--el-riesgo-que-la-media-esconde)
 - [🧮 Cinco escuelas de decisión. Un solo veredicto.](#-cinco-escuelas-de-decisión-un-solo-veredicto)
 - [🔬 La señal está aguas arriba — y ahí vive el apalancamiento](#-la-señal-está-aguas-arriba--y-ahí-vive-el-apalancamiento)
+- [🎓 Fundamentos: qué es Monte Carlo y qué es la Decisión Multicriterio](#-fundamentos-qué-es-monte-carlo-y-qué-es-la-decisión-multicriterio)
 - [🌐 12 idiomas](#-12-idiomas)
 - [🙋 Objeciones (las preguntas que te estás haciendo ahora)](#-objeciones-las-preguntas-que-te-estás-haciendo-ahora)
 - [🧩 Skills incluidas](#-skills-incluidas-build--analyze-your-own)
@@ -448,6 +449,66 @@ técnico** — y el CFO obtiene un número que sobrevive a la auditoría.
 
 > **El giro final:** el framework deja de medir el riesgo del **dinero** y pasa a medir el riesgo de la **decisión
 > misma**. Muy pocos lugares en el mundo hacen esto.
+
+---
+
+## 🎓 Fundamentos: qué es Monte Carlo y qué es la Decisión Multicriterio
+
+### 🎲 Simulación Matemática de Monte Carlo
+
+**Qué es.** Un método que responde preguntas difíciles **sorteando**. En vez de resolver en forma cerrada la
+matemática de un sistema incierto — a menudo imposible —, asignas **distribuciones de probabilidad** a las
+variables de entrada, sorteas miles de escenarios, calculas el resultado en cada uno y observas la **distribución
+entera** de las salidas. La Ley de los Grandes Números garantiza la convergencia; el error cae con `1/√N`, es
+decir, **cuadruplicar las iteraciones reduce el error a la mitad**.
+
+**Cómo surgió.** Los Álamos, 1946. **Stanisław Ulam**, convaleciente de una enfermedad, jugaba solitario y se
+preguntó cuál sería la probabilidad de ganar. Se dio cuenta de que resolver la combinatoria era brutal — pero
+**simular** cientos de partidas y simplemente contar era trivial. Llevó la idea a **John von Neumann**, y ambos la
+aplicaron al problema que los ocupaba en el Proyecto Manhattan: la **difusión de neutrones** en material fisible.
+**Nicholas Metropolis** bautizó el método como "Monte Carlo", en referencia al casino de Mónaco donde un tío de
+Ulam solía apostar. El **ENIAC** hizo viables los primeros cálculos. El método nació, literalmente, del encuentro
+entre un juego de cartas y la bomba atómica.
+
+**Dónde se usa hoy.** Valoración de opciones y cálculo de **VaR** en finanzas; confiabilidad estructural en
+ingeniería; riesgo de plazo y costo en gestión de proyectos; física de partículas; cadenas de suministro;
+epidemiología. Y dentro de la propia IA: **MCMC** (inferencia bayesiana) y **MCTS** — la búsqueda en árbol que
+llevó a AlphaGo a vencer a Lee Sedol.
+
+**Cómo nos sirve aquí.** Cada flujo de caja de tu proyecto se vuelve una variable aleatoria, y el consumo de tokens
+recibe la distribución **ajustada a tus datos reales**. Corremos 10.000 escenarios y, al final, no tienes un VAN —
+tienes la **distribución de tu dinero**: `P(VAN < 0)` (la probabilidad real de pérdida), **VaR 5%** (el peor
+escenario plausible), **CVaR 5%** (cuánto cuesta cuando el desastre ocurre) y el **tornado** (qué variable mueve de
+verdad el resultado). El promedio miente; la cola decide.
+
+### 🧮 Análisis de Decisión Multicriterio (MCDA)
+
+**Qué es y para qué sirve.** Cuando eliges entre proyectos, los criterios **entran en conflicto** (un VAN alto suele
+venir con riesgo alto) y son **inconmensurables** (¿cómo sumas pesos con porcentaje de alucinación?). El MCDA es el
+campo que vuelve esa elección explícita, auditable y defendible. Su tesis fundadora es incómoda y liberadora: **no
+existe el "mejor" en el vacío.** Existe un mejor *dado un sistema de preferencias que hiciste explícito*. Cambiar la
+opinión implícita por un modelo explícito: esa es toda la ganancia.
+
+**Las tres escuelas.** La **americana**, de valor y utilidad (AHP, MAUT): agrega todo en un único número. La
+**europea**, de sobreclasificación (ELECTRE, PROMETHEE), de Bernard Roy: acepta que dos alternativas puedan ser
+**incomparables** y permite el **veto** — una nota pésima en un criterio no se compensa con notas óptimas en los
+demás. La **constructivista** (MCDA-C): el modelo no se descubre, se **construye junto con el decisor**.
+
+| Método | Origen | Pregunta central | Lo que solo él aporta | En el portafolio de IA |
+|---|---|---|---|---|
+| **DEMATEL** | Gabus & Fontela, Battelle (1972-73) | *"¿Quién influye a quién?"* | separa **causa** de **efecto** y deriva los **pesos** de la propia estructura de influencia | muestra que reducir la alucinación (IITA) es **causa** — actúa allí y VAN, TIR y riesgo mejoran juntos |
+| **AHP-TOPSIS 2n** | Saaty (1977) · Hwang & Yoon (1981) | *"¿Quién está más cerca de la solución ideal?"* | pesos por comparación par a par con **prueba de consistencia** (CR ≤ 0,10) | rankea en **dos normalizaciones** y reporta la concordancia entre ellas |
+| **ELECTRE I** | Bernard Roy (1968) | *"¿Quién domina a quién — y quién sobrevive sin ser dominado?"* | **incomparabilidad** y **veto**: un criterio pésimo no se compra con otros óptimos | aísla el **núcleo** de proyectos que ningún otro domina |
+| **PROMETHEE II** | Brans & Vincke (1985) | *"¿Cuál es el flujo neto de preferencia?"* | **seis funciones de preferencia** con umbrales de indiferencia y preferencia | gradúa *cuánto* mejor es un proyecto, no solo *si* lo es |
+| **MAUT** | Keeney & Raiffa (1976) | *"¿Qué maximiza la utilidad de quien decide?"* | modela la **aversión al riesgo** con utilidad cóncava | penaliza ganancias inciertas — un decisor prudente no paga lo mismo por ellas |
+| **MCDA-C** | Ensslin, Montibeller & Noronha (2001) | *"¿Dónde está el nivel Bueno y dónde el Neutro?"* | **función de valor anclada**: `V=0` en Neutro, `V=100` en Bueno, con extrapolación | clasifica en **comprometedor / competitivo / excelencia** en vez de solo ordenar |
+
+**Por qué cinco, y no uno.** Cada escuela se equivoca de una forma distinta. Un método solo devuelve un ganador con
+**confianza implícita del 100%** — lo cual es siempre mentira. Corriendo los cinco y cerrando por **consenso de
+Borda**, la divergencia entre ellos se vuelve **información**: cuando cuatro concuerdan y uno disiente de frente, eso
+no es ruido — es el aviso de que tu elección depende de si prefieres *sobreclasificación* a *utilidad*. Y la
+**perturbación de Dirichlet** en los pesos responde la pregunta final: *"¿el 1º puesto sobrevive a un error de dos
+puntos porcentuales en la calibración?"*
 
 ---
 

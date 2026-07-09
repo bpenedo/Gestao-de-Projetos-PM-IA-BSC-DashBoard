@@ -71,6 +71,7 @@ Unterschied zwischen *hoffen* und *wissen*. Zwischen für KI zahlen und mit ihr 
 - [🎲 Monte Carlo — das Risiko, das der Mittelwert verbirgt](#-monte-carlo--das-risiko-das-der-mittelwert-verbirgt)
 - [🧮 Fünf Entscheidungsschulen. Ein Urteil.](#-fünf-entscheidungsschulen-ein-urteil)
 - [🔬 Das Signal liegt stromaufwärts — dort sitzt der Hebel](#-das-signal-liegt-stromaufwärts--dort-sitzt-der-hebel)
+- [🎓 Grundlagen: Was Monte Carlo ist und was multikriterielle Entscheidung ist](#-grundlagen-was-monte-carlo-ist-und-was-multikriterielle-entscheidung-ist)
 - [🌐 12 Sprachen](#-12-sprachen)
 - [🙋 Einwände (die Fragen, die Sie sich gerade stellen)](#-einwände-die-fragen-die-sie-sich-gerade-stellen)
 - [🧩 Enthaltene Skills](#-enthaltene-skills-build--analyze-your-own)
@@ -453,6 +454,66 @@ der CFO bekommt eine Zahl, die die Prüfung übersteht.
 
 > **Die letzte Wende:** Das Framework misst nicht mehr das Risiko des **Geldes**, sondern das Risiko der
 > **Entscheidung selbst**. Sehr wenige Orte auf der Welt tun das.
+
+---
+
+## 🎓 Grundlagen: Was Monte Carlo ist und was multikriterielle Entscheidung ist
+
+### 🎲 Mathematische Monte-Carlo-Simulation
+
+**Was es ist.** Eine Methode, die schwierige Fragen **durch Auslosen** beantwortet. Statt die Mathematik eines
+unsicheren Systems geschlossen zu lösen — oft unmöglich —, weist man den Eingangsgrößen **Wahrscheinlichkeits-
+verteilungen** zu, zieht Tausende Szenarien, berechnet jeweils das Ergebnis und betrachtet die **gesamte
+Verteilung** der Ausgänge. Das Gesetz der großen Zahlen sichert die Konvergenz; der Fehler fällt mit `1/√N` —
+**Vervierfachen der Iterationen halbiert also den Fehler**.
+
+**Wie es entstand.** Los Alamos, 1946. **Stanisław Ulam**, von einer Krankheit genesend, spielte Patience und fragte
+sich nach der Gewinnwahrscheinlichkeit. Ihm wurde klar: Die Kombinatorik zu lösen war brutal — Hunderte Partien zu
+**simulieren** und schlicht zu zählen war trivial. Er trug die Idee **John von Neumann** vor, und beide wandten sie
+auf das Problem an, das sie im Manhattan-Projekt beschäftigte: die **Neutronendiffusion** in spaltbarem Material.
+**Nicholas Metropolis** taufte die Methode „Monte Carlo" — nach dem monegassischen Casino, in dem ein Onkel Ulams zu
+spielen pflegte. Der **ENIAC** machte die ersten Rechnungen möglich. Die Methode entsprang buchstäblich der
+Begegnung eines Kartenspiels mit der Atombombe.
+
+**Wo sie heute eingesetzt wird.** Optionsbewertung und **VaR** im Finanzwesen; strukturelle Zuverlässigkeit im
+Ingenieurwesen; Termin- und Kostenrisiko im Projektmanagement; Teilchenphysik; Lieferketten; Epidemiologie. Und in
+der KI selbst: **MCMC** (bayessche Inferenz) und **MCTS** — die Baumsuche, mit der AlphaGo Lee Sedol schlug.
+
+**Wie sie uns hier dient.** Jeder Cashflow Ihres Projekts wird zur Zufallsvariablen, und der Tokenverbrauch erhält
+die **an Ihre echten Daten angepasste** Verteilung. Wir rechnen 10.000 Szenarien, und am Ende haben Sie keinen
+Kapitalwert — Sie haben die **Verteilung Ihres Geldes**: `P(Kapitalwert < 0)` (die echte Verlustwahrscheinlichkeit),
+**VaR 5 %** (das schlechteste plausible Szenario), **CVaR 5 %** (was es kostet, wenn es eintritt) und den **Tornado**
+(welche Variable das Ergebnis wirklich bewegt). Der Mittelwert lügt; der Rand entscheidet.
+
+### 🧮 Multikriterielle Entscheidungsanalyse (MCDA)
+
+**Was es ist und wozu.** Wenn Sie zwischen Projekten wählen, **widersprechen** sich die Kriterien (hoher Kapitalwert
+kommt meist mit hohem Risiko) und sind **inkommensurabel** (wie addiert man Euro und Halluzinationsprozente?). MCDA
+ist das Feld, das diese Wahl explizit, prüfbar und vertretbar macht. Ihre Gründungsthese ist unbequem und befreiend:
+**„das Beste" gibt es nicht im luftleeren Raum.** Es gibt ein Bestes *gegeben ein Präferenzsystem, das Sie explizit
+gemacht haben*. Die implizite Meinung gegen ein explizites Modell zu tauschen — darin liegt der ganze Gewinn.
+
+**Die drei Schulen.** Die **amerikanische** von Wert und Nutzen (AHP, MAUT): aggregiert alles zu einer Zahl. Die
+**europäische** des Outranking (ELECTRE, PROMETHEE) von Bernard Roy: akzeptiert, dass zwei Alternativen
+**unvergleichbar** sein können, und erlaubt ein **Veto** — eine miserable Note in einem Kriterium wird nicht durch
+Bestnoten anderswo aufgewogen. Die **konstruktivistische** (MCDA-C): Das Modell wird nicht entdeckt, es wird
+**gemeinsam mit dem Entscheider gebaut**.
+
+| Methode | Ursprung | Kernfrage | Was nur sie bringt | Im KI-Portfolio |
+|---|---|---|---|---|
+| **DEMATEL** | Gabus & Fontela, Battelle (1972-73) | *„Wer beeinflusst wen?"* | trennt **Ursache** von **Wirkung** und leitet die **Gewichte** aus der Einflussstruktur selbst ab | zeigt, dass Halluzination zu senken (IITA) eine **Ursache** ist — dort ansetzen, und Kapitalwert, IZF und Risiko bessern sich gemeinsam |
+| **AHP-TOPSIS 2n** | Saaty (1977) · Hwang & Yoon (1981) | *„Wer ist der Ideallösung am nächsten?"* | Gewichte aus Paarvergleichen mit **Konsistenztest** (CR ≤ 0,10) | rankt unter **zwei Normalisierungen** und meldet deren Übereinstimmung |
+| **ELECTRE I** | Bernard Roy (1968) | *„Wer überklassiert wen — und wer überlebt unbesiegt?"* | **Unvergleichbarkeit** und **Veto**: ein miserables Kriterium wird nicht freigekauft | isoliert den **Kern** der von niemandem dominierten Projekte |
+| **PROMETHEE II** | Brans & Vincke (1985) | *„Wie hoch ist der Netto-Präferenzfluss?"* | **sechs Präferenzfunktionen** mit Indifferenz- und Präferenzschwellen | gradiert, *um wie viel* ein Projekt besser ist, nicht bloß *ob* |
+| **MAUT** | Keeney & Raiffa (1976) | *„Was maximiert den Nutzen des Entscheiders?"* | modelliert **Risikoaversion** über konkave Nutzenfunktion | bestraft unsichere Gewinne — ein vorsichtiger Entscheider zahlt dafür nicht dasselbe |
+| **MCDA-C** | Ensslin, Montibeller & Noronha (2001) | *„Wo liegt das Niveau Gut, wo Neutral?"* | **verankerte Wertfunktion**: `V=0` bei Neutral, `V=100` bei Gut, mit Extrapolation | klassifiziert in **kompromittierend / wettbewerbsfähig / Exzellenz**, statt nur zu ordnen |
+
+**Warum fünf und nicht eine.** Jede Schule irrt anders. Eine einzelne Methode liefert einen Sieger mit **impliziter
+100-%-Zuversicht** — stets eine Lüge. Führt man alle fünf aus und schließt mit einem **Borda-Konsens**, wird die
+Uneinigkeit zwischen ihnen zu **Information**: Wenn vier zustimmen und eine frontal widerspricht, ist das kein
+Rauschen — es ist die Warnung, dass Ihre Wahl davon abhängt, ob Sie *Outranking* dem *Nutzen* vorziehen. Und die
+**Dirichlet-Perturbation** der Gewichte beantwortet die letzte Frage: *„Übersteht Platz 1 einen Fehler von zwei
+Prozentpunkten in der Kalibrierung?"*
 
 ---
 

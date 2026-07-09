@@ -68,6 +68,7 @@ Entre pagar pela IA e **lucrar** com ela.
 - [🎲 Monte Carlo — o risco que a média esconde](#-monte-carlo--o-risco-que-a-média-esconde)
 - [🧮 Cinco escolas de decisão. Um único veredito.](#-cinco-escolas-de-decisão-um-único-veredito)
 - [🔬 O sinal está a montante — e é aí que mora a alavancagem](#-o-sinal-está-a-montante--e-é-aí-que-mora-a-alavancagem)
+- [🎓 Fundamentos: o que é Monte Carlo e o que é a Decisão Multicritério](#-fundamentos-o-que-é-monte-carlo-e-o-que-é-a-decisão-multicritério)
 - [🌐 12 idiomas](#-12-idiomas)
 - [🙋 Objeções (as perguntas que você está se fazendo agora)](#-objeções-as-perguntas-que-você-está-se-fazendo-agora)
 - [🧩 Skills incluídas](#-skills-incluídas-build--analyze-your-own)
@@ -443,6 +444,66 @@ o CFO ganha um número que sobrevive à auditoria.
 
 > **A virada final:** o framework deixa de medir o risco do **dinheiro** e passa a medir o risco da **própria
 > decisão**. Poucos lugares no mundo fazem isso.
+
+---
+
+## 🎓 Fundamentos: o que é Monte Carlo e o que é a Decisão Multicritério
+
+### 🎲 Simulação Matemática de Monte Carlo
+
+**O que é.** Um método que responde perguntas difíceis **sorteando**. Em vez de resolver em forma fechada a
+matemática de um sistema incerto — o que muitas vezes é impossível —, você atribui **distribuições de
+probabilidade** às variáveis de entrada, sorteia milhares de cenários, calcula o resultado em cada um e observa
+a **distribuição inteira** das saídas. A Lei dos Grandes Números garante a convergência; o erro cai com `1/√N`,
+ou seja, **quadruplicar as iterações reduz o erro pela metade**.
+
+**Como surgiu.** Los Alamos, 1946. **Stanisław Ulam**, convalescendo de uma doença, jogava paciência e se
+perguntou qual seria a probabilidade de vencer. Percebeu que resolver a combinatória era brutal — mas **simular**
+centenas de partidas e simplesmente contar era trivial. Levou a ideia a **John von Neumann**, e os dois a
+aplicaram ao problema que os ocupava no Projeto Manhattan: a **difusão de nêutrons** em material físsil.
+**Nicholas Metropolis** batizou o método de "Monte Carlo", em referência ao cassino de Mônaco onde um tio de
+Ulam costumava apostar. O **ENIAC** tornou os primeiros cálculos viáveis. O método nasceu, literalmente, do
+encontro entre um jogo de cartas e a bomba atômica.
+
+**Onde se usa hoje.** Precificação de opções e cálculo de **VaR** em finanças; confiabilidade estrutural em
+engenharia; risco de prazo e custo em gestão de projetos; física de partículas; cadeias de suprimentos;
+epidemiologia. E dentro da própria IA: **MCMC** (inferência bayesiana) e **MCTS** — a busca em árvore que levou
+o AlphaGo a vencer Lee Sedol.
+
+**Como nos atende aqui.** Cada fluxo de caixa do seu projeto vira uma variável aleatória, e o consumo de tokens
+recebe a distribuição **ajustada aos seus dados reais**. Rodamos 10.000 cenários e, no fim, você não tem um VPL
+— tem a **distribuição do seu dinheiro**: `P(VPL < 0)` (a chance real de prejuízo), **VaR 5%** (o pior cenário
+plausível), **CVaR 5%** (quanto custa quando o desastre acontece) e o **tornado** (qual variável realmente move o
+resultado). A média mente; a cauda decide.
+
+### 🧮 Análise de Decisão Multicritério (MCDA)
+
+**O que é e para que serve.** Quando você escolhe entre projetos, os critérios **conflitam** (VPL alto costuma
+vir com risco alto) e são **incomensuráveis** (como somar reais com percentual de alucinação?). A MCDA é o campo
+que torna essa escolha explícita, auditável e defensável. Sua tese fundadora é desconfortável e libertadora: **não
+existe "melhor" no vácuo.** Existe melhor *dado um sistema de preferências que você tornou explícito*. Trocar a
+opinião implícita por um modelo explícito é o ganho.
+
+**As três escolas.** A **americana**, de valor e utilidade (AHP, MAUT): agrega tudo num único número.
+A **europeia**, de sobreclassificação (ELECTRE, PROMETHEE), de Bernard Roy: aceita que duas alternativas possam
+ser **incomparáveis** e permite **veto** — uma nota péssima num critério não se compensa com notas ótimas nos
+outros. A **construtivista** (MCDA-C): o modelo não é descoberto, é **construído junto com o decisor**.
+
+| Método | Origem | Pergunta central | O que só ele traz | No portfólio de IA |
+|---|---|---|---|---|
+| **DEMATEL** | Gabus & Fontela, Battelle (1972-73) | *"Quem influencia quem?"* | separa **causa** de **efeito** e deriva os **pesos** da própria estrutura de influência | mostra que reduzir alucinação (IITA) é **causa** — mexa ali e VPL, TIR e risco melhoram juntos |
+| **AHP-TOPSIS 2n** | Saaty (1977) · Hwang & Yoon (1981) | *"Quem está mais perto da solução ideal?"* | pesos por comparação par a par com **teste de consistência** (CR ≤ 0,10) | ranqueia em **duas normalizações** e reporta a concordância entre elas |
+| **ELECTRE I** | Bernard Roy (1968) | *"Quem domina quem — e quem sobrevive sem ser dominado?"* | **incomparabilidade** e **veto**: um critério péssimo não é comprado por outros ótimos | isola o **núcleo** de projetos que nenhum outro domina |
+| **PROMETHEE II** | Brans & Vincke (1985) | *"Qual o fluxo líquido de preferência?"* | **seis funções de preferência** com limiares de indiferença e preferência | gradua *o quanto* um projeto é melhor, não apenas *se* é |
+| **MAUT** | Keeney & Raiffa (1976) | *"O que maximiza a utilidade de quem decide?"* | modela **aversão a risco** por utilidade côncava | penaliza ganhos incertos — um decisor prudente não paga o mesmo por eles |
+| **MCDA-C** | Ensslin, Montibeller & Noronha (2001) | *"Onde está o nível Bom e onde está o Neutro?"* | **função de valor ancorada**: `V=0` no Neutro, `V=100` no Bom, com extrapolação | classifica em **comprometedor / competitivo / excelência** em vez de só ordenar |
+
+**Por que cinco, e não um.** Cada escola erra de um jeito diferente. Um método sozinho devolve um vencedor com
+**confiança implícita de 100%** — o que é sempre mentira. Rodando os cinco e fechando por **consenso de Borda**,
+a divergência entre eles vira **informação**: quando quatro concordam e um discorda frontalmente, isso não é
+ruído — é o aviso de que a sua escolha depende de você preferir *sobreclassificação* a *utilidade*. E a
+**perturbação de Dirichlet** nos pesos ainda responde a pergunta final: *"o 1º lugar sobrevive a um erro de dois
+pontos percentuais na calibração?"*
 
 ---
 

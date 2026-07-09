@@ -68,6 +68,7 @@ Norton), **investeringsanalys på Wall Street-nivå** och **flerkriteriebeslut**
 - [🎲 Monte Carlo — risken som medelvärdet döljer](#-monte-carlo--risken-som-medelvärdet-döljer)
 - [🧮 Fem beslutsskolor. En dom.](#-fem-beslutsskolor-en-dom)
 - [🔬 Signalen ligger uppströms — och där bor hävstången](#-signalen-ligger-uppströms--och-där-bor-hävstången)
+- [🎓 Grunder: vad Monte Carlo är, och vad flerkriteriebeslut är](#-grunder-vad-monte-carlo-är-och-vad-flerkriteriebeslut-är)
 - [🌐 12 språk](#-12-språk)
 - [🙋 Invändningar (frågorna du ställer dig just nu)](#-invändningar-frågorna-du-ställer-dig-just-nu)
 - [🧩 Medföljande Skills](#-medföljande-skills-build--analyze-your-own)
@@ -439,6 +440,63 @@ som överlever revision.
 
 > **Den sista vändningen:** ramverket slutar mäta risken i **pengarna** och börjar mäta risken i **själva beslutet**.
 > Väldigt få platser i världen gör detta.
+
+---
+
+## 🎓 Grunder: vad Monte Carlo är, och vad flerkriteriebeslut är
+
+### 🎲 Matematisk Monte Carlo-simulering
+
+**Vad det är.** En metod som besvarar svåra frågor **genom lottning**. I stället för att lösa matematiken i ett
+osäkert system på sluten form — ofta omöjligt — tilldelar man **sannolikhetsfördelningar** till indatavariablerna,
+drar tusentals scenarier, beräknar utfallet i vart och ett och betraktar **hela fördelningen** av utfall. Stora
+talens lag garanterar konvergens; felet avtar som `1/√N`, det vill säga **att fyrdubbla iterationerna halverar
+felet**.
+
+**Hur den föddes.** Los Alamos, 1946. **Stanisław Ulam**, konvalescent efter en sjukdom, lade patiens och undrade
+vad sannolikheten att vinna var. Han insåg att lösa kombinatoriken var brutalt — men att **simulera** hundratals
+partier och helt enkelt räkna var trivialt. Han tog idén till **John von Neumann**, och de båda tillämpade den på
+problemet som upptog dem i Manhattanprojektet: **neutrondiffusion** i klyvbart material. **Nicholas Metropolis**
+döpte metoden till "Monte Carlo", efter kasinot i Monaco där en morbror till Ulam brukade spela. **ENIAC** gjorde de
+första beräkningarna möjliga. Metoden föddes, bokstavligen, ur mötet mellan ett kortspel och atombomben.
+
+**Var den används idag.** Optionsprissättning och **VaR** inom finans; strukturell tillförlitlighet inom teknik;
+tids- och kostnadsrisk i projektledning; partikelfysik; försörjningskedjor; epidemiologi. Och inom AI självt:
+**MCMC** (bayesiansk inferens) och **MCTS** — trädsökningen som förde AlphaGo förbi Lee Sedol.
+
+**Hur den tjänar oss här.** Varje kassaflöde i ditt projekt blir en slumpvariabel, och tokenförbrukningen får den
+fördelning som är **anpassad till dina verkliga data**. Vi kör 10 000 scenarier och till slut har du inget NPV — du
+har **fördelningen av dina pengar**: `P(NPV < 0)` (den verkliga sannolikheten för förlust), **VaR 5 %** (det värsta
+rimliga scenariot), **CVaR 5 %** (vad det kostar när katastrofen inträffar) och **tornadon** (vilken variabel som
+faktiskt rör resultatet). Medelvärdet ljuger; svansen avgör.
+
+### 🧮 Flerkriterieanalys för beslut (MCDA)
+
+**Vad det är och vad det är till för.** När du väljer mellan projekt **står kriterierna i konflikt** (högt NPV kommer
+oftast med hög risk) och är **inkommensurabla** (hur adderar man kronor med hallucinationsprocent?). MCDA är fältet
+som gör det valet explicit, granskningsbart och försvarbart. Dess grundtes är obekväm och befriande: **det finns inget
+"bäst" i ett vakuum.** Det finns ett bäst *givet ett preferenssystem som du gjort explicit*. Att byta implicit åsikt
+mot en explicit modell — där ligger hela vinsten.
+
+**De tre skolorna.** Den **amerikanska**, om värde och nytta (AHP, MAUT): aggregerar allt till ett enda tal. Den
+**europeiska**, om överklassning (ELECTRE, PROMETHEE), från Bernard Roy: accepterar att två alternativ kan vara
+**ojämförbara** och tillåter **veto** — ett uselt betyg på ett kriterium köps inte loss av toppbetyg på andra. Den
+**konstruktivistiska** (MCDA-C): modellen upptäcks inte, den **byggs tillsammans med beslutsfattaren**.
+
+| Metod | Ursprung | Central fråga | Vad bara den ger | I AI-portföljen |
+|---|---|---|---|---|
+| **DEMATEL** | Gabus & Fontela, Battelle (1972-73) | *"Vem påverkar vem?"* | skiljer **orsak** från **verkan** och härleder **vikterna** ur själva inflytandestrukturen | visar att minska hallucination (IITA) är en **orsak** — agera där, så förbättras NPV, IRR och risk tillsammans |
+| **AHP-TOPSIS 2n** | Saaty (1977) · Hwang & Yoon (1981) | *"Vem är närmast ideallösningen?"* | vikter via parvisa jämförelser med **konsistenstest** (CR ≤ 0,10) | rangordnar under **två normaliseringar** och rapporterar samstämmigheten |
+| **ELECTRE I** | Bernard Roy (1968) | *"Vem överklassar vem — och vem överlever odominerad?"* | **ojämförbarhet** och **veto**: ett uselt kriterium köps inte loss | isolerar **kärnan** av projekt som inget annat dominerar |
+| **PROMETHEE II** | Brans & Vincke (1985) | *"Vad är nettopreferensflödet?"* | **sex preferensfunktioner** med indifferens- och preferenströsklar | graderar *hur mycket* bättre ett projekt är, inte bara *om* det är det |
+| **MAUT** | Keeney & Raiffa (1976) | *"Vad maximerar beslutsfattarens nytta?"* | modellerar **riskaversion** genom konkav nytta | bestraffar osäkra vinster — en försiktig beslutsfattare betalar inte lika mycket för dem |
+| **MCDA-C** | Ensslin, Montibeller & Noronha (2001) | *"Var ligger nivån Bra, och var Neutral?"* | **förankrad värdefunktion**: `V=0` vid Neutral, `V=100` vid Bra, med extrapolering | klassificerar i **äventyrande / konkurrenskraftig / excellens** i stället för att bara ordna |
+
+**Varför fem, och inte en.** Varje skola misslyckas på sitt eget sätt. En ensam metod returnerar en vinnare med
+**implicit 100 % säkerhet** — alltid en lögn. Kör man alla fem och avslutar med **Borda-konsensus** blir oenigheten
+mellan dem **information**: när fyra är eniga och en avviker rakt av är det inte brus — det är varningen att ditt val
+beror på om du föredrar *överklassning* framför *nytta*. Och **Dirichlet-störningen** av vikterna besvarar den sista
+frågan: *"överlever förstaplatsen ett fel på två procentenheter i kalibreringen?"*
 
 ---
 
