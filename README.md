@@ -451,6 +451,95 @@ o CFO ganha um número que sobrevive à auditoria.
 
 ### 🎲 Simulação Matemática de Monte Carlo
 
+#### 📖 O conceito
+
+Monte Carlo é um método numérico que responde a perguntas sobre sistemas incertos **por amostragem aleatória**. A
+ideia inverte o instinto do matemático: em vez de deduzir a resposta em **forma fechada** — resolver a integral, a
+combinatória, a equação diferencial —, você constrói um **modelo**, sorteia milhares de realizações das variáveis
+incertas e simplesmente **conta o que aconteceu**. O que se obtém no fim não é um número: é a **distribuição de
+probabilidade do resultado**.
+
+Duas leis o sustentam. A **Lei dos Grandes Números** garante que a média das simulações converge para o valor
+verdadeiro. O **Teorema Central do Limite** informa a que velocidade: o erro-padrão cai com `1/√N`. A consequência é
+honesta e um pouco cruel — **para dobrar a precisão é preciso quadruplicar as iterações**. Monte Carlo não é rápido.
+A sua virtude é outra: o erro **não depende da dimensão do problema**. Métodos determinísticos de quadratura sofrem
+da *maldição da dimensionalidade* e colapsam com dezenas de variáveis; Monte Carlo, não. Ele vence exatamente onde a
+matemática analítica morre.
+
+#### 📖 Onde e quando surgiu
+
+**Los Alamos, Novo México, 1946.** O matemático polonês **Stanisław Ulam** convalescia de uma encefalite e passava os
+dias jogando paciência. Perguntou-se qual seria a probabilidade de uma partida sair vencedora. Tentou a combinatória
+e desistiu: era intratável. Então lhe ocorreu algo simples a ponto de parecer trapaça — **jogar cem partidas, contar
+quantas venceu e dividir**. Percebeu no mesmo instante que aquilo não era um truque de carteado: era um **método
+geral de integração** para problemas que ninguém sabia resolver.
+
+Levou a ideia a **John von Neumann**, que viu de imediato a aplicação no problema que os consumia no Projeto
+Manhattan: a **difusão de nêutrons** em material físsil. Simular a trajetória aleatória de milhares de nêutrons —
+espalhamento, absorção, fissão — era viável; resolver a equação de transporte não era. **Nicholas Metropolis** propôs
+o nome **"Monte Carlo"**, em referência ao cassino de Mônaco onde um tio de Ulam costumava pedir dinheiro emprestado
+para apostar. O **ENIAC** tornou os primeiros cálculos possíveis, e em **1949** Metropolis e Ulam publicaram
+*"The Monte Carlo Method"* no *Journal of the American Statistical Association*.
+
+O método nasceu, literalmente, do encontro entre um **jogo de cartas** e a **bomba atômica**. Poucas ideias
+científicas têm certidão de nascimento tão desconcertante.
+
+#### 📖 A metodologia, em cinco passos
+
+1. **Modelar.** Escreva a saída como função das entradas: `y = f(x₁, …, xₙ)`.
+2. **Atribuir distribuições.** Cada entrada incerta recebe uma distribuição. Havendo **dados históricos**, ela é
+   *ajustada* a eles; não havendo, é arbitrada — e isso deve ser **declarado**.
+3. **Amostrar.** Sorteie `N` cenários. Se as variáveis forem **correlacionadas**, a amostragem precisa respeitar essa
+   estrutura: sortear de forma independente onde há dependência real é o erro mais comum do método.
+4. **Propagar.** Calcule `f` em cada cenário. É aqui que a incerteza das entradas **se transforma** na incerteza da
+   saída, sem nenhuma aproximação linear.
+5. **Analisar.** Estude a distribuição: média e desvio, **percentis**, probabilidade de eventos (`P(y < 0)`), a
+   **cauda** (VaR, CVaR) e a **sensibilidade** (qual `xᵢ` move `y`).
+
+#### 📖 Usos e aplicações no mundo
+
+- **Finanças:** precificação de opções exóticas (onde não há forma fechada), **VaR** e **CVaR** de carteiras, testes
+  de estresse regulatórios (Basileia), risco de crédito.
+- **Engenharia:** confiabilidade estrutural, tolerâncias de fabricação, análise de falhas em sistemas complexos.
+- **Gestão de projetos:** risco de prazo e custo (a evolução probabilística do PERT), curvas-S de conclusão.
+- **Física e química:** transporte de partículas, blindagem de radiação, mecânica estatística.
+- **Operações e cadeias de suprimentos:** filas, estoques, capacidade sob demanda incerta.
+- **Epidemiologia:** propagação de doenças e avaliação de políticas sob incerteza.
+- **Dentro da própria IA:** **MCMC** (inferência bayesiana), **MCTS** — a busca em árvore que levou o AlphaGo a
+  vencer Lee Sedol — e o *Monte Carlo dropout* para estimar incerteza em redes neurais.
+
+#### 🔒 Metodologia, uso e aplicação EXCLUSIVOS neste projeto
+
+Aqui o Monte Carlo não é enfeite acadêmico: é o **motor de risco** do portfólio.
+
+- **As entradas.** Cada fluxo de caixa periódico vira uma variável **Triangular** (`mín`, `moda`, `máx`), com moda no
+  valor determinístico e caudas a ±30%. Já o **consumo de tokens** — a única variável verdadeiramente de cauda pesada
+  — **não é arbitrado**: onze distribuições candidatas são **ajustadas por máxima verossimilhança** à sua série real
+  de `logs_langfuse`, vence a de **menor AIC**, e a aderência é medida por **Kolmogorov-Smirnov**. Se o p-valor cai
+  abaixo de 0,05, a tela estampa `ADERÊNCIA FRACA` em vermelho, em vez de fingir precisão.
+- **A correlação.** Quando os fluxos são dependentes, a amostragem usa **Iman-Conover**, que impõe a correlação de
+  postos **preservando exatamente as distribuições marginais**. A matriz é validada antes: simétrica, diagonal 1,
+  positiva definida.
+- **A propagação.** **10.000 iterações** por projeto, com **semente fixa (42)**: rodar de novo devolve exatamente o
+  mesmo número. Não é detalhe — é o que torna o resultado **auditável** por um sócio, um investidor ou um auditor.
+- **As saídas.** Não apenas o VPL: simulamos **VPL, TIR, TIRM, VUL, ILL** e o **custo de tokens**, cada um com as dez
+  estatísticas descritivas clássicas (assimetria e curtose nas definições do Excel), **percentis de 1% a 99%** e
+  **histograma de 100 classes**.
+- **O risco que importa.** `P(VPL < 0)` é a probabilidade real de prejuízo. O **VaR 5%** é o pior cenário plausível —
+  *"em 19 de cada 20 futuros, eu ganho pelo menos isto"*. O **CVaR 5%** responde o que ninguém pergunta: quando o
+  desastre acontece, **quanto custa em média**.
+- **A sensibilidade.** O **tornado** é calculado nas duas formas clássicas: os **betas de uma regressão múltipla** (o
+  efeito de +R$ 1 numa entrada sobre o VPL) e a **correlação de Pearson** (o quanto a incerteza daquela entrada dita
+  a incerteza do VPL). São leituras complementares; o dashboard mostra as duas.
+- **Uma descoberta do próprio framework.** Ao medir a si mesmo, o tornado devolveu betas **exatamente iguais aos
+  fatores de desconto** `1/(1+i)ᵗ` — porque o VPL é *linear* nos fluxos. Simular apenas os fluxos, portanto, não
+  informa nada além da taxa. **O sinal estocástico de verdade está a montante, nos tokens.** Foi essa constatação que
+  motivou o ajuste de distribuições aos dados reais.
+- **O risco alimenta a decisão.** Duas saídas do Monte Carlo entram como **critérios** no modelo multicritério:
+  `P(VPL<0)` como critério de **custo** e o **VaR 5%** como critério de **benefício**. A escolha final já nasce
+  **ajustada a risco**, e não apenas ao valor esperado.
+
+
 **O que é.** Um método que responde perguntas difíceis **sorteando**. Em vez de resolver em forma fechada a
 matemática de um sistema incerto — o que muitas vezes é impossível —, você atribui **distribuições de
 probabilidade** às variáveis de entrada, sorteia milhares de cenários, calcula o resultado em cada um e observa
@@ -477,6 +566,178 @@ plausível), **CVaR 5%** (quanto custa quando o desastre acontece) e o **tornado
 resultado). A média mente; a cauda decide.
 
 ### 🧮 Análise de Decisão Multicritério (MCDA)
+
+#### 📖 O conceito e para que serve
+
+Escolher entre projetos é difícil por duas razões que nenhuma planilha resolve. Primeiro, os critérios **conflitam**:
+o projeto de maior VPL costuma ser o de maior risco. Segundo, eles são **incomensuráveis**: não existe operação
+aritmética honesta que some reais com percentual de alucinação e horas de retrabalho.
+
+A MCDA (*Multi-Criteria Decision Analysis*) é o campo — nascido nos anos 1960-70, na fronteira entre a pesquisa
+operacional e a teoria da decisão — que enfrenta exatamente isso. Ela **não promete a resposta certa**. Promete algo
+mais útil: tornar a escolha **explícita, auditável e defensável**.
+
+Sua tese fundadora é desconfortável e libertadora ao mesmo tempo: **não existe "melhor" no vácuo.** Existe melhor
+*dado um sistema de preferências que alguém tornou explícito*. Todo decisor já opera com um sistema de preferências —
+a diferença é que, sem MCDA, ele é **implícito, inconsistente e não auditável**. Trocar a opinião tácita por um modelo
+explícito: aí está o ganho inteiro.
+
+#### 📖 Usos e aplicações no mundo
+
+Seleção de fornecedores e priorização de portfólio; escolha de tecnologias de energia (solar × eólica × biomassa);
+localização de plantas, hospitais e aterros; avaliação de impacto ambiental; políticas públicas e alocação
+orçamentária; seleção de pessoal; priorização de manutenção; e — cada vez mais — **avaliação tecno-econômica** de
+tecnologias emergentes, que é exatamente o caso de um portfólio de projetos de IA.
+
+#### 📖 As três escolas de decisão
+
+- **Escola americana (valor e utilidade).** Agrega tudo num **único número**. Assume que uma nota ruim num critério
+  pode ser **compensada** por notas ótimas em outros. Simples, poderosa — e, às vezes, perigosa. `AHP`, `MAUT`.
+- **Escola europeia (sobreclassificação).** Fundada por **Bernard Roy**. Aceita que duas alternativas possam ser
+  **incomparáveis** e admite o **veto**: um desempenho catastrófico num critério **não se compra** com excelência nos
+  demais. Modela a hesitação real do decisor por meio de **limiares**. `ELECTRE`, `PROMETHEE`.
+- **Escola construtivista.** O modelo não é *descoberto*, é **construído junto com o decisor**, pela estruturação do
+  problema e por escalas ancoradas em níveis de referência. `MCDA-C`.
+
+#### 📖 1. DEMATEL — *Decision-Making Trial and Evaluation Laboratory*
+
+**O que é.** Criado por **Gabus & Fontela** no **Battelle Memorial Institute** (Genebra, 1972-73) para estudar
+problemas mundiais complexos e emaranhados. **Não ranqueia alternativas**: mapeia a **estrutura causal entre os
+critérios**.
+
+**Como funciona.** Especialistas preenchem uma **matriz de relação direta** `Z` (quanto o critério *i* influencia o
+*j*, de 0 a 4). Normaliza-se por `s = max(maior soma de linha, maior soma de coluna)` e obtém-se a **matriz de relação
+total** `T = X(I − X)⁻¹`, que soma a influência direta **e todas as indiretas**, por qualquer caminho. Daí saem `R`
+(somas das linhas) e `C` (somas das colunas): **`R+C` é a proeminência** (importância no sistema) e **`R−C` é a
+relação** (positivo = **causa**; negativo = **efeito**).
+
+**Uso geral.** Cadeias de suprimentos sustentáveis, barreiras à adoção de tecnologia, análise de riscos sistêmicos.
+
+**🔒 Neste projeto.** O DEMATEL responde à pergunta que **antecede** o ranking: *"onde eu devo agir?"*. Ele revela que
+**IITA (alucinação), PSR (saúde) e IDLS (desperdício Lean) são CAUSAS**, enquanto **VPL, TIR, ILL e as métricas de
+risco são EFEITOS**. É contraintuitivo e libertador: não adianta perseguir o VPL — ele é um **termômetro**. Mexa na
+alucinação, e VPL, TIR e risco melhoram *juntos*. Além disso, os **pesos** dos critérios não são arbitrados: são
+**derivados da estrutura de influência**, via `wᵢ ∝ √((R+C)ᵢ² + (R−C)ᵢ²)`. Esses pesos alimentam os **outros cinco
+métodos** — é o padrão de integração descrito por John (2025).
+
+#### 📖 2. AHP-TOPSIS 2n — *Analytic Hierarchy Process* + *Technique for Order Preference by Similarity to Ideal Solution*
+
+**O que é.** **Saaty (1977)** propôs o AHP: derivar pesos de **comparações par a par** entre critérios, com um **teste
+de consistência** que denuncia julgamentos contraditórios (`CR ≤ 0,10`). **Hwang & Yoon (1981)** propuseram o TOPSIS: a
+melhor alternativa é a que está **mais perto da solução ideal** e **mais longe da anti-ideal**.
+
+**Como funciona.** Normaliza-se a matriz de decisão, multiplicam-se as colunas pelos pesos, calculam-se as distâncias
+euclidianas às soluções ideal e anti-ideal, e o **coeficiente de proximidade** `Ci = d⁻/(d⁺+d⁻)` ordena tudo.
+
+**Uso geral.** É a dupla mais usada do mundo em MCDM — de seleção de fornecedores a avaliação de desempenho.
+
+**🔒 Neste projeto.** Rodamos o TOPSIS em **duas normalizações** — vetorial (euclidiana) e min-max (linear) —, daí o
+**"2n"**. Cada projeto recebe dois coeficientes e o ranking final é a média. O que se ganha é uma medida que quase
+ninguém reporta: a **concordância entre as normalizações**. Quando as duas discordam da posição de um projeto, o
+resultado dele é **frágil a uma escolha técnica arbitrária** — e o dashboard mostra isso. A matriz de Saaty deste
+projeto tem `CR = 0,0119`, bem abaixo do limite de 0,10.
+
+#### 📖 3. ELECTRE I — *ÉLimination Et Choix Traduisant la REalité*
+
+**O que é.** **Bernard Roy (1968)**, na consultoria SEMA, em Paris. É o marco zero da escola europeia de
+sobreclassificação. A pergunta não é *"qual a nota de cada um?"*, e sim *"**a** é ao menos tão bom quanto **b**?"*.
+
+**Como funciona.** Para cada par `(a, b)` calculam-se dois índices. A **concordância** `C(a,b)` soma os pesos dos
+critérios em que `a` é ao menos tão bom quanto `b`. A **discordância** `D(a,b)` mede a **maior desvantagem** de `a`
+frente a `b`. Diz-se que `a` **sobreclassifica** `b` se a concordância for alta **e** a discordância for baixa. O
+conjunto de alternativas que **ninguém sobreclassifica** é o **núcleo** (*kernel*) — o menu de escolhas defensáveis.
+
+**Uso geral.** Decisões públicas e ambientais, onde compensar um critério catastrófico com outros seria inaceitável.
+
+**🔒 Neste projeto.** O ELECTRE é o método que **se recusa a mentir por conveniência**. Um projeto com VPL
+estratosférico e alucinação escandalosa **não compra** o seu lugar: a **discordância** o barra. O framework reporta o
+**núcleo** — os projetos que nenhum outro domina — e usa como score o **grau de sobreclassificação líquido** (quantos
+ele domina, menos quantos o dominam). É também o único dos seis que admite dizer: *"estes dois projetos são
+simplesmente **incomparáveis**"*.
+
+#### 📖 4. PROMETHEE II — *Preference Ranking Organization METHod for Enrichment Evaluation*
+
+**O que é.** **Jean-Pierre Brans (1982)**, refinado com **Bernard Mareschal e Philippe Vincke (1985)**. Também é
+sobreclassificação, mas com uma virada elegante: em vez de um limiar binário, mede-se **o quanto** `a` é preferido a
+`b`.
+
+**Como funciona.** Para cada critério, a diferença `d = g(a) − g(b)` passa por uma **função de preferência** que a
+converte num grau entre 0 e 1. Brans propôs **seis funções generalizadas** (usual, quase-critério, limiar de
+preferência, nível, linear com indiferença, gaussiana), parametrizadas por um **limiar de indiferença `q`** (abaixo do
+qual a diferença é irrelevante) e um **limiar de preferência `p`** (acima do qual a preferência é total). Somam-se os
+graus ponderados: `φ⁺` é o quanto `a` domina os outros, `φ⁻` o quanto é dominado, e o **fluxo líquido** `φ = φ⁺ − φ⁻`
+produz uma **pré-ordem completa** (PROMETHEE II).
+
+**Uso geral.** Energia, logística, saúde — sempre que graduar a **intensidade** da preferência importa.
+
+**🔒 Neste projeto.** Usamos a função **linear com indiferença**, com `q` e `p` estimados dos quantis 10% e 90% dos
+desvios observados em cada critério. O PROMETHEE responde *"o quanto o vencedor é melhor?"*, e não apenas *"ele é
+melhor?"*. E foi justamente ele que produziu o achado mais interessante do portfólio: na análise de robustez, o
+**PROMETHEE II elege o líder do consenso em apenas 25,4% dos universos de preferência** — enquanto as outras quatro
+escolas concordam. O consenso estava **mascarando uma divergência de escola**.
+
+#### 📖 5. MAUT — *Multi-Attribute Utility Theory*
+
+**O que é.** **Ralph Keeney & Howard Raiffa (1976)**, herdeiros diretos de von Neumann e Morgenstern. É a escola
+americana em sua forma axiomática: se as suas preferências obedecem a certos axiomas de racionalidade, então existe uma
+**função utilidade** que as representa, e decidir é **maximizar a utilidade esperada**.
+
+**Como funciona.** Cada critério recebe uma **função utilidade** `uⱼ`, que mapeia desempenho em satisfação. A utilidade
+global é aditiva: `U(a) = Σ wⱼ · uⱼ(a)` — válida sob **independência aditiva** em preferência. O ponto crucial é a
+**forma** da função: uma `u` **côncava** representa **aversão a risco** (o segundo milhão vale menos que o primeiro);
+linear é neutralidade; convexa é propensão.
+
+**Uso geral.** Decisões médicas, políticas energéticas, negociação — qualquer contexto em que a atitude perante o risco
+precise ser **explicitada e defendida**.
+
+**🔒 Neste projeto.** Usamos utilidade **exponencial** `u(z) = (1 − e^(−r·z)) / (1 − e^(−r))`, com coeficiente de
+aversão `r = 2`. Isso é uma **escolha ética declarada**: o framework é **conservador**. Um ganho incerto vale menos do
+que um ganho certo de mesma média — exatamente como um CFO prudente avaliaria. Enquanto o TOPSIS trata todos os ganhos
+como fungíveis, o MAUT **penaliza a promessa alta e incerta**.
+
+#### 📖 6. MCDA-C — *Multicritério de Apoio à Decisão — Construtivista*
+
+**O que é.** Formalizado por **Leonardo Ensslin, Gilberto Montibeller e Sandra Noronha (2001)**, com raízes em Roy e em
+Bana e Costa. A premissa é filosófica: o modelo **não preexiste** ao decisor. Ele é **construído com ele**, em três
+fases — **estruturação** (mapas cognitivos, descritores), **avaliação** (funções de valor, taxas de substituição) e
+**recomendações**.
+
+**Como funciona.** Cada critério recebe um **descritor** com níveis, e dois deles são âncoras: o nível **Neutro**
+(abaixo do qual o desempenho compromete) e o nível **Bom** (acima do qual há excelência). A função de valor é ancorada:
+`V = 0` no Neutro, `V = 100` no Bom, e **extrapola** livremente fora do intervalo.
+
+**Uso geral.** Avaliação de desempenho organizacional, gestão pública, contextos em que o decisor precisa **aprender**
+sobre o próprio problema.
+
+**🔒 Neste projeto.** Na ausência de uma sessão de estruturação com o decisor, ancoramos os níveis nos **quartis
+observados** do portfólio: `Neutro = Q1`, `Bom = Q3`. Isso preserva o que o MCDA-C tem de único — ele não apenas
+**ordena**, ele **classifica**: `V < 0` é **comprometedor**, `0 ≤ V ≤ 100` é **competitivo**, `V > 100` é
+**excelência**. Um projeto pode ser o primeiro do ranking e ainda assim estar na faixa comprometedora. Nenhum outro
+método deste conjunto lhe diria isso.
+
+#### 📖 Por que cinco métodos, e não um
+
+Porque **cada escola erra de um jeito diferente**, e um método sozinho devolve um vencedor com **confiança implícita de
+100%** — o que é sempre mentira. O AHP-TOPSIS compensa demais; o ELECTRE às vezes não decide; o MAUT depende da forma da
+utilidade; o MCDA-C depende das âncoras.
+
+Rodamos os cinco com os **mesmos pesos** (os do DEMATEL) e fechamos por **consenso de Borda**. Aí a divergência entre
+eles deixa de ser estorvo e vira **informação**: quando quatro concordam e um discorda frontalmente, isso não é ruído —
+é o aviso de que a sua escolha **depende da escola de decisão** que você implicitamente adotou.
+
+#### 📖 A pergunta final: o veredito sobrevive?
+
+Todo o edifício acima repousa sobre **pesos**, e pesos são **estimativas**. Se dois pontos percentuais no peso do IITA
+trocam o 1º com o 2º lugar, o "vencedor" é um **artefato da calibração**, não um fato do portfólio.
+
+Por isso perturbamos os pesos do DEMATEL com uma **Dirichlet** — `w' ~ Dir(κ·w)`, que vive exatamente no simplex e
+preserva `E[w'] = w`, perturbando **sem enviesar** — e reranqueamos **2.000 vezes**. O veredito muda de natureza:
+
+> *"Project C é o melhor"* ⟶ **"Project C vence em 99,9% dos universos de preferência plausíveis"**
+
+É um **intervalo de confiança sobre a própria decisão**. Com isso, o framework deixa de medir apenas o risco do
+**dinheiro** e passa a medir o risco da **decisão**.
+
 
 **O que é e para que serve.** Quando você escolhe entre projetos, os critérios **conflitam** (VPL alto costuma
 vir com risco alto) e são **incomensuráveis** (como somar reais com percentual de alucinação?). A MCDA é o campo

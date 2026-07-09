@@ -461,6 +461,95 @@ der CFO bekommt eine Zahl, die die Prüfung übersteht.
 
 ### 🎲 Mathematische Monte-Carlo-Simulation
 
+#### 📖 Das Konzept
+
+Monte Carlo ist ein numerisches Verfahren, das Fragen über unsichere Systeme **durch Zufallsstichproben** beantwortet. Die
+Idee kehrt den Instinkt des Mathematikers um: Statt die Antwort in **geschlossener Form** herzuleiten — das Integral, die
+Kombinatorik, die Differentialgleichung zu lösen —, baut man ein **Modell**, zieht Tausende Realisierungen der unsicheren
+Größen und **zählt schlicht, was geschah**. Am Ende steht keine Zahl, sondern die **Wahrscheinlichkeitsverteilung des
+Ergebnisses**.
+
+Zwei Gesetze tragen es. Das **Gesetz der großen Zahlen** sichert, dass der Mittelwert der Simulationen gegen den wahren
+Wert konvergiert. Der **zentrale Grenzwertsatz** sagt, wie schnell: Der Standardfehler fällt mit `1/√N`. Die Folge ist
+ehrlich und ein wenig grausam — **um die Genauigkeit zu verdoppeln, muss man die Iterationen vervierfachen**. Monte Carlo
+ist nicht schnell. Seine Tugend liegt anderswo: Der Fehler **hängt nicht von der Dimension des Problems ab**.
+Deterministische Quadraturverfahren leiden am *Fluch der Dimensionalität* und brechen bei Dutzenden Variablen zusammen;
+Monte Carlo nicht. Es gewinnt genau dort, wo die analytische Mathematik stirbt.
+
+#### 📖 Wo und wann es entstand
+
+**Los Alamos, New Mexico, 1946.** Der polnische Mathematiker **Stanisław Ulam** genas von einer Enzephalitis und spielte
+tagelang Patience. Er fragte sich, wie hoch die Gewinnwahrscheinlichkeit sei. Er versuchte die Kombinatorik und gab auf:
+nicht handhabbar. Dann kam ihm etwas so Einfaches, dass es nach Schummelei aussah — **hundert Partien spielen, die Siege
+zählen und teilen**. Er begriff sofort: Das war kein Kartentrick, sondern eine **allgemeine Integrationsmethode** für
+Probleme, die niemand zu lösen wusste.
+
+Er trug die Idee **John von Neumann** vor, der sofort die Anwendung auf jenes Problem sah, das sie im Manhattan-Projekt
+beschäftigte: die **Neutronendiffusion** in spaltbarem Material. Den Zufallsweg Tausender Neutronen zu **simulieren** —
+Streuung, Absorption, Spaltung — war machbar; die Transportgleichung zu lösen nicht. **Nicholas Metropolis** schlug den
+Namen **„Monte Carlo"** vor, nach dem monegassischen Casino, wo ein Onkel Ulams sich Geld zum Spielen lieh. Der **ENIAC**
+machte die ersten Rechnungen möglich, und **1949** veröffentlichten Metropolis und Ulam *„The Monte Carlo Method"* im
+*Journal of the American Statistical Association*.
+
+Die Methode entsprang buchstäblich der Begegnung eines **Kartenspiels** mit der **Atombombe**. Wenige wissenschaftliche
+Ideen haben eine derart verwirrende Geburtsurkunde.
+
+#### 📖 Die Methodik in fünf Schritten
+
+1. **Modellieren.** Schreiben Sie die Ausgabe als Funktion der Eingaben: `y = f(x₁, …, xₙ)`.
+2. **Verteilungen zuweisen.** Jede unsichere Eingabe erhält eine Verteilung. Gibt es **historische Daten**, wird sie daran
+   *angepasst*; sonst wird sie gesetzt — und das muss **deklariert** werden.
+3. **Ziehen.** Erzeugen Sie `N` Szenarien. Sind die Variablen **korreliert**, muss die Stichprobe diese Struktur achten:
+   unabhängig zu ziehen, wo echte Abhängigkeit besteht, ist der häufigste Fehler des Verfahrens.
+4. **Propagieren.** Berechnen Sie `f` in jedem Szenario. Hier **wird** die Unsicherheit der Eingaben zur Unsicherheit der
+   Ausgabe — ohne jede lineare Näherung.
+5. **Analysieren.** Untersuchen Sie die Verteilung: Mittelwert und Streuung, **Perzentile**, Ereigniswahrscheinlichkeiten
+   (`P(y < 0)`), den **Rand** (VaR, CVaR) und die **Sensitivität** (welches `xᵢ` bewegt `y`).
+
+#### 📖 Anwendungen in der Welt
+
+- **Finanzen:** Bewertung exotischer Optionen (ohne geschlossene Form), **VaR** und **CVaR** von Portfolios, regulatorische
+  Stresstests (Basel), Kreditrisiko.
+- **Ingenieurwesen:** strukturelle Zuverlässigkeit, Fertigungstoleranzen, Ausfallanalyse komplexer Systeme.
+- **Projektmanagement:** Termin- und Kostenrisiko (die probabilistische Weiterentwicklung von PERT), S-Kurven.
+- **Physik und Chemie:** Teilchentransport, Strahlenabschirmung, statistische Mechanik.
+- **Operations und Lieferketten:** Warteschlangen, Bestände, Kapazität bei unsicherer Nachfrage.
+- **Epidemiologie:** Krankheitsausbreitung und Politikbewertung unter Unsicherheit.
+- **In der KI selbst:** **MCMC** (bayessche Inferenz), **MCTS** — die Baumsuche, mit der AlphaGo Lee Sedol schlug — und
+  *Monte-Carlo-Dropout* zur Unsicherheitsschätzung in neuronalen Netzen.
+
+#### 🔒 Methodik, Nutzung und Anwendung EXKLUSIV in diesem Projekt
+
+Hier ist Monte Carlo kein akademisches Ornament: Es ist die **Risiko-Engine** des Portfolios.
+
+- **Die Eingaben.** Jeder periodische Cashflow wird zur **Dreiecksvariablen** (`min`, `Modus`, `max`), mit Modus beim
+  deterministischen Wert und Rändern bei ±30 %. Der **Tokenverbrauch** — die einzige wirklich schwerrandige Größe — wird
+  **nicht gesetzt**: Elf Kandidatenverteilungen werden per **Maximum-Likelihood** an Ihre reale `logs_langfuse`-Reihe
+  angepasst, die mit dem **niedrigsten AIC** gewinnt, und die Güte misst **Kolmogorov-Smirnov**. Fällt der p-Wert unter
+  0,05, druckt der Bildschirm `SCHWACHE ANPASSUNG` in Rot, statt Präzision vorzutäuschen.
+- **Die Korrelation.** Sind die Flüsse abhängig, nutzt die Stichprobe **Iman-Conover**, das die Rangkorrelation aufprägt und
+  dabei die **Randverteilungen exakt erhält**. Die Matrix wird zuvor validiert: symmetrisch, Einheitsdiagonale, positiv
+  definit.
+- **Die Propagation.** **10.000 Iterationen** je Projekt mit **festem Startwert (42)**: Erneutes Ausführen liefert exakt
+  dieselbe Zahl. Das ist kein Detail — es macht das Ergebnis **prüfbar** für Partner, Investor oder Auditor.
+- **Die Ausgaben.** Nicht nur der Kapitalwert: Wir simulieren **Kapitalwert, IZF, MIRR, ÄJA, PI** und die **Tokenkosten**,
+  jeweils mit den zehn klassischen deskriptiven Statistiken (Schiefe und Wölbung nach Excel-Definition), **Perzentilen von
+  1 % bis 99 %** und einem **100-Klassen-Histogramm**.
+- **Das Risiko, das zählt.** `P(Kapitalwert < 0)` ist die reale Verlustwahrscheinlichkeit. **VaR 5 %** ist das schlechteste
+  plausible Szenario — *„in 19 von 20 Zukünften verdiene ich mindestens das"*. **CVaR 5 %** beantwortet, was niemand fragt:
+  Wenn die Katastrophe eintritt, **was kostet sie im Mittel**.
+- **Die Sensitivität.** Der **Tornado** wird in beiden klassischen Formen berechnet: die **Betas einer multiplen Regression**
+  (die Wirkung von +1 auf eine Eingabe auf den Kapitalwert) und die **Pearson-Korrelation** (wie stark die Unsicherheit
+  dieser Eingabe jene des Kapitalwerts diktiert). Zwei komplementäre Lesarten; das Dashboard zeigt beide.
+- **Eine Entdeckung des Frameworks über sich selbst.** Beim Vermessen seiner selbst lieferte der Tornado Betas, die **exakt
+  den Abzinsungsfaktoren** `1/(1+i)ᵗ` entsprachen — weil der Kapitalwert in den Flüssen *linear* ist. Nur die Flüsse zu
+  simulieren sagt also nichts über den Zins hinaus. **Das echte stochastische Signal liegt stromaufwärts, in den Tokens.**
+  Diese Einsicht motivierte die Verteilungsanpassung an reale Daten.
+- **Risiko speist die Entscheidung.** Zwei Monte-Carlo-Ausgaben treten als **Kriterien** in das multikriterielle Modell ein:
+  `P(Kapitalwert<0)` als **Kosten**kriterium und **VaR 5 %** als **Nutzen**kriterium. Die endgültige Wahl entsteht damit
+  bereits **risikoadjustiert**, nicht bloß erwartungswertadjustiert.
+
+
 **Was es ist.** Eine Methode, die schwierige Fragen **durch Auslosen** beantwortet. Statt die Mathematik eines
 unsicheren Systems geschlossen zu lösen — oft unmöglich —, weist man den Eingangsgrößen **Wahrscheinlichkeits-
 verteilungen** zu, zieht Tausende Szenarien, berechnet jeweils das Ergebnis und betrachtet die **gesamte
@@ -486,6 +575,180 @@ Kapitalwert — Sie haben die **Verteilung Ihres Geldes**: `P(Kapitalwert < 0)` 
 (welche Variable das Ergebnis wirklich bewegt). Der Mittelwert lügt; der Rand entscheidet.
 
 ### 🧮 Multikriterielle Entscheidungsanalyse (MCDA)
+
+#### 📖 Das Konzept und wozu es dient
+
+Zwischen Projekten zu wählen ist aus zwei Gründen schwer, die keine Tabelle löst. Erstens **widersprechen** sich die
+Kriterien: Das Projekt mit dem höchsten Kapitalwert ist meist das riskanteste. Zweitens sind sie **inkommensurabel**: Es
+gibt keine ehrliche Arithmetik, die Euro, Halluzinationsprozente und Nacharbeitsstunden addiert.
+
+MCDA (*Multi-Criteria Decision Analysis*) ist das Feld — in den 1960er-70er Jahren an der Grenze von Operations Research und
+Entscheidungstheorie entstanden —, das genau dies angeht. Es **verspricht nicht die richtige Antwort**. Es verspricht
+Nützlicheres: die Wahl **explizit, prüfbar und vertretbar** zu machen.
+
+Seine Gründungsthese ist unbequem und befreiend zugleich: **„das Beste" gibt es nicht im luftleeren Raum.** Es gibt ein
+Bestes *gegeben ein Präferenzsystem, das jemand explizit gemacht hat*. Jeder Entscheider operiert bereits mit einem
+Präferenzsystem — der Unterschied ist, dass es ohne MCDA **implizit, inkonsistent und nicht prüfbar** ist. Die stillschweigende
+Meinung gegen ein explizites Modell zu tauschen: darin liegt der ganze Gewinn.
+
+#### 📖 Anwendungen in der Welt
+
+Lieferantenauswahl und Portfoliopriorisierung; Wahl von Energietechnologien (Solar × Wind × Biomasse); Standortwahl für
+Werke, Krankenhäuser und Deponien; Umweltverträglichkeitsprüfung; öffentliche Politik und Budgetallokation; Personalauswahl;
+Instandhaltungspriorisierung; und — zunehmend — **techno-ökonomische Bewertung** neuer Technologien, was exakt der Fall eines
+KI-Projektportfolios ist.
+
+#### 📖 Die drei Entscheidungsschulen
+
+- **Amerikanische Schule (Wert und Nutzen).** Aggregiert alles zu einer **einzigen Zahl**. Sie nimmt an, eine schlechte Note
+  in einem Kriterium könne durch Bestnoten anderswo **kompensiert** werden. Einfach, mächtig — und mitunter gefährlich.
+  `AHP`, `MAUT`.
+- **Europäische Schule (Outranking).** Von **Bernard Roy** begründet. Sie akzeptiert, dass zwei Alternativen
+  **unvergleichbar** sein können, und lässt das **Veto** zu: eine katastrophale Leistung in einem Kriterium **wird nicht
+  freigekauft** durch Exzellenz anderswo. Sie modelliert das reale Zögern des Entscheiders über **Schwellen**. `ELECTRE`,
+  `PROMETHEE`.
+- **Konstruktivistische Schule.** Das Modell wird nicht *entdeckt*, es wird **gemeinsam mit dem Entscheider gebaut**, durch
+  Problemstrukturierung und an Referenzniveaus verankerte Skalen. `MCDA-C`.
+
+#### 📖 1. DEMATEL — *Decision-Making Trial and Evaluation Laboratory*
+
+**Was es ist.** Von **Gabus & Fontela** am **Battelle Memorial Institute** (Genf, 1972-73) geschaffen, um komplexe, verwobene
+Weltprobleme zu untersuchen. Es **rankt keine Alternativen**: Es kartiert die **kausale Struktur zwischen den Kriterien**.
+
+**Wie es funktioniert.** Experten füllen eine **direkte Beziehungsmatrix** `Z` aus (wie stark Kriterium *i* auf *j* wirkt,
+0 bis 4). Normiert wird mit `s = max(größte Zeilensumme, größte Spaltensumme)`, was die **Gesamtbeziehungsmatrix**
+`T = X(I − X)⁻¹` ergibt — sie summiert direkte **und alle indirekten** Einflüsse über beliebige Pfade. Daraus folgen `R`
+(Zeilensummen) und `C` (Spaltensummen): **`R+C` ist die Prominenz** (Bedeutung im System), **`R−C` die Relation** (positiv =
+**Ursache**; negativ = **Wirkung**).
+
+**Allgemeine Nutzung.** Nachhaltige Lieferketten, Barrieren der Technologieadoption, systemische Risikoanalyse.
+
+**🔒 In diesem Projekt.** DEMATEL beantwortet die Frage, die dem Ranking **vorausgeht**: *„Wo soll ich ansetzen?"*. Es zeigt,
+dass **IITA (Halluzination), PSR (Gesundheit) und IDLS (Lean-Verschwendung) URSACHEN** sind, während **Kapitalwert, IZF, PI
+und die Risikomaße WIRKUNGEN** sind. Das ist kontraintuitiv und befreiend: Dem Kapitalwert nachzujagen bringt nichts — er ist
+ein **Thermometer**. Setzen Sie bei der Halluzination an, und Kapitalwert, IZF und Risiko bessern sich *gemeinsam*. Zudem
+werden die **Gewichte** nicht gesetzt: Sie werden **aus der Einflussstruktur abgeleitet**, über
+`wᵢ ∝ √((R+C)ᵢ² + (R−C)ᵢ²)`. Diese Gewichte speisen die **übrigen fünf Methoden** — das Integrationsmuster nach John (2025).
+
+#### 📖 2. AHP-TOPSIS 2n — *Analytic Hierarchy Process* + *Technique for Order Preference by Similarity to Ideal Solution*
+
+**Was es ist.** **Saaty (1977)** schlug AHP vor: Gewichte aus **Paarvergleichen** der Kriterien, mit einem **Konsistenztest**,
+der widersprüchliche Urteile entlarvt (`CR ≤ 0,10`). **Hwang & Yoon (1981)** schlugen TOPSIS vor: Die beste Alternative liegt
+der **Ideallösung am nächsten** und der **Anti-Ideallösung am fernsten**.
+
+**Wie es funktioniert.** Die Entscheidungsmatrix wird normiert, die Spalten mit den Gewichten multipliziert, die euklidischen
+Abstände zu Ideal und Anti-Ideal berechnet, und der **Nähekoeffizient** `Ci = d⁻/(d⁺+d⁻)` ordnet alles.
+
+**Allgemeine Nutzung.** Das weltweit meistgenutzte Paar im MCDM — von Lieferantenauswahl bis Leistungsbewertung.
+
+**🔒 In diesem Projekt.** Wir führen TOPSIS unter **zwei Normalisierungen** aus — vektoriell (euklidisch) und Min-Max (linear)
+—, daher das **„2n"**. Jedes Projekt erhält zwei Koeffizienten; das Endranking ist deren Mittel. Gewonnen wird ein Maß, das
+fast niemand berichtet: die **Übereinstimmung zwischen den Normalisierungen**. Wenn beide über die Position eines Projekts
+uneins sind, ist dessen Ergebnis **anfällig gegenüber einer willkürlichen technischen Wahl** — und das Dashboard zeigt es.
+Die Saaty-Matrix dieses Projekts hat `CR = 0,0119`, deutlich unter der Grenze von 0,10.
+
+#### 📖 3. ELECTRE I — *ÉLimination Et Choix Traduisant la REalité*
+
+**Was es ist.** **Bernard Roy (1968)** bei der Beratung SEMA in Paris. Der Nullpunkt der europäischen Outranking-Schule. Die
+Frage lautet nicht *„welche Note hat jeder?"*, sondern *„ist **a** mindestens so gut wie **b**?"*.
+
+**Wie es funktioniert.** Für jedes Paar `(a, b)` zwei Indizes. Die **Konkordanz** `C(a,b)` summiert die Gewichte der Kriterien,
+in denen `a` mindestens so gut wie `b` ist. Die **Diskordanz** `D(a,b)` misst den **größten Nachteil** von `a` gegenüber `b`.
+`a` **überklassiert** `b`, wenn die Konkordanz hoch **und** die Diskordanz niedrig ist. Die Menge der Alternativen, die
+**niemand überklassiert**, ist der **Kern** (*kernel*) — das Menü vertretbarer Wahlen.
+
+**Allgemeine Nutzung.** Öffentliche und umweltbezogene Entscheidungen, wo das Aufwiegen eines katastrophalen Kriteriums
+inakzeptabel wäre.
+
+**🔒 In diesem Projekt.** ELECTRE ist die Methode, die sich **weigert, aus Bequemlichkeit zu lügen**. Ein Projekt mit
+stratosphärischem Kapitalwert und skandalöser Halluzination **kauft** seinen Platz nicht: Die **Diskordanz** blockiert es. Das
+Framework berichtet den **Kern** — die Projekte, die kein anderes dominiert — und nutzt als Score den **Netto-Überklassierungsgrad**
+(wie viele es dominiert, minus wie viele es dominieren). Es ist zudem die einzige der sechs, die sagen darf: *„diese beiden
+Projekte sind schlicht **unvergleichbar**"*.
+
+#### 📖 4. PROMETHEE II — *Preference Ranking Organization METHod for Enrichment Evaluation*
+
+**Was es ist.** **Jean-Pierre Brans (1982)**, verfeinert mit **Bernard Mareschal und Philippe Vincke (1985)**. Ebenfalls
+Outranking, aber mit eleganter Wendung: Statt einer binären Schwelle misst man, **um wie viel** `a` gegenüber `b` bevorzugt
+wird.
+
+**Wie es funktioniert.** Je Kriterium durchläuft die Differenz `d = g(a) − g(b)` eine **Präferenzfunktion**, die sie auf einen
+Grad zwischen 0 und 1 abbildet. Brans schlug **sechs verallgemeinerte Funktionen** vor (üblich, Quasi-Kriterium,
+Präferenzschwelle, Stufe, linear mit Indifferenz, gaußisch), parametrisiert durch eine **Indifferenzschwelle `q`** (unterhalb
+derer die Differenz belanglos ist) und eine **Präferenzschwelle `p`** (oberhalb derer die Präferenz total ist). Die gewichteten
+Grade werden summiert: `φ⁺` misst, wie stark `a` die anderen dominiert, `φ⁻` wie stark es dominiert wird, und der **Nettofluss**
+`φ = φ⁺ − φ⁻` erzeugt eine **vollständige Präordnung** (PROMETHEE II).
+
+**Allgemeine Nutzung.** Energie, Logistik, Gesundheit — wo immer die **Intensität** der Präferenz zählt.
+
+**🔒 In diesem Projekt.** Wir nutzen die Funktion **linear mit Indifferenz**, mit `q` und `p` geschätzt aus den 10-%- und
+90-%-Quantilen der beobachteten Abweichungen je Kriterium. PROMETHEE beantwortet *„um wie viel ist der Sieger besser?"*, nicht
+bloß *„ist er besser?"*. Und gerade sie brachte den interessantesten Fund des Portfolios: In der Robustheitsanalyse **wählt
+PROMETHEE II den Konsensführer in nur 25,4 % der Präferenzuniversen** — während die anderen vier Schulen übereinstimmen. Der
+Konsens **verbarg eine Uneinigkeit der Schulen**.
+
+#### 📖 5. MAUT — *Multi-Attribute Utility Theory*
+
+**Was es ist.** **Ralph Keeney & Howard Raiffa (1976)**, direkte Erben von von Neumann und Morgenstern. Die amerikanische
+Schule in axiomatischer Form: Gehorchen Ihre Präferenzen bestimmten Rationalitätsaxiomen, so existiert eine **Nutzenfunktion**,
+die sie darstellt, und Entscheiden heißt **den Erwartungsnutzen maximieren**.
+
+**Wie es funktioniert.** Jedes Kriterium erhält eine **Nutzenfunktion** `uⱼ`, die Leistung auf Zufriedenheit abbildet. Der
+Gesamtnutzen ist additiv: `U(a) = Σ wⱼ · uⱼ(a)` — gültig unter **additiver Unabhängigkeit** in der Präferenz. Entscheidend ist
+die **Form**: Ein **konkaves** `u` bedeutet **Risikoaversion** (die zweite Million wiegt weniger als die erste); linear ist
+Neutralität, konvex Risikofreude.
+
+**Allgemeine Nutzung.** Medizinische Entscheidungen, Energiepolitik, Verhandlungen — überall, wo die Haltung zum Risiko
+**explizit gemacht und verteidigt** werden muss.
+
+**🔒 In diesem Projekt.** Wir verwenden **exponentiellen** Nutzen `u(z) = (1 − e^(−r·z)) / (1 − e^(−r))` mit Aversionskoeffizient
+`r = 2`. Das ist eine **erklärte ethische Wahl**: Das Framework ist **konservativ**. Ein unsicherer Gewinn ist weniger wert als
+ein sicherer gleichen Erwartungswerts — genau wie ein umsichtiger CFO urteilen würde. Wo TOPSIS alle Gewinne als austauschbar
+behandelt, **bestraft MAUT das hohe, unsichere Versprechen**.
+
+#### 📖 6. MCDA-C — *Multikriterielle Entscheidungsunterstützung — konstruktivistisch*
+
+**Was es ist.** Formalisiert von **Leonardo Ensslin, Gilberto Montibeller und Sandra Noronha (2001)**, mit Wurzeln bei Roy und
+Bana e Costa. Die Prämisse ist philosophisch: Das Modell **existiert nicht vor** dem Entscheider. Es wird **mit ihm gebaut**, in
+drei Phasen — **Strukturierung** (kognitive Karten, Deskriptoren), **Bewertung** (Wertfunktionen, Substitutionsraten) und
+**Empfehlungen**.
+
+**Wie es funktioniert.** Jedes Kriterium erhält einen **Deskriptor** mit Niveaus, zwei davon sind Anker: das Niveau **Neutral**
+(darunter kompromittiert die Leistung) und das Niveau **Gut** (darüber herrscht Exzellenz). Die Wertfunktion ist verankert:
+`V = 0` bei Neutral, `V = 100` bei Gut, und sie **extrapoliert** frei außerhalb des Intervalls.
+
+**Allgemeine Nutzung.** Bewertung organisationaler Leistung, öffentliche Verwaltung, Kontexte, in denen der Entscheider über
+sein eigenes Problem **lernen** muss.
+
+**🔒 In diesem Projekt.** Mangels einer Strukturierungssitzung mit dem Entscheider verankern wir die Niveaus an den
+**beobachteten Quartilen** des Portfolios: `Neutral = Q1`, `Gut = Q3`. Das bewahrt das Einzigartige von MCDA-C — es **ordnet**
+nicht nur, es **klassifiziert**: `V < 0` ist **kompromittierend**, `0 ≤ V ≤ 100` ist **wettbewerbsfähig**, `V > 100` ist
+**Exzellenz**. Ein Projekt kann das Ranking anführen und dennoch im kompromittierenden Band liegen. Keine andere Methode dieses
+Satzes würde Ihnen das sagen.
+
+#### 📖 Warum fünf Methoden und nicht eine
+
+Weil **jede Schule anders irrt**, und eine einzelne Methode einen Sieger mit **impliziter 100-%-Zuversicht** liefert — was stets
+eine Lüge ist. AHP-TOPSIS kompensiert zu stark; ELECTRE entscheidet manchmal nicht; MAUT hängt von der Nutzenform ab; MCDA-C von
+den Ankern.
+
+Wir führen alle fünf mit **denselben Gewichten** (denen von DEMATEL) aus und schließen mit einem **Borda-Konsens**. Dann hört die
+Uneinigkeit auf, ein Ärgernis zu sein, und wird zu **Information**: Wenn vier zustimmen und eine frontal widerspricht, ist das
+kein Rauschen — es ist die Warnung, dass Ihre Wahl **von der Entscheidungsschule abhängt**, die Sie implizit übernommen haben.
+
+#### 📖 Die letzte Frage: Übersteht das Urteil?
+
+Das ganze Gebäude ruht auf **Gewichten**, und Gewichte sind **Schätzungen**. Wenn zwei Prozentpunkte im IITA-Gewicht Platz 1 und
+2 tauschen, ist der „Sieger" ein **Artefakt der Kalibrierung**, kein Faktum des Portfolios.
+
+Darum perturbieren wir die DEMATEL-Gewichte mit einer **Dirichlet** — `w' ~ Dir(κ·w)`, die exakt auf dem Simplex lebt und
+`E[w'] = w` erhält, also **verzerrungsfrei** stört — und ranken **2.000-mal** neu. Das Urteil ändert seine Natur:
+
+> *„Project C ist das beste"* ⟶ **„Project C gewinnt in 99,9 % der plausiblen Präferenzuniversen"**
+
+Es ist ein **Konfidenzintervall über die Entscheidung selbst**. Damit misst das Framework nicht mehr nur das Risiko des
+**Geldes**, sondern das Risiko der **Entscheidung**.
+
 
 **Was es ist und wozu.** Wenn Sie zwischen Projekten wählen, **widersprechen** sich die Kriterien (hoher Kapitalwert
 kommt meist mit hohem Risiko) und sind **inkommensurabel** (wie addiert man Euro und Halluzinationsprozente?). MCDA

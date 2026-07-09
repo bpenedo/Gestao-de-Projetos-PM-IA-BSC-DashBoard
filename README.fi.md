@@ -449,6 +449,92 @@ luvun, joka kestää tilintarkastuksen.
 
 ### 🎲 Matemaattinen Monte Carlo -simulaatio
 
+#### 📖 Käsite
+
+Monte Carlo on numeerinen menetelmä, joka vastaa epävarmoja järjestelmiä koskeviin kysymyksiin **satunnaisotannalla**. Ajatus
+kääntää matemaatikon vaiston nurin: sen sijaan että vastaus johdettaisiin **suljetussa muodossa** — ratkaisten integraalin,
+kombinatoriikan, differentiaaliyhtälön — rakennetaan **malli**, arvotaan tuhansia epävarmojen muuttujien realisaatioita ja
+yksinkertaisesti **lasketaan, mitä tapahtui**. Lopputulos ei ole luku: se on **tuloksen todennäköisyysjakauma**.
+
+Kaksi lakia kannattelee sitä. **Suurten lukujen laki** takaa, että simulaatioiden keskiarvo suppenee kohti todellista arvoa.
+**Keskeinen raja-arvolause** kertoo, kuinka nopeasti: keskivirhe pienenee kuin `1/√N`. Seuraus on rehellinen ja hieman julma —
+**tarkkuuden kaksinkertaistaminen vaatii iteraatioiden nelinkertaistamisen**. Monte Carlo ei ole nopea. Sen hyve on muualla:
+virhe **ei riipu ongelman ulottuvuudesta**. Deterministiset kvadratuurimenetelmät kärsivät *ulottuvuuden kirouksesta* ja
+romahtavat kymmenillä muuttujilla; Monte Carlo ei. Se voittaa juuri siellä, missä analyyttinen matematiikka kuolee.
+
+#### 📖 Missä ja milloin se syntyi
+
+**Los Alamos, New Mexico, 1946.** Puolalainen matemaatikko **Stanisław Ulam** toipui aivotulehduksesta ja vietti päivänsä
+pasianssia pelaten. Hän mietti, mikä oli todennäköisyys voittaa peli. Hän kokeili kombinatoriikkaa ja luovutti: mahdotonta.
+Sitten hänen mieleensä juolahti jotain niin yksinkertaista, että se näytti huijaukselta — **pelaa sata peliä, laske voitot ja
+jaa**. Hän tajusi heti, ettei tämä ollut korttitemppu: se oli **yleinen integrointimenetelmä** ongelmiin, joita kukaan ei
+osannut ratkaista.
+
+Hän vei ajatuksen **John von Neumannille**, joka näki heti sen sovelluksen ongelmaan, joka heitä Manhattan-projektissa
+askarrutti: **neutronidiffuusioon** fissiilissä materiaalissa. Tuhansien neutronien satunnaiskulun **simulointi** — sironta,
+absorptio, fissio — oli mahdollista; kuljetusyhtälön ratkaiseminen ei. **Nicholas Metropolis** ehdotti nimeä **"Monte Carlo"**
+Monacon kasinon mukaan, jossa Ulamin setä lainasi rahaa pelatakseen. **ENIAC** teki ensimmäiset laskelmat mahdollisiksi, ja
+**1949** Metropolis ja Ulam julkaisivat *"The Monte Carlo Method"* -artikkelin *Journal of the American Statistical
+Association* -lehdessä.
+
+Menetelmä syntyi kirjaimellisesti **korttipelin** ja **atomipommin** kohtaamisesta. Harvalla tieteellisellä ajatuksella on yhtä
+hämmentävä syntymätodistus.
+
+#### 📖 Metodologia viidessä askeleessa
+
+1. **Mallinna.** Kirjoita tuotos syötteiden funktiona: `y = f(x₁, …, xₙ)`.
+2. **Anna jakaumat.** Jokainen epävarma syöte saa jakauman. Jos **historiadataa** on, se *sovitetaan* siihen; jos ei, se
+   asetetaan — ja se on **ilmoitettava**.
+3. **Otanta.** Arvo `N` skenaariota. Jos muuttujat ovat **korreloituneita**, otannan on kunnioitettava tuota rakennetta:
+   riippumaton arpominen siellä, missä todellinen riippuvuus vallitsee, on menetelmän yleisin virhe.
+4. **Etene.** Laske `f` jokaisessa skenaariossa. Tässä syötteiden epävarmuus **muuttuu** tuotoksen epävarmuudeksi ilman
+   minkäänlaista lineaarista approksimaatiota.
+5. **Analysoi.** Tutki jakaumaa: keskiarvo ja hajonta, **prosenttipisteet**, tapahtumien todennäköisyydet (`P(y < 0)`), **häntä**
+   (VaR, CVaR) ja **herkkyys** (mikä `xᵢ` liikuttaa `y`:tä).
+
+#### 📖 Käyttö ja sovellukset maailmalla
+
+- **Rahoitus:** eksoottisten optioiden hinnoittelu (kun suljettua muotoa ei ole), salkkujen **VaR** ja **CVaR**, sääntelyn
+  stressitestit (Basel), luottoriski.
+- **Tekniikka:** rakenteellinen luotettavuus, valmistustoleranssit, monimutkaisten järjestelmien vikaanalyysi.
+- **Projektinhallinta:** aikataulu- ja kustannusriski (PERT:n todennäköisyyspohjainen kehitys), valmistumisen S-käyrät.
+- **Fysiikka ja kemia:** hiukkaskuljetus, säteilysuojaus, tilastollinen mekaniikka.
+- **Operaatiot ja toimitusketjut:** jonot, varastot, kapasiteetti epävarman kysynnän alla.
+- **Epidemiologia:** tautien leviäminen ja politiikkojen arviointi epävarmuudessa.
+- **Tekoälyn sisällä:** **MCMC** (bayesilainen päättely), **MCTS** — puuhaku, joka vei AlphaGon Lee Sedolin ohi — ja
+  *Monte Carlo dropout* neuroverkkojen epävarmuuden arviointiin.
+
+#### 🔒 Metodologia, käyttö ja sovellus YKSINOMAAN tässä projektissa
+
+Täällä Monte Carlo ei ole akateeminen koriste: se on salkun **riskimoottori**.
+
+- **Syötteet.** Jokaisesta jaksottaisesta kassavirrasta tulee **kolmiojakautunut** muuttuja (`min`, `moodi`, `max`), moodi
+  deterministisessä arvossa ja hännät ±30 %:ssa. Sen sijaan **tokenien kulutusta** — ainoaa aidosti raskashäntäistä muuttujaa —
+  **ei aseteta**: yksitoista ehdokasjakaumaa **sovitetaan suurimman uskottavuuden menetelmällä** todelliseen
+  `logs_langfuse`-sarjaasi, **pienimmän AIC:n** omaava voittaa, ja sopivuus mitataan **Kolmogorov-Smirnovilla**. Jos p-arvo
+  putoaa alle 0,05:n, ruutu tulostaa `HEIKKO SOPIVUUS` punaisella sen sijaan, että teeskentelisi tarkkuutta.
+- **Korrelaatio.** Kun virrat ovat riippuvia, otanta käyttää **Iman-Conoveria**, joka pakottaa järjestyskorrelaation
+  **säilyttäen reunajakaumat täsmälleen**. Matriisi validoidaan ensin: symmetrinen, ykkösdiagonaali, positiivisesti definiitti.
+- **Eteneminen.** **10 000 iteraatiota** projektia kohden, **kiinteällä siemenellä (42)**: aja uudelleen ja saat täsmälleen saman
+  luvun. Se ei ole yksityiskohta — se tekee tuloksesta **auditoitavan** kumppanille, sijoittajalle tai tilintarkastajalle.
+- **Tuotokset.** Ei vain NPV: simuloimme **NPV:n, IRR:n, MIRR:n, EAA:n, PI:n** ja **tokenkustannuksen**, kunkin kymmenellä
+  klassisella tunnusluvulla (vinous ja huipukkuus Excelin määritelmin), **prosenttipisteillä 1 %:sta 99 %:iin** ja **100 luokan
+  histogrammilla**.
+- **Riski, jolla on väliä.** `P(NPV < 0)` on todellinen tappion todennäköisyys. **VaR 5 %** on pahin uskottava skenaario —
+  *"19:ssä tulevaisuudessa 20:stä ansaitsen vähintään tämän"*. **CVaR 5 %** vastaa siihen, mitä kukaan ei kysy: kun katastrofi
+  iskee, **paljonko se keskimäärin maksaa**.
+- **Herkkyys.** **Tornado** lasketaan molemmissa klassisissa muodoissa: **monimuuttujaregression beetat** (yhden yksikön lisäyksen
+  vaikutus syötteessä NPV:hen) ja **Pearsonin korrelaatio** (kuinka paljon kyseisen syötteen epävarmuus sanelee NPV:n
+  epävarmuuden). Ne ovat toisiaan täydentäviä lukutapoja; dashboard näyttää molemmat.
+- **Kehyksen löydös itsestään.** Itseään mitatessaan tornado palautti beetat, jotka olivat **täsmälleen diskonttaustekijät**
+  `1/(1+i)ᵗ` — koska NPV on *lineaarinen* kassavirroissa. Pelkkien virtojen simulointi ei siis kerro mitään korkoa enempää.
+  **Todellinen satunnaissignaali on ylävirrassa, tokeneissa.** Juuri tämä havainto motivoi jakaumien sovittamisen todelliseen
+  dataan.
+- **Riski ruokkii päätöstä.** Kaksi Monte Carlon tuotosta menee **kriteereinä** monikriteerimalliin: `P(NPV<0)`
+  **kustannus**kriteerinä ja **VaR 5 %** **hyöty**kriteerinä. Lopullinen valinta syntyy siis jo **riskikorjattuna**, ei vain
+  odotusarvon suhteen.
+
+
 **Mikä se on.** Menetelmä, joka vastaa vaikeisiin kysymyksiin **arpomalla**. Sen sijaan että ratkaisisit epävarman
 järjestelmän matematiikan suljetussa muodossa — usein mahdotonta — annat syötemuuttujille
 **todennäköisyysjakaumat**, arvot tuhansia skenaarioita, lasket tuloksen kussakin ja katsot tulosten **koko
@@ -474,6 +560,176 @@ uskottava skenaario), **CVaR 5 %** (mitä katastrofi maksaa) ja **tornado** (mik
 tulosta). Keskiarvo valehtelee; häntä ratkaisee.
 
 ### 🧮 Monikriteerinen päätösanalyysi (MCDA)
+
+#### 📖 Käsite ja mihin sitä tarvitaan
+
+Projektien välillä valitseminen on vaikeaa kahdesta syystä, joita mikään taulukkolaskenta ei ratkaise. Ensiksi kriteerit **ovat
+ristiriidassa**: korkeimman NPV:n projekti on yleensä riskialttein. Toiseksi ne ovat **yhteismitattomia**: ei ole rehellistä
+aritmetiikkaa, joka laskisi yhteen eurot, hallusinaatioprosentin ja uudelleentekemisen tunnit.
+
+MCDA (*Multi-Criteria Decision Analysis*) on ala — syntynyt 1960-70-luvuilla operaatiotutkimuksen ja päätösteorian rajapinnalla —
+joka kohtaa juuri tämän. Se **ei lupaa oikeaa vastausta.** Se lupaa jotain hyödyllisempää: tehdä valinnasta **eksplisiittisen,
+auditoitavan ja puolustettavan**.
+
+Sen perustava teesi on epämukava ja vapauttava yhtä aikaa: **"parasta" ei ole tyhjiössä.** On paras *annetulla
+preferenssijärjestelmällä, jonka joku on tehnyt eksplisiittiseksi*. Jokainen päättäjä toimii jo jonkin preferenssijärjestelmän
+varassa — ero on siinä, että ilman MCDA:ta se on **implisiittinen, epäjohdonmukainen ja auditoimaton**. Hiljaisen mielipiteen
+vaihtaminen eksplisiittiseen malliin: siinä on koko hyöty.
+
+#### 📖 Käyttö ja sovellukset maailmalla
+
+Toimittajavalinta ja salkun priorisointi; energiateknologioiden valinta (aurinko × tuuli × biomassa); tehtaiden, sairaaloiden ja
+kaatopaikkojen sijoittaminen; ympäristövaikutusten arviointi; julkinen politiikka ja budjettijako; henkilövalinta; kunnossapidon
+priorisointi; ja — yhä useammin — nousevien teknologioiden **teknistaloudellinen arviointi**, mikä on juuri tekoälyprojektisalkun
+tapaus.
+
+#### 📖 Kolme päätöksenteon koulukuntaa
+
+- **Amerikkalainen koulukunta (arvo ja hyöty).** Kokoaa kaiken **yhdeksi luvuksi**. Olettaa, että huono arvosana yhdessä
+  kriteerissä voidaan **kompensoida** loistavilla arvosanoilla muissa. Yksinkertaista, voimakasta — ja toisinaan vaarallista.
+  `AHP`, `MAUT`.
+- **Eurooppalainen koulukunta (ylivertaisuus).** Perustaja **Bernard Roy**. Hyväksyy, että kaksi vaihtoehtoa voivat olla
+  **vertailukelvottomia**, ja sallii **veton**: katastrofaalista suoritusta yhdessä kriteerissä **ei osteta pois** erinomaisuudella
+  muualla. Se mallintaa päättäjän todellista epäröintiä **kynnysten** avulla. `ELECTRE`, `PROMETHEE`.
+- **Konstruktivistinen koulukunta.** Mallia ei *löydetä*, se **rakennetaan yhdessä päättäjän kanssa**, ongelman jäsentämisen ja
+  viitetasoihin ankkuroitujen asteikkojen kautta. `MCDA-C`.
+
+#### 📖 1. DEMATEL — *Decision-Making Trial and Evaluation Laboratory*
+
+**Mikä se on.** Loivat **Gabus & Fontela** **Battelle Memorial Institutessa** (Geneve, 1972-73) tutkiakseen monimutkaisia,
+kietoutuneita maailmanongelmia. Se **ei järjestä vaihtoehtoja**: se kartoittaa **kriteerien välisen syy-rakenteen**.
+
+**Miten se toimii.** Asiantuntijat täyttävät **suoran suhteen matriisin** `Z` (kuinka paljon kriteeri *i* vaikuttaa *j*:hin,
+0–4). Normalisoidaan `s = max(suurin rivisumma, suurin sarakesumma)`, mistä saadaan **kokonaissuhdematriisi** `T = X(I − X)⁻¹`,
+joka summaa suoran vaikutuksen **ja kaikki epäsuorat** mitä tahansa polkua pitkin. Siitä seuraavat `R` (rivisummat) ja `C`
+(sarakesummat): **`R+C` on näkyvyys** (merkitys järjestelmässä) ja **`R−C` on suhde** (positiivinen = **syy**; negatiivinen =
+**seuraus**).
+
+**Yleinen käyttö.** Kestävät toimitusketjut, teknologian omaksumisen esteet, systeemisen riskin analyysi.
+
+**🔒 Tässä projektissa.** DEMATEL vastaa kysymykseen, joka **edeltää** järjestystä: *"missä minun pitäisi toimia?"*. Se paljastaa,
+että **IITA (hallusinaatio), PSR (terveys) ja IDLS (Lean-hukka) ovat SYITÄ**, kun taas **NPV, IRR, PI ja riskimittarit ovat
+SEURAUKSIA**. Se on vastaintuitiivista ja vapauttavaa: NPV:n perässä juokseminen on turhaa — se on **lämpömittari**. Vaikuta
+hallusinaatioon, ja NPV, IRR ja riski paranevat *yhdessä*. Lisäksi kriteerien **painoja** ei aseteta: ne **johdetaan
+vaikutusrakenteesta**, kaavalla `wᵢ ∝ √((R+C)ᵢ² + (R−C)ᵢ²)`. Nämä painot ruokkivat **muita viittä menetelmää** — Johnin (2025)
+kuvaama integraatiomalli.
+
+#### 📖 2. AHP-TOPSIS 2n — *Analytic Hierarchy Process* + *Technique for Order Preference by Similarity to Ideal Solution*
+
+**Mikä se on.** **Saaty (1977)** esitti AHP:n: painot johdetaan kriteerien **parivertailuista**, mukana **johdonmukaisuustesti**,
+joka paljastaa ristiriitaiset arviot (`CR ≤ 0,10`). **Hwang & Yoon (1981)** esittivät TOPSIS:n: paras vaihtoehto on se, joka on
+**lähinnä ideaaliratkaisua** ja **kauimpana anti-ideaalista**.
+
+**Miten se toimii.** Päätösmatriisi normalisoidaan, sarakkeet kerrotaan painoilla, lasketaan euklidiset etäisyydet ideaali- ja
+anti-ideaaliratkaisuihin, ja **läheisyyskerroin** `Ci = d⁻/(d⁺+d⁻)` järjestää kaiken.
+
+**Yleinen käyttö.** Maailman käytetyin pari MCDM:ssä — toimittajavalinnasta suorituskyvyn arviointiin.
+
+**🔒 Tässä projektissa.** Ajamme TOPSIS:n **kahdella normalisoinnilla** — vektorilla (euklidinen) ja min-max:lla (lineaarinen) —
+tästä **"2n"**. Kukin projekti saa kaksi kerrointa ja lopullinen järjestys on niiden keskiarvo. Voitamme mittarin, jota lähes
+kukaan ei raportoi: **normalisointien välisen yksimielisyyden**. Kun ne ovat eri mieltä projektin sijoituksesta, sen tulos on
+**hauras mielivaltaiselle tekniselle valinnalle** — ja dashboard näyttää sen. Tämän projektin Saaty-matriisin `CR = 0,0119`,
+selvästi alle 0,10 rajan.
+
+#### 📖 3. ELECTRE I — *ÉLimination Et Choix Traduisant la REalité*
+
+**Mikä se on.** **Bernard Roy (1968)**, konsulttiyhtiö SEMA:ssa Pariisissa. Se on eurooppalaisen ylivertaisuuskoulukunnan
+nollapiste. Kysymys ei ole *"mikä on kunkin arvosana?"* vaan *"onko **a** vähintään yhtä hyvä kuin **b**?"*.
+
+**Miten se toimii.** Kullekin parille `(a, b)` lasketaan kaksi indeksiä. **Konkordanssi** `C(a,b)` summaa niiden kriteerien painot,
+joissa `a` on vähintään yhtä hyvä kuin `b`. **Diskordanssi** `D(a,b)` mittaa `a`:n **suurimman haitan** suhteessa `b`:hen. Sanotaan,
+että `a` **ylittää** `b`:n, jos konkordanssi on korkea **ja** diskordanssi matala. Niiden vaihtoehtojen joukko, joita **kukaan ei
+ylitä**, on **ydin** (*kernel*) — puolustettavien valintojen valikko.
+
+**Yleinen käyttö.** Julkiset ja ympäristöpäätökset, joissa katastrofaalisen kriteerin kompensoiminen olisi kestämätöntä.
+
+**🔒 Tässä projektissa.** ELECTRE on menetelmä, joka **kieltäytyy valehtelemasta mukavuuden vuoksi**. Projekti, jonka NPV on
+stratosfäärinen mutta hallusinaatio häpeällinen, **ei osta** paikkaansa: **diskordanssi** estää sen. Kehys raportoi **ytimen** —
+projektit, joita mikään muu ei hallitse — ja käyttää pisteenä **netto-ylivertaisuusastetta** (kuinka montaa se hallitsee,
+vähennettynä sillä, kuinka moni hallitsee sitä). Se on myös ainoa kuudesta, joka saa sanoa: *"nämä kaksi projektia ovat
+yksinkertaisesti **vertailukelvottomia**"*.
+
+#### 📖 4. PROMETHEE II — *Preference Ranking Organization METHod for Enrichment Evaluation*
+
+**Mikä se on.** **Jean-Pierre Brans (1982)**, hiottu yhdessä **Bernard Mareschalin ja Philippe Vincken (1985)** kanssa. Myös
+ylivertaisuutta, mutta tyylikkäällä käänteellä: binäärisen kynnyksen sijaan mitataan, **kuinka paljon** `a` on `b`:tä
+mieluisampi.
+
+**Miten se toimii.** Kunkin kriteerin osalta erotus `d = g(a) − g(b)` kulkee **preferenssifunktion** läpi, joka muuntaa sen asteeksi
+välillä 0–1. Brans esitti **kuusi yleistettyä funktiota** (tavallinen, kvasikriteeri, preferenssikynnys, taso, lineaarinen
+yhdentekevyydellä, gaussinen), jotka parametroidaan **yhdentekevyyskynnyksellä `q`** (jonka alapuolella ero on merkityksetön) ja
+**preferenssikynnyksellä `p`** (jonka yläpuolella preferenssi on täydellinen). Painotetut asteet summataan: `φ⁺` on se, kuinka
+paljon `a` hallitsee muita, `φ⁻` kuinka paljon sitä hallitaan, ja **nettovirta** `φ = φ⁺ − φ⁻` tuottaa **täydellisen esijärjestyksen**
+(PROMETHEE II).
+
+**Yleinen käyttö.** Energia, logistiikka, terveydenhuolto — aina kun preferenssin **voimakkuuden** asteikointi on tärkeää.
+
+**🔒 Tässä projektissa.** Käytämme **lineaarista yhdentekevyydellä** -funktiota, jossa `q` ja `p` estimoidaan kunkin kriteerin
+havaittujen poikkeamien 10 %:n ja 90 %:n kvantiileista. PROMETHEE vastaa kysymykseen *"kuinka paljon parempi voittaja on?"*, ei vain
+*"onko se parempi?"*. Ja juuri se tuotti salkun kiinnostavimman löydön: robustiusanalyysissä **PROMETHEE II valitsee konsensuksen
+johtajan vain 25,4 %:ssa preferenssiuniversumeista** — kun neljä muuta koulukuntaa ovat samaa mieltä. Konsensus **peitti
+koulukuntien välisen erimielisyyden**.
+
+#### 📖 5. MAUT — *Multi-Attribute Utility Theory*
+
+**Mikä se on.** **Ralph Keeney & Howard Raiffa (1976)**, von Neumannin ja Morgensternin suorat perilliset. Se on amerikkalainen
+koulukunta aksiomaattisessa muodossa: jos preferenssisi noudattavat tiettyjä rationaalisuusaksioomia, niitä esittävä **hyötyfunktio**
+on olemassa, ja päättäminen tarkoittaa **odotetun hyödyn maksimointia**.
+
+**Miten se toimii.** Kukin kriteeri saa **hyötyfunktion** `uⱼ`, joka kuvaa suorituksen tyytyväisyydeksi. Kokonaishyöty on
+additiivinen: `U(a) = Σ wⱼ · uⱼ(a)` — pätee **additiivisen riippumattomuuden** vallitessa. Ratkaisevaa on funktion **muoto**:
+**konkaavi** `u` edustaa **riskin karttamista** (toinen miljoona on vähemmän arvokas kuin ensimmäinen); lineaarinen on neutraalius;
+konveksi riskihakuisuus.
+
+**Yleinen käyttö.** Lääketieteelliset päätökset, energiapolitiikka, neuvottelut — mikä tahansa yhteys, jossa suhtautuminen riskiin on
+**tehtävä näkyväksi ja puolustettava**.
+
+**🔒 Tässä projektissa.** Käytämme **eksponentiaalista** hyötyä `u(z) = (1 − e^(−r·z)) / (1 − e^(−r))` karttamiskertoimella `r = 2`.
+Se on **julistettu eettinen valinta**: kehys on **konservatiivinen**. Epävarma voitto on arvoltaan vähemmän kuin varma voitto samalla
+odotusarvolla — juuri niin kuin varovainen talousjohtaja sen arvioisi. Siinä missä TOPSIS kohtelee kaikkia voittoja vaihtokelpoisina,
+MAUT **rankaisee korkeasta ja epävarmasta lupauksesta**.
+
+#### 📖 6. MCDA-C — *Monikriteerinen päätöksenteon tuki — konstruktivistinen*
+
+**Mikä se on.** Formalisoivat **Leonardo Ensslin, Gilberto Montibeller ja Sandra Noronha (2001)**, juuret Royssa ja Bana e
+Costassa. Lähtökohta on filosofinen: malli **ei ole olemassa ennen** päättäjää. Se **rakennetaan hänen kanssaan** kolmessa
+vaiheessa — **jäsentäminen** (kognitiiviset kartat, deskriptorit), **arviointi** (arvofunktiot, korvaussuhteet) ja **suositukset**.
+
+**Miten se toimii.** Kukin kriteeri saa **deskriptorin**, jossa on tasoja, ja kaksi niistä on ankkureita: **Neutraali**-taso (jonka
+alapuolella suoritus vaarantaa) ja **Hyvä**-taso (jonka yläpuolella vallitsee erinomaisuus). Arvofunktio on ankkuroitu: `V = 0`
+Neutraalissa, `V = 100` Hyvässä, ja se **ekstrapoloi** vapaasti välin ulkopuolelle.
+
+**Yleinen käyttö.** Organisaation suorituskyvyn arviointi, julkinen hallinto, tilanteet joissa päättäjän on **opittava** omasta
+ongelmastaan.
+
+**🔒 Tässä projektissa.** Koska jäsentämisistuntoa päättäjän kanssa ei ole, ankkuroimme tasot salkun **havaittuihin
+kvartiileihin**: `Neutraali = Q1`, `Hyvä = Q3`. Tämä säilyttää MCDA-C:n ainutlaatuisuuden — se ei vain **järjestä**, se
+**luokittelee**: `V < 0` on **vaarantava**, `0 ≤ V ≤ 100` on **kilpailukykyinen**, `V > 100` on **erinomaisuus**. Projekti voi olla
+listan kärjessä ja silti sijaita vaarantavalla kaistalla. Mikään muu tämän joukon menetelmä ei kertoisi sitä sinulle.
+
+#### 📖 Miksi viisi menetelmää eikä yksi
+
+Koska **jokainen koulukunta erehtyy eri tavalla**, ja yksinäinen menetelmä palauttaa voittajan **implisiittisellä 100 %:n
+varmuudella** — mikä on aina valhe. AHP-TOPSIS ylikompensoi; ELECTRE kieltäytyy toisinaan päättämästä; MAUT riippuu hyödyn muodosta;
+MCDA-C ankkureista.
+
+Ajamme kaikki viisi **samoilla painoilla** (DEMATELin) ja päätämme **Borda-konsensukseen**. Silloin niiden välinen erimielisyys
+lakkaa olemasta haitta ja muuttuu **informaatioksi**: kun neljä on samaa mieltä ja yksi on suoraan eri mieltä, se ei ole kohinaa — se
+on varoitus siitä, että valintasi **riippuu päätöskoulukunnasta**, jonka olet implisiittisesti omaksunut.
+
+#### 📖 Viimeinen kysymys: kestääkö tuomio?
+
+Koko yllä oleva rakennelma lepää **painojen** varassa, ja painot ovat **arvioita**. Jos kaksi prosenttiyksikköä IITA:n painossa
+vaihtaa 1. ja 2. sijan, "voittaja" on **kalibroinnin artefakti**, ei salkun tosiasia.
+
+Siksi häiritsemme DEMATELin painoja **Dirichlet'llä** — `w' ~ Dir(κ·w)`, joka elää täsmälleen simplexillä ja säilyttää `E[w'] = w`,
+eli häiritsee **vinouttamatta** — ja järjestämme uudelleen **2 000 kertaa**. Tuomion luonne muuttuu:
+
+> *"Project C on paras"* ⟶ **"Project C voittaa 99,9 %:ssa uskottavista preferenssiuniversumeista"**
+
+Se on **luottamusväli itse päätökselle**. Sen myötä kehys lakkaa mittaamasta vain **rahan** riskiä ja alkaa mitata **päätöksen**
+riskiä.
+
 
 **Mikä se on ja mihin sitä tarvitaan.** Kun valitset projektien välillä, kriteerit **ovat ristiriidassa** (korkea
 NPV tulee yleensä korkean riskin kera) ja ovat **yhteismitattomia** (miten lasket euroja yhteen

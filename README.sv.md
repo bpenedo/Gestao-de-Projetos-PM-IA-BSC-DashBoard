@@ -447,6 +447,92 @@ som överlever revision.
 
 ### 🎲 Matematisk Monte Carlo-simulering
 
+#### 📖 Begreppet
+
+Monte Carlo är en numerisk metod som besvarar frågor om osäkra system **genom slumpmässig sampling**. Idén vänder
+matematikerns instinkt upp och ned: i stället för att härleda svaret på **sluten form** — lösa integralen, kombinatoriken,
+differentialekvationen — bygger man en **modell**, drar tusentals realiseringar av de osäkra variablerna och **räknar helt
+enkelt vad som hände**. Det man får till slut är inte ett tal: det är **resultatets sannolikhetsfördelning**.
+
+Två lagar bär upp den. **Stora talens lag** garanterar att medelvärdet av simuleringarna konvergerar mot det sanna värdet.
+**Centrala gränsvärdessatsen** säger hur snabbt: standardfelet avtar som `1/√N`. Följden är ärlig och något grym — **för
+att fördubbla precisionen måste man fyrdubbla iterationerna**. Monte Carlo är inte snabbt. Dess dygd ligger på annat håll:
+felet **beror inte på problemets dimension**. Deterministiska kvadraturmetoder lider av *dimensionalitetens förbannelse*
+och kollapsar vid dussintals variabler; Monte Carlo gör det inte. Den vinner precis där den analytiska matematiken dör.
+
+#### 📖 Var och när den uppstod
+
+**Los Alamos, New Mexico, 1946.** Den polske matematikern **Stanisław Ulam** konvalescerade efter en hjärninflammation och
+lade patiens dagarna i ända. Han undrade vad sannolikheten att vinna ett parti var. Han försökte med kombinatoriken och gav
+upp: ohanterlig. Då slog honom något så enkelt att det såg ut som fusk — **spela hundra partier, räkna hur många du vinner
+och dividera**. Han insåg omedelbart att detta inte var ett korttrick: det var en **allmän integrationsmetod** för problem
+som ingen visste hur man löste.
+
+Han tog idén till **John von Neumann**, som genast såg tillämpningen på problemet som upptog dem i Manhattanprojektet:
+**neutrondiffusion** i klyvbart material. Att **simulera** slumpvandringen hos tusentals neutroner — spridning, absorption,
+klyvning — var genomförbart; att lösa transportekvationen var det inte. **Nicholas Metropolis** föreslog namnet **"Monte
+Carlo"**, efter kasinot i Monaco där en morbror till Ulam brukade låna pengar för att spela. **ENIAC** gjorde de första
+beräkningarna möjliga, och **1949** publicerade Metropolis och Ulam *"The Monte Carlo Method"* i *Journal of the American
+Statistical Association*.
+
+Metoden föddes, bokstavligen, ur mötet mellan ett **kortspel** och **atombomben**. Få vetenskapliga idéer har ett så
+förbryllande födelsebevis.
+
+#### 📖 Metodiken, i fem steg
+
+1. **Modellera.** Skriv utfallet som en funktion av indata: `y = f(x₁, …, xₙ)`.
+2. **Tilldela fördelningar.** Varje osäkert indata får en fördelning. Finns **historiska data** *anpassas* den till dem; om
+   inte, postuleras den — och det måste **deklareras**.
+3. **Sampla.** Dra `N` scenarier. Är variablerna **korrelerade** måste samplingen respektera den strukturen: att dra
+   oberoende där verkligt beroende finns är metodens vanligaste fel.
+4. **Propagera.** Beräkna `f` i varje scenario. Här **förvandlas** indatas osäkerhet till utfallets osäkerhet, utan någon
+   linjär approximation.
+5. **Analysera.** Studera fördelningen: medelvärde och spridning, **percentiler**, händelsesannolikheter (`P(y < 0)`),
+   **svansen** (VaR, CVaR) och **känsligheten** (vilket `xᵢ` rör `y`).
+
+#### 📖 Användning och tillämpningar i världen
+
+- **Finans:** prissättning av exotiska optioner (utan sluten form), **VaR** och **CVaR** för portföljer, regulatoriska
+  stresstester (Basel), kreditrisk.
+- **Teknik:** strukturell tillförlitlighet, tillverkningstoleranser, felanalys i komplexa system.
+- **Projektledning:** tids- och kostnadsrisk (PERT:s probabilistiska utveckling), S-kurvor för färdigställande.
+- **Fysik och kemi:** partikeltransport, strålskärmning, statistisk mekanik.
+- **Operations och försörjningskedjor:** köer, lager, kapacitet under osäker efterfrågan.
+- **Epidemiologi:** sjukdomsspridning och policyutvärdering under osäkerhet.
+- **Inom AI självt:** **MCMC** (bayesiansk inferens), **MCTS** — trädsökningen som förde AlphaGo förbi Lee Sedol — och
+  *Monte Carlo dropout* för att skatta osäkerhet i neurala nät.
+
+#### 🔒 Metodik, användning och tillämpning EXKLUSIVA för detta projekt
+
+Här är Monte Carlo ingen akademisk utsmyckning: den är portföljens **riskmotor**.
+
+- **Indata.** Varje periodiskt kassaflöde blir en **triangulär** variabel (`min`, `typvärde`, `max`), med typvärde vid det
+  deterministiska värdet och svansar vid ±30 %. **Tokenförbrukningen** — den enda verkligt tungsvansade variabeln —
+  **postuleras inte**: elva kandidatfördelningar **anpassas med maximum likelihood** till din verkliga `logs_langfuse`-serie,
+  den med **lägst AIC** vinner, och anpassningen mäts med **Kolmogorov-Smirnov**. Faller p-värdet under 0,05 skriver skärmen
+  `SVAG ANPASSNING` i rött i stället för att låtsas precision.
+- **Korrelationen.** När flödena är beroende använder samplingen **Iman-Conover**, som påtvingar rangkorrelation samtidigt
+  som den **bevarar marginalfördelningarna exakt**. Matrisen valideras först: symmetrisk, enhetsdiagonal, positivt definit.
+- **Propageringen.** **10 000 iterationer** per projekt, med **fast frö (42)**: kör igen och du får exakt samma tal. Det är
+  ingen detalj — det är vad som gör resultatet **granskningsbart** av en delägare, en investerare eller en revisor.
+- **Utfallen.** Inte bara NPV: vi simulerar **NPV, IRR, MIRR, EAA, PI** och **tokenkostnaden**, var och en med de tio
+  klassiska deskriptiva måtten (skevhet och kurtosis enligt Excels definitioner), **percentiler från 1 % till 99 %** och ett
+  **histogram med 100 klasser**.
+- **Risken som betyder något.** `P(NPV < 0)` är den verkliga sannolikheten för förlust. **VaR 5 %** är det värsta rimliga
+  scenariot — *"i 19 av 20 framtider tjänar jag minst detta"*. **CVaR 5 %** besvarar det ingen frågar: när katastrofen väl
+  inträffar, **vad kostar den i genomsnitt**.
+- **Känsligheten.** **Tornadon** beräknas i båda klassiska formerna: **betana från en multipel regression** (effekten av +1 i
+  ett indata på NPV) och **Pearsonkorrelationen** (hur mycket det indatats osäkerhet styr NPV:s osäkerhet). Komplementära
+  läsningar; dashboarden visar båda.
+- **En upptäckt ramverket gjorde om sig självt.** När det mätte sig självt gav tornadon betan **exakt lika med
+  diskonteringsfaktorerna** `1/(1+i)ᵗ` — eftersom NPV är *linjärt* i flödena. Att bara simulera flödena säger alltså inget
+  utöver räntan. **Den verkliga stokastiska signalen ligger uppströms, i tokens.** Den insikten motiverade
+  fördelningsanpassningen till verkliga data.
+- **Risken göder beslutet.** Två Monte Carlo-utfall går in som **kriterier** i flerkriteriemodellen: `P(NPV<0)` som ett
+  **kostnads**kriterium och **VaR 5 %** som ett **nytto**kriterium. Det slutliga valet föds därför redan **riskjusterat**, inte
+  bara justerat för väntevärdet.
+
+
 **Vad det är.** En metod som besvarar svåra frågor **genom lottning**. I stället för att lösa matematiken i ett
 osäkert system på sluten form — ofta omöjligt — tilldelar man **sannolikhetsfördelningar** till indatavariablerna,
 drar tusentals scenarier, beräknar utfallet i vart och ett och betraktar **hela fördelningen** av utfall. Stora
@@ -471,6 +557,168 @@ rimliga scenariot), **CVaR 5 %** (vad det kostar när katastrofen inträffar) oc
 faktiskt rör resultatet). Medelvärdet ljuger; svansen avgör.
 
 ### 🧮 Flerkriterieanalys för beslut (MCDA)
+
+#### 📖 Begreppet och vad det är till för
+
+Att välja mellan projekt är svårt av två skäl som inget kalkylark löser. För det första **står kriterierna i konflikt**:
+projektet med högst NPV är oftast det mest riskfyllda. För det andra är de **inkommensurabla**: det finns ingen ärlig
+aritmetik som adderar kronor, hallucinationsprocent och omarbetningstimmar.
+
+MCDA (*Multi-Criteria Decision Analysis*) är fältet — fött på 1960-70-talen, i gränslandet mellan operationsanalys och
+beslutsteori — som möter precis detta. Det **lovar inte rätt svar.** Det lovar något nyttigare: att göra valet
+**explicit, granskningsbart och försvarbart**.
+
+Dess grundtes är obekväm och befriande på samma gång: **det finns inget "bäst" i ett vakuum.** Det finns ett bäst *givet ett
+preferenssystem som någon gjort explicit*. Varje beslutsfattare arbetar redan med ett preferenssystem — skillnaden är att det
+utan MCDA är **implicit, inkonsekvent och ogranskningsbart**. Att byta den tysta åsikten mot en explicit modell: där ligger
+hela vinsten.
+
+#### 📖 Användning och tillämpningar i världen
+
+Leverantörsval och portföljprioritering; val av energiteknik (sol × vind × biomassa); lokalisering av fabriker, sjukhus och
+deponier; miljökonsekvensbedömning; offentlig politik och budgetallokering; personalurval; underhållsprioritering; och —
+alltmer — **teknoekonomisk bedömning** av framväxande teknik, vilket är precis fallet med en AI-projektportfölj.
+
+#### 📖 De tre beslutsskolorna
+
+- **Amerikanska skolan (värde och nytta).** Aggregerar allt till **ett enda tal**. Antar att ett dåligt betyg på ett kriterium
+  kan **kompenseras** av toppbetyg på andra. Enkel, kraftfull — och ibland farlig. `AHP`, `MAUT`.
+- **Europeiska skolan (överklassning).** Grundad av **Bernard Roy**. Accepterar att två alternativ kan vara **ojämförbara**
+  och tillåter **veto**: en katastrofal prestation på ett kriterium **köps inte loss** av excellens på andra. Den modellerar
+  beslutsfattarens verkliga tvekan genom **trösklar**. `ELECTRE`, `PROMETHEE`.
+- **Konstruktivistiska skolan.** Modellen *upptäcks* inte, den **byggs tillsammans med beslutsfattaren**, genom
+  problemstrukturering och skalor förankrade i referensnivåer. `MCDA-C`.
+
+#### 📖 1. DEMATEL — *Decision-Making Trial and Evaluation Laboratory*
+
+**Vad det är.** Skapad av **Gabus & Fontela** vid **Battelle Memorial Institute** (Genève, 1972-73) för att studera komplexa,
+sammanflätade världsproblem. Den **rangordnar inte alternativ**: den kartlägger den **kausala strukturen mellan kriterierna**.
+
+**Hur den fungerar.** Experter fyller i en **direktrelationsmatris** `Z` (hur mycket kriterium *i* påverkar *j*, från 0 till 4).
+Man normaliserar med `s = max(största radsumma, största kolumnsumma)` och får **totalrelationsmatrisen** `T = X(I − X)⁻¹`, som
+summerar direkt påverkan **och all indirekt**, längs vilken väg som helst. Därur kommer `R` (radsummor) och `C` (kolumnsummor):
+**`R+C` är prominensen** (betydelse i systemet) och **`R−C` är relationen** (positiv = **orsak**; negativ = **verkan**).
+
+**Allmän användning.** Hållbara försörjningskedjor, hinder för teknikadoption, systemisk riskanalys.
+
+**🔒 I detta projekt.** DEMATEL besvarar frågan som **föregår** rangordningen: *"var ska jag agera?"*. Den avslöjar att
+**IITA (hallucination), PSR (hälsa) och IDLS (Lean-slöseri) är ORSAKER**, medan **NPV, IRR, PI och riskmåtten är VERKNINGAR**.
+Det är kontraintuitivt och befriande: att jaga NPV är meningslöst — det är en **termometer**. Agera på hallucinationen, så
+förbättras NPV, IRR och risk *tillsammans*. Dessutom postuleras inte kriteriernas **vikter**: de **härleds ur
+inflytandestrukturen**, via `wᵢ ∝ √((R+C)ᵢ² + (R−C)ᵢ²)`. Dessa vikter matar de **övriga fem metoderna** — integrationsmönstret
+som John (2025) beskriver.
+
+#### 📖 2. AHP-TOPSIS 2n — *Analytic Hierarchy Process* + *Technique for Order Preference by Similarity to Ideal Solution*
+
+**Vad det är.** **Saaty (1977)** föreslog AHP: härleda vikter ur **parvisa jämförelser** mellan kriterier, med ett
+**konsistenstest** som avslöjar motsägelsefulla omdömen (`CR ≤ 0,10`). **Hwang & Yoon (1981)** föreslog TOPSIS: det bästa
+alternativet är det som ligger **närmast ideallösningen** och **längst från anti-ideallösningen**.
+
+**Hur den fungerar.** Beslutsmatrisen normaliseras, kolumnerna multipliceras med vikterna, euklidiska avstånd till ideal- och
+anti-ideallösningarna beräknas, och **närhetskoefficienten** `Ci = d⁻/(d⁺+d⁻)` ordnar allt.
+
+**Allmän användning.** Världens mest använda par inom MCDM — från leverantörsval till prestationsutvärdering.
+
+**🔒 I detta projekt.** Vi kör TOPSIS under **två normaliseringar** — vektor (euklidisk) och min-max (linjär) — därav **"2n"**.
+Varje projekt får två koefficienter och slutrankningen är medelvärdet. Vad vi vinner är ett mått som nästan ingen rapporterar:
+**samstämmigheten mellan normaliseringarna**. När de två är oense om ett projekts placering är dess resultat **skört inför ett
+godtyckligt tekniskt val** — och dashboarden visar det. Detta projekts Saaty-matris har `CR = 0,0119`, långt under gränsen 0,10.
+
+#### 📖 3. ELECTRE I — *ÉLimination Et Choix Traduisant la REalité*
+
+**Vad det är.** **Bernard Roy (1968)**, på konsultfirman SEMA i Paris. Det är nollpunkten för den europeiska
+överklassningsskolan. Frågan är inte *"vilket betyg har var och en?"* utan *"är **a** minst lika bra som **b**?"*.
+
+**Hur den fungerar.** För varje par `(a, b)` beräknas två index. **Konkordansen** `C(a,b)` summerar vikterna för de kriterier
+där `a` är minst lika bra som `b`. **Diskordansen** `D(a,b)` mäter `a`:s **största nackdel** mot `b`. Man säger att `a`
+**överklassar** `b` om konkordansen är hög **och** diskordansen låg. Mängden alternativ som **ingen överklassar** är **kärnan**
+(*kernel*) — menyn av försvarbara val.
+
+**Allmän användning.** Offentliga och miljömässiga beslut, där att kompensera ett katastrofalt kriterium vore oacceptabelt.
+
+**🔒 I detta projekt.** ELECTRE är metoden som **vägrar ljuga av bekvämlighet**. Ett projekt med stratosfäriskt NPV och
+skandalös hallucination **köper inte** sin plats: **diskordansen** stoppar det. Ramverket rapporterar **kärnan** — projekten
+som inget annat dominerar — och använder som poäng den **netto överklassningsgraden** (hur många det dominerar, minus hur många
+som dominerar det). Den är också den enda av de sex som får säga: *"dessa två projekt är helt enkelt **ojämförbara**"*.
+
+#### 📖 4. PROMETHEE II — *Preference Ranking Organization METHod for Enrichment Evaluation*
+
+**Vad det är.** **Jean-Pierre Brans (1982)**, förfinad med **Bernard Mareschal och Philippe Vincke (1985)**. Också
+överklassning, men med en elegant vändning: i stället för en binär tröskel mäts **hur mycket** `a` föredras framför `b`.
+
+**Hur den fungerar.** För varje kriterium passerar skillnaden `d = g(a) − g(b)` genom en **preferensfunktion** som omvandlar den
+till en grad mellan 0 och 1. Brans föreslog **sex generaliserade funktioner** (vanlig, kvasikriterium, preferenströskel, nivå,
+linjär med indifferens, gaussisk), parametriserade av en **indifferenströskel `q`** (under vilken skillnaden är oväsentlig) och
+en **preferenströskel `p`** (över vilken preferensen är total). De viktade graderna summeras: `φ⁺` är hur mycket `a` dominerar
+de andra, `φ⁻` hur mycket det domineras, och **nettoflödet** `φ = φ⁺ − φ⁻` ger en **fullständig förordning** (PROMETHEE II).
+
+**Allmän användning.** Energi, logistik, hälsa — närhelst det är viktigt att gradera preferensens **intensitet**.
+
+**🔒 I detta projekt.** Vi använder funktionen **linjär med indifferens**, med `q` och `p` skattade från 10 %- och 90 %-kvantilerna
+av de observerade avvikelserna för varje kriterium. PROMETHEE besvarar *"hur mycket bättre är vinnaren?"*, inte bara *"är den
+bättre?"*. Och det var just den som gav portföljens intressantaste fynd: i robusthetsanalysen **väljer PROMETHEE II
+konsensusledaren i endast 25,4 % av preferensuniversumen** — medan de andra fyra skolorna är eniga. Konsensus **dolde en oenighet
+mellan skolor**.
+
+#### 📖 5. MAUT — *Multi-Attribute Utility Theory*
+
+**Vad det är.** **Ralph Keeney & Howard Raiffa (1976)**, direkta arvtagare till von Neumann och Morgenstern. Det är den amerikanska
+skolan i axiomatisk form: om dina preferenser lyder vissa rationalitetsaxiom, då finns en **nyttofunktion** som representerar dem,
+och att besluta är att **maximera den förväntade nyttan**.
+
+**Hur den fungerar.** Varje kriterium får en **nyttofunktion** `uⱼ` som avbildar prestation på tillfredsställelse. Den globala
+nyttan är additiv: `U(a) = Σ wⱼ · uⱼ(a)` — giltig under **additivt oberoende** i preferens. Det avgörande är funktionens **form**:
+ett **konkavt** `u` representerar **riskaversion** (den andra miljonen är värd mindre än den första); linjärt är neutralitet;
+konvext är risksökande.
+
+**Allmän användning.** Medicinska beslut, energipolitik, förhandling — varje sammanhang där hållningen till risk måste **göras
+explicit och försvaras**.
+
+**🔒 I detta projekt.** Vi använder **exponentiell** nytta `u(z) = (1 − e^(−r·z)) / (1 − e^(−r))` med aversionskoefficient `r = 2`.
+Det är ett **deklarerat etiskt val**: ramverket är **konservativt**. En osäker vinst är värd mindre än en säker vinst med samma
+väntevärde — precis som en försiktig CFO skulle bedöma den. Där TOPSIS behandlar alla vinster som utbytbara **bestraffar MAUT det
+höga, osäkra löftet**.
+
+#### 📖 6. MCDA-C — *Flerkriteriellt beslutsstöd — konstruktivistiskt*
+
+**Vad det är.** Formaliserat av **Leonardo Ensslin, Gilberto Montibeller och Sandra Noronha (2001)**, med rötter hos Roy och Bana e
+Costa. Premissen är filosofisk: modellen **föregår inte** beslutsfattaren. Den **byggs med honom**, i tre faser —
+**strukturering** (kognitiva kartor, deskriptorer), **utvärdering** (värdefunktioner, substitutionstakter) och **rekommendationer**.
+
+**Hur den fungerar.** Varje kriterium får en **deskriptor** med nivåer, varav två är ankare: nivån **Neutral** (under vilken
+prestationen äventyrar) och nivån **Bra** (över vilken det råder excellens). Värdefunktionen är förankrad: `V = 0` vid Neutral,
+`V = 100` vid Bra, och den **extrapolerar** fritt utanför intervallet.
+
+**Allmän användning.** Utvärdering av organisatorisk prestation, offentlig förvaltning, sammanhang där beslutsfattaren måste
+**lära sig** om sitt eget problem.
+
+**🔒 I detta projekt.** I avsaknad av en struktureringssession med beslutsfattaren förankrar vi nivåerna i portföljens
+**observerade kvartiler**: `Neutral = Q1`, `Bra = Q3`. Detta bevarar det unika med MCDA-C — den **ordnar** inte bara, den
+**klassificerar**: `V < 0` är **äventyrande**, `0 ≤ V ≤ 100` är **konkurrenskraftig**, `V > 100` är **excellens**. Ett projekt kan
+toppa rankningen och ändå ligga i det äventyrande bandet. Ingen annan metod i denna uppsättning skulle berätta det för dig.
+
+#### 📖 Varför fem metoder, och inte en
+
+Därför att **varje skola misslyckas på sitt eget sätt**, och en ensam metod returnerar en vinnare med **implicit 100 % säkerhet** —
+vilket alltid är en lögn. AHP-TOPSIS överkompenserar; ELECTRE vägrar ibland avgöra; MAUT beror på nyttans form; MCDA-C på ankarna.
+
+Vi kör alla fem med **samma vikter** (DEMATEL:s) och avslutar med **Borda-konsensus**. Då upphör oenigheten mellan dem att vara en
+olägenhet och blir **information**: när fyra är eniga och en avviker rakt av är det inte brus — det är varningen att ditt val
+**beror på den beslutsskola** du implicit antagit.
+
+#### 📖 Den sista frågan: överlever domen?
+
+Hela byggnaden ovan vilar på **vikter**, och vikter är **skattningar**. Om två procentenheter på IITA-vikten byter plats på 1:a och
+2:a, är "vinnaren" en **artefakt av kalibreringen**, inte ett faktum om portföljen.
+
+Därför stör vi DEMATEL-vikterna med en **Dirichlet** — `w' ~ Dir(κ·w)`, som lever exakt på simplexet och bevarar `E[w'] = w`,
+alltså stör **utan att snedvrida** — och rangordnar om **2 000 gånger**. Domen byter natur:
+
+> *"Project C är bäst"* ⟶ **"Project C vinner i 99,9 % av de rimliga preferensuniversumen"**
+
+Det är ett **konfidensintervall för själva beslutet**. Med det slutar ramverket mäta enbart risken i **pengarna** och börjar mäta
+risken i **beslutet**.
+
 
 **Vad det är och vad det är till för.** När du väljer mellan projekt **står kriterierna i konflikt** (högt NPV kommer
 oftast med hög risk) och är **inkommensurabla** (hur adderar man kronor med hallucinationsprocent?). MCDA är fältet

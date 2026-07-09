@@ -448,6 +448,96 @@ that survives audit.
 
 ### 🎲 Monte Carlo mathematical simulation
 
+#### 📖 The concept
+
+Monte Carlo is a numerical method that answers questions about uncertain systems **through random sampling**. The idea
+inverts the mathematician's instinct: instead of deducing the answer in **closed form** — solving the integral, the
+combinatorics, the differential equation — you build a **model**, draw thousands of realizations of the uncertain
+variables and simply **count what happened**. What you get in the end is not a number: it is the **probability
+distribution of the outcome**.
+
+Two laws hold it up. The **Law of Large Numbers** guarantees that the average of the simulations converges to the true
+value. The **Central Limit Theorem** tells you how fast: the standard error falls as `1/√N`. The consequence is honest
+and slightly cruel — **to double the precision you must quadruple the iterations**. Monte Carlo is not fast. Its virtue
+is elsewhere: the error **does not depend on the dimension of the problem**. Deterministic quadrature methods suffer
+the *curse of dimensionality* and collapse with dozens of variables; Monte Carlo does not. It wins exactly where
+analytical mathematics dies.
+
+#### 📖 Where and when it arose
+
+**Los Alamos, New Mexico, 1946.** The Polish mathematician **Stanisław Ulam** was convalescing from encephalitis and
+spent his days playing solitaire. He wondered what the probability of winning a game was. He tried the combinatorics
+and gave up: intractable. Then something occurred to him so simple it looked like cheating — **play a hundred games,
+count how many you win, and divide**. He realized at once that this was no card-table trick: it was a **general method
+of integration** for problems nobody knew how to solve.
+
+He took the idea to **John von Neumann**, who immediately saw its application to the problem consuming them in the
+Manhattan Project: **neutron diffusion** in fissile material. Simulating the random walk of thousands of neutrons —
+scattering, absorption, fission — was feasible; solving the transport equation was not. **Nicholas Metropolis**
+proposed the name **"Monte Carlo"**, after the Monaco casino where an uncle of Ulam's used to borrow money to gamble.
+The **ENIAC** made the first computations possible, and in **1949** Metropolis and Ulam published *"The Monte Carlo
+Method"* in the *Journal of the American Statistical Association*.
+
+The method was born, literally, of the meeting between a **card game** and the **atomic bomb**. Few scientific ideas
+have such a disconcerting birth certificate.
+
+#### 📖 The methodology, in five steps
+
+1. **Model.** Write the output as a function of the inputs: `y = f(x₁, …, xₙ)`.
+2. **Assign distributions.** Every uncertain input gets a distribution. If **historical data** exists, it is *fitted*
+   to them; if not, it is asserted — and that must be **declared**.
+3. **Sample.** Draw `N` scenarios. If the variables are **correlated**, the sampling must respect that structure:
+   drawing independently where real dependence exists is the method's most common error.
+4. **Propagate.** Compute `f` in each scenario. This is where the uncertainty of the inputs **becomes** the uncertainty
+   of the output, with no linear approximation.
+5. **Analyze.** Study the resulting distribution: mean and deviation, **percentiles**, probability of events
+   (`P(y < 0)`), the **tail** (VaR, CVaR) and the **sensitivity** (which `xᵢ` moves `y`).
+
+#### 📖 Uses and applications in the world
+
+- **Finance:** pricing exotic options (where no closed form exists), portfolio **VaR** and **CVaR**, regulatory stress
+  tests (Basel), credit risk.
+- **Engineering:** structural reliability, manufacturing tolerances, failure analysis in complex systems.
+- **Project management:** schedule and cost risk (the probabilistic evolution of PERT), completion S-curves.
+- **Physics and chemistry:** particle transport, radiation shielding, statistical mechanics.
+- **Operations and supply chains:** queues, inventories, capacity under uncertain demand.
+- **Epidemiology:** disease spread and policy evaluation under uncertainty.
+- **Inside AI itself:** **MCMC** (Bayesian inference), **MCTS** — the tree search that took AlphaGo past Lee Sedol —
+  and *Monte Carlo dropout* for estimating uncertainty in neural networks.
+
+#### 🔒 Methodology, use and application EXCLUSIVE to this project
+
+Here Monte Carlo is no academic ornament: it is the **risk engine** of the portfolio.
+
+- **The inputs.** Each periodic cash flow becomes a **Triangular** variable (`min`, `mode`, `max`), with mode at the
+  deterministic value and tails at ±30%. Token consumption — the one genuinely heavy-tailed variable — is **not
+  asserted**: eleven candidate distributions are **fitted by maximum likelihood** to your real `logs_langfuse` series,
+  the one with the **lowest AIC** wins, and goodness of fit is measured by **Kolmogorov-Smirnov**. If the p-value drops
+  below 0.05, the screen prints `WEAK FIT` in red instead of faking precision.
+- **The correlation.** When flows are dependent, sampling uses **Iman-Conover**, which imposes rank correlation while
+  **preserving the marginal distributions exactly**. The matrix is validated first: symmetric, unit diagonal, positive
+  definite.
+- **The propagation.** **10,000 iterations** per project, with a **fixed seed (42)**: run it again and you get exactly
+  the same number. That is not a detail — it is what makes the result **auditable** by a partner, an investor or an
+  auditor.
+- **The outputs.** Not only NPV: we simulate **NPV, IRR, MIRR, EAA, PI** and the **token cost**, each with the ten
+  classic descriptive statistics (skewness and kurtosis under Excel's definitions), **percentiles from 1% to 99%** and
+  a **100-bin histogram**.
+- **The risk that matters.** `P(NPV < 0)` is the real probability of loss. **VaR 5%** is the worst plausible scenario —
+  *"in 19 out of 20 futures I make at least this much"*. **CVaR 5%** answers what nobody asks: when disaster strikes,
+  **what does it cost on average**.
+- **The sensitivity.** The **tornado** is computed in both classic forms: the **betas of a multiple regression** (the
+  effect of +$1 on an input over NPV) and the **Pearson correlation** (how much that input's uncertainty dictates NPV's
+  uncertainty). They are complementary readings; the dashboard shows both.
+- **A discovery by the framework about itself.** Measuring itself, the tornado returned betas **exactly equal to the
+  discount factors** `1/(1+i)ᵗ` — because NPV is *linear* in the flows. Simulating only the flows therefore tells you
+  nothing beyond the rate. **The real stochastic signal is upstream, in the tokens.** That finding is what motivated
+  fitting distributions to real data.
+- **Risk feeds the decision.** Two Monte Carlo outputs enter as **criteria** in the multi-criteria model: `P(NPV<0)` as
+  a **cost** criterion and **VaR 5%** as a **benefit** criterion. The final choice is therefore born **risk-adjusted**,
+  not merely expectation-adjusted.
+
+
 **What it is.** A method that answers hard questions **by drawing lots**. Instead of solving the mathematics of an
 uncertain system in closed form — often impossible — you assign **probability distributions** to the input
 variables, draw thousands of scenarios, compute the outcome in each one and observe the **entire distribution** of
@@ -473,6 +563,175 @@ scenario), **CVaR 5%** (what it costs when disaster strikes) and the **tornado**
 result). The mean lies; the tail decides.
 
 ### 🧮 Multi-Criteria Decision Analysis (MCDA)
+
+#### 📖 The concept and what it is for
+
+Choosing between projects is hard for two reasons no spreadsheet solves. First, criteria **conflict**: the
+highest-NPV project is usually the riskiest. Second, they are **incommensurable**: there is no honest arithmetic that
+adds dollars to a hallucination percentage and hours of rework.
+
+MCDA (*Multi-Criteria Decision Analysis*) is the field — born in the 1960s-70s at the frontier of operations research
+and decision theory — that confronts exactly this. It **does not promise the right answer**. It promises something more
+useful: to make the choice **explicit, auditable and defensible**.
+
+Its founding thesis is uncomfortable and liberating at once: **there is no "best" in a vacuum.** There is a best *given
+a preference system someone made explicit*. Every decision-maker already operates with a preference system — the
+difference is that, without MCDA, it is **implicit, inconsistent and unauditable**. Trading tacit opinion for an
+explicit model: that is the entire gain.
+
+#### 📖 Uses and applications in the world
+
+Supplier selection and portfolio prioritization; choice of energy technologies (solar × wind × biomass); siting of
+plants, hospitals and landfills; environmental impact assessment; public policy and budget allocation; personnel
+selection; maintenance prioritization; and — increasingly — **techno-economic assessment** of emerging technologies,
+which is exactly the case of an AI project portfolio.
+
+#### 📖 The three schools of decision
+
+- **American school (value and utility).** Aggregates everything into a **single number**. Assumes a bad score on one
+  criterion can be **compensated** by great scores on others. Simple, powerful — and sometimes dangerous. `AHP`, `MAUT`.
+- **European school (outranking).** Founded by **Bernard Roy**. Accepts that two alternatives may be **incomparable**
+  and admits the **veto**: catastrophic performance on one criterion **is not bought off** by excellence elsewhere. It
+  models the decision-maker's real hesitation through **thresholds**. `ELECTRE`, `PROMETHEE`.
+- **Constructivist school.** The model is not *discovered*, it is **built together with the decision-maker**, through
+  problem structuring and scales anchored on reference levels. `MCDA-C`.
+
+#### 📖 1. DEMATEL — *Decision-Making Trial and Evaluation Laboratory*
+
+**What it is.** Created by **Gabus & Fontela** at the **Battelle Memorial Institute** (Geneva, 1972-73) to study complex,
+entangled world problems. It **does not rank alternatives**: it maps the **causal structure among criteria**.
+
+**How it works.** Experts fill a **direct-relation matrix** `Z` (how much criterion *i* influences *j*, from 0 to 4). It
+is normalized by `s = max(largest row sum, largest column sum)`, giving the **total-relation matrix** `T = X(I − X)⁻¹`,
+which sums direct influence **and all indirect influence**, along any path. From it come `R` (row sums) and `C` (column
+sums): **`R+C` is prominence** (importance in the system) and **`R−C` is relation** (positive = **cause**; negative =
+**effect**).
+
+**General use.** Sustainable supply chains, barriers to technology adoption, systemic risk analysis.
+
+**🔒 In this project.** DEMATEL answers the question that **precedes** the ranking: *"where should I act?"*. It reveals
+that **IITA (hallucination), PSR (health) and IDLS (Lean waste) are CAUSES**, while **NPV, IRR, PI and the risk metrics
+are EFFECTS**. It is counterintuitive and liberating: chasing NPV is pointless — NPV is a **thermometer**. Act on
+hallucination and NPV, IRR and risk improve *together*. Moreover, the criteria **weights** are not asserted: they are
+**derived from the influence structure**, via `wᵢ ∝ √((R+C)ᵢ² + (R−C)ᵢ²)`. Those weights feed the **other five methods**
+— the integration pattern described by John (2025).
+
+#### 📖 2. AHP-TOPSIS 2n — *Analytic Hierarchy Process* + *Technique for Order Preference by Similarity to Ideal Solution*
+
+**What it is.** **Saaty (1977)** proposed AHP: derive weights from **pairwise comparisons** between criteria, with a
+**consistency test** that exposes contradictory judgments (`CR ≤ 0.10`). **Hwang & Yoon (1981)** proposed TOPSIS: the
+best alternative is the one **closest to the ideal solution** and **farthest from the anti-ideal**.
+
+**How it works.** Normalize the decision matrix, multiply the columns by the weights, compute Euclidean distances to the
+ideal and anti-ideal solutions, and the **closeness coefficient** `Ci = d⁻/(d⁺+d⁻)` orders everything.
+
+**General use.** The most widely used pair in MCDM worldwide — from supplier selection to performance evaluation.
+
+**🔒 In this project.** We run TOPSIS under **two normalizations** — vector (Euclidean) and min-max (linear) — hence the
+**"2n"**. Each project gets two coefficients and the final ranking is the average. What we gain is a measure almost
+nobody reports: the **agreement between the normalizations**. When the two disagree about a project's position, that
+project's result is **fragile to an arbitrary technical choice** — and the dashboard shows it. This project's Saaty
+matrix has `CR = 0.0119`, well below the 0.10 limit.
+
+#### 📖 3. ELECTRE I — *ÉLimination Et Choix Traduisant la REalité*
+
+**What it is.** **Bernard Roy (1968)**, at the SEMA consultancy in Paris. It is ground zero of the European outranking
+school. The question is not *"what is each one's score?"* but *"is **a** at least as good as **b**?"*.
+
+**How it works.** For each pair `(a, b)` two indices are computed. **Concordance** `C(a,b)` sums the weights of the
+criteria on which `a` is at least as good as `b`. **Discordance** `D(a,b)` measures `a`'s **greatest disadvantage**
+against `b`. We say `a` **outranks** `b` if concordance is high **and** discordance is low. The set of alternatives
+**nobody outranks** is the **kernel** — the menu of defensible choices.
+
+**General use.** Public and environmental decisions, where compensating a catastrophic criterion would be unacceptable.
+
+**🔒 In this project.** ELECTRE is the method that **refuses to lie for convenience**. A project with a stratospheric NPV
+and scandalous hallucination **does not buy** its place: **discordance** bars it. The framework reports the **kernel** —
+the projects no other dominates — and uses as score the **net outranking degree** (how many it dominates, minus how many
+dominate it). It is also the only one of the six that is allowed to say: *"these two projects are simply
+**incomparable**"*.
+
+#### 📖 4. PROMETHEE II — *Preference Ranking Organization METHod for Enrichment Evaluation*
+
+**What it is.** **Jean-Pierre Brans (1982)**, refined with **Bernard Mareschal and Philippe Vincke (1985)**. Also
+outranking, but with an elegant turn: instead of a binary threshold, it measures **how much** `a` is preferred to `b`.
+
+**How it works.** For each criterion, the difference `d = g(a) − g(b)` passes through a **preference function** that maps
+it to a degree between 0 and 1. Brans proposed **six generalized functions** (usual, quasi-criterion, preference
+threshold, level, linear with indifference, Gaussian), parameterized by an **indifference threshold `q`** (below which
+the difference is irrelevant) and a **preference threshold `p`** (above which preference is total). The weighted degrees
+are summed: `φ⁺` is how much `a` dominates the others, `φ⁻` how much it is dominated, and the **net flow**
+`φ = φ⁺ − φ⁻` yields a **complete preorder** (PROMETHEE II).
+
+**General use.** Energy, logistics, health — whenever grading the **intensity** of preference matters.
+
+**🔒 In this project.** We use the **linear with indifference** function, with `q` and `p` estimated from the 10% and 90%
+quantiles of the observed deviations on each criterion. PROMETHEE answers *"by how much is the winner better?"*, not
+merely *"is it better?"*. And it produced the portfolio's most interesting finding: in the robustness analysis,
+**PROMETHEE II elects the consensus leader in only 25.4% of the preference universes** — while the other four schools
+agree. The consensus was **masking a disagreement between schools**.
+
+#### 📖 5. MAUT — *Multi-Attribute Utility Theory*
+
+**What it is.** **Ralph Keeney & Howard Raiffa (1976)**, direct heirs of von Neumann and Morgenstern. It is the American
+school in axiomatic form: if your preferences obey certain rationality axioms, then a **utility function** representing
+them exists, and deciding means **maximizing expected utility**.
+
+**How it works.** Each criterion gets a **utility function** `uⱼ` mapping performance into satisfaction. Global utility
+is additive: `U(a) = Σ wⱼ · uⱼ(a)` — valid under **additive independence** in preference. The crucial point is the
+function's **shape**: a **concave** `u` represents **risk aversion** (the second million is worth less than the first);
+linear is neutrality; convex is risk-seeking.
+
+**General use.** Medical decisions, energy policy, negotiation — any context where the attitude toward risk must be
+**made explicit and defended**.
+
+**🔒 In this project.** We use **exponential** utility `u(z) = (1 − e^(−r·z)) / (1 − e^(−r))` with aversion coefficient
+`r = 2`. That is a **declared ethical choice**: the framework is **conservative**. An uncertain gain is worth less than a
+certain gain of the same mean — exactly as a prudent CFO would assess it. Where TOPSIS treats all gains as fungible,
+MAUT **penalizes the high, uncertain promise**.
+
+#### 📖 6. MCDA-C — *Multicriteria Decision Aid — Constructivist*
+
+**What it is.** Formalized by **Leonardo Ensslin, Gilberto Montibeller and Sandra Noronha (2001)**, with roots in Roy and
+Bana e Costa. The premise is philosophical: the model **does not preexist** the decision-maker. It is **built with him**,
+in three phases — **structuring** (cognitive maps, descriptors), **evaluation** (value functions, substitution rates) and
+**recommendations**.
+
+**How it works.** Each criterion gets a **descriptor** with levels, two of which are anchors: the **Neutral** level (below
+which performance compromises) and the **Good** level (above which there is excellence). The value function is anchored:
+`V = 0` at Neutral, `V = 100` at Good, and it **extrapolates** freely outside the interval.
+
+**General use.** Organizational performance evaluation, public management, contexts where the decision-maker must **learn**
+about his own problem.
+
+**🔒 In this project.** Absent a structuring session with the decision-maker, we anchor the levels on the portfolio's
+**observed quartiles**: `Neutral = Q1`, `Good = Q3`. This preserves what is unique to MCDA-C — it does not merely
+**order**, it **classifies**: `V < 0` is **compromising**, `0 ≤ V ≤ 100` is **competitive**, `V > 100` is **excellence**.
+A project can top the ranking and still sit in the compromising band. No other method in this set would tell you that.
+
+#### 📖 Why five methods, and not one
+
+Because **each school fails differently**, and a lone method returns a winner with an **implicit 100% confidence** — which
+is always a lie. AHP-TOPSIS over-compensates; ELECTRE sometimes refuses to decide; MAUT depends on the shape of the
+utility; MCDA-C depends on the anchors.
+
+We run all five with the **same weights** (DEMATEL's) and close with a **Borda consensus**. Then the disagreement between
+them stops being a nuisance and becomes **information**: when four agree and one flatly dissents, that is not noise — it
+is the warning that your choice **depends on the decision school** you implicitly adopted.
+
+#### 📖 The final question: does the verdict survive?
+
+The whole edifice above rests on **weights**, and weights are **estimates**. If two percentage points on the IITA weight
+swap 1st and 2nd place, the "winner" is an **artifact of the calibration**, not a fact of the portfolio.
+
+That is why we perturb the DEMATEL weights with a **Dirichlet** — `w' ~ Dir(κ·w)`, which lives exactly on the simplex and
+preserves `E[w'] = w`, perturbing **without bias** — and re-rank **2,000 times**. The verdict changes nature:
+
+> *"Project C is the best"* ⟶ **"Project C wins in 99.9% of plausible preference universes"**
+
+It is a **confidence interval on the decision itself**. With it, the framework stops measuring only the risk of the
+**money** and starts measuring the risk of the **decision**.
+
 
 **What it is and what it's for.** When you choose between projects, the criteria **conflict** (high NPV usually
 comes with high risk) and are **incommensurable** (how do you add dollars to a hallucination percentage?). MCDA is
