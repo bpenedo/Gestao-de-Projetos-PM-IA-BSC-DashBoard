@@ -69,6 +69,7 @@
 - [🧩 内置 Skills](#-内置-skillsbuild--analyze-your-own)
 - [📚 资源与参考](#-资源与参考awesome)
 - [🗺️ 路线图](#️-路线图)
+- [🧰 从零开始的本地安装步骤](#-从零开始的本地安装步骤)
 - [🤝 贡献](#-贡献)
 - [📄 许可与署名](#-许可与署名)
 
@@ -427,6 +428,109 @@ Português · English · Español · Français · Deutsch · 中文 · 한국어
 - [ ] 更多可观测性连接器（OpenTelemetry、Helicone）
 - [ ] 多租户 SaaS 模式 + 原生调度
 - [ ] 静态仪表盘发布（GitHub Pages）
+
+---
+
+## 🧰 从零开始的本地安装步骤
+
+> 一切都在**你自己的机器上**运行。包内不含作者的任何密钥，也没有任何数据离开你的电脑。
+
+### 第 0 步 —— 前置条件
+
+| 依赖 | 版本 | 必需？ | 用途 |
+|---|---|---|---|
+| **Python** | 3.10+ | ✅ | 管线、KPI、蒙特卡洛、多准则决策 |
+| **Node.js + npm** | 18+ | ✅ | 仪表盘（Evidence） |
+| **git** | 任意 | ✅ | 克隆仓库 |
+| **Rust + maturin** | 稳定版 | ⬜ 可选 | 加速日志分类 |
+| **tectonic** | 任意 | ⬜ 可选 | 生成 PDF 版 pitch deck |
+
+*在 Windows 上请使用 **WSL** 或 **Git Bash** —— 这条管线是 `bash` 脚本。*
+
+### 第 1 步 —— 克隆仓库
+```bash
+git clone https://github.com/bpenedo/Gestao-de-Projetos-PM-IA-BSC-DashBoard.git
+cd Gestao-de-Projetos-PM-IA-BSC-DashBoard
+```
+
+### 第 2 步 —— 独立的 Python 环境
+```bash
+cd foundations/pipeline
+python3 -m venv .venv
+source .venv/bin/activate        # Windows (PowerShell): .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+### 第 3 步 —— 安装仪表盘依赖
+```bash
+cd ../evidence
+npm install
+```
+
+### 第 4 步 —— 运行演示（匿名，无需凭证）
+```bash
+cd ../pipeline
+./run_all.sh --mock
+```
+
+管线依次执行：匿名演示数据 → KPI → NPV/IRR/MIRR/EAA/PI → **将分布拟合到 token** → **蒙特卡洛（10,000 次迭代）** →
+AHP-TOPSIS 2n → **DEMATEL · ELECTRE · PROMETHEE · MAUT · MCDA-C** → **排名稳健性（Dirichlet）** → 图表 → 管理档案 →
+5D 地图 → pitch deck → 构建仪表盘。
+
+### 第 5 步 —— 打开仪表盘
+```bash
+cd ../evidence
+npm run dev          # http://localhost:3000
+npm run preview      # (alternativa) serve o estático já compilado em build/
+```
+
+### 第 6 步 —— 切换到你自己的数据
+
+**6.1 —— 凭证与参数**（全部可选；没有 `.env` 时管线使用默认值）：
+```bash
+cd ../pipeline
+cp .env.example .env      # edite: LANGFUSE_PUBLIC_KEY, LANGFUSE_SECRET_KEY, SELIC_ANUAL, USD_BRL...
+```
+
+**6.2 —— 你的现金流**（它驱动 NPV、IRR 和蒙特卡洛）：
+```bash
+cp fluxo_caixa_template.csv fluxo_caixa.csv
+```
+格式：`periodo 0` 是投资（负现金流），`taxa` 是每期折现率（`0.10` = 10%）。
+```csv
+project_name,periodo,fluxo,taxa
+Project A,0,-12000,0.10
+Project A,1,3000,0.10
+Project A,2,4000,0.10
+```
+
+**6.3 —— 用真实数据运行：**
+```bash
+./run_all.sh          # sem --mock: sincroniza do Langfuse e usa fluxo_caixa.csv
+```
+
+### 第 7 步（可选）—— 加速与 PDF
+```bash
+cd analise_rs && maturin develop --release && cd ..   # Rust (PyO3): classificação mais rápida
+```
+若要生成 pitch deck，请安装 **tectonic**（例如 `cargo install tectonic` 或用你的发行版包管理器）。
+
+### 第 8 步（可选）—— 定时刷新
+```bash
+crontab -e
+*/15 * * * * /CAMINHO/ABSOLUTO/foundations/pipeline/run_all.sh >> /tmp/bsc.log 2>&1
+```
+
+### 🩺 常见问题
+
+| 现象 | 可能原因 | 解决 |
+|---|---|---|
+| `no such table: ...` | 数据库未初始化 | `python3 db.py` |
+| 仪表盘构建失败 | 旧的构建产物 | `rm -rf ../evidence/build && npm run build` |
+| `findfont: Failed to find font weight` | matplotlib 警告 | 无害，可忽略 |
+| `Precisa de ≥2 projetos` | 组合里只有一个项目 | 多准则决策需要比较备选；请再加一个 |
+| 界面上 `KS p 值 < 0.05` | 该分布无法很好地描述你的数据 | 收集更多样本；框架会提示而不是隐藏 |
+| 每次运行数字都变 | 随机种子被改动 | 保持 `MC_SEED` 固定以确保可复现 |
 
 ---
 

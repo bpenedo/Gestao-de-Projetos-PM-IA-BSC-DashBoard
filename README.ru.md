@@ -73,6 +73,7 @@
 - [🧩 Встроенные Skills](#-встроенные-skills-build--analyze-your-own)
 - [📚 Ресурсы и ссылки](#-ресурсы-и-ссылки-awesome)
 - [🗺️ Дорожная карта](#️-дорожная-карта)
+- [🧰 Пошаговая установка (локально, с нуля)](#-пошаговая-установка-локально-с-нуля)
 - [🤝 Участие](#-участие)
 - [📄 Лицензия и авторство](#-лицензия-и-авторство)
 
@@ -481,6 +482,109 @@ Português · English · Español · Français · Deutsch · 中文 · 한국어
 - [ ] Доп. коннекторы observability (OpenTelemetry, Helicone)
 - [ ] Многоарендный SaaS-режим + встроенное планирование
 - [ ] Публикация статического дашборда (GitHub Pages)
+
+---
+
+## 🧰 Пошаговая установка (локально, с нуля)
+
+> Всё работает **на вашей машине**. Ключи автора не идут с пакетом, и никакие данные не покидают ваш компьютер.
+
+### Шаг 0 — Требования
+
+| Требование | Версия | Обязательно? | Зачем |
+|---|---|---|---|
+| **Python** | 3.10+ | ✅ | конвейер, KPI, Монте-Карло, MCDM |
+| **Node.js + npm** | 18+ | ✅ | дашборд (Evidence) |
+| **git** | любая | ✅ | клонировать репозиторий |
+| **Rust + maturin** | стабильная | ⬜ опционально | ускоряет классификацию логов |
+| **tectonic** | любая | ⬜ опционально | собирает питч-деки в PDF |
+
+*В Windows используйте **WSL** или **Git Bash** — конвейер это `bash`-скрипт.*
+
+### Шаг 1 — Клонировать репозиторий
+```bash
+git clone https://github.com/bpenedo/Gestao-de-Projetos-PM-IA-BSC-DashBoard.git
+cd Gestao-de-Projetos-PM-IA-BSC-DashBoard
+```
+
+### Шаг 2 — Изолированное окружение Python
+```bash
+cd foundations/pipeline
+python3 -m venv .venv
+source .venv/bin/activate        # Windows (PowerShell): .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+### Шаг 3 — Зависимости дашборда
+```bash
+cd ../evidence
+npm install
+```
+
+### Шаг 4 — Запустить демо (анонимно, без учётных данных)
+```bash
+cd ../pipeline
+./run_all.sh --mock
+```
+
+По порядку: анонимные демо-данные → KPI → NPV/IRR/MIRR/EAA/PI → **подгонка распределений к токенам** →
+**Монте-Карло (10 000 итераций)** → AHP-TOPSIS 2n → **DEMATEL · ELECTRE · PROMETHEE · MAUT · MCDA-C** →
+**робастность рейтинга (Дирихле)** → графики → административное досье → 5D-карта → питч-деки → сборка дашборда.
+
+### Шаг 5 — Открыть дашборд
+```bash
+cd ../evidence
+npm run dev          # http://localhost:3000
+npm run preview      # (alternativa) serve o estático já compilado em build/
+```
+
+### Шаг 6 — Перейти на ВАШИ данные
+
+**6.1 — Учётные данные и параметры** (все опциональны; без `.env` берутся значения по умолчанию):
+```bash
+cd ../pipeline
+cp .env.example .env      # edite: LANGFUSE_PUBLIC_KEY, LANGFUSE_SECRET_KEY, SELIC_ANUAL, USD_BRL...
+```
+
+**6.2 — Ваш денежный поток** (именно он питает NPV, IRR и Монте-Карло):
+```bash
+cp fluxo_caixa_template.csv fluxo_caixa.csv
+```
+Формат: `periodo 0` — инвестиция (отрицательный поток), `taxa` — ставка дисконтирования за период (`0.10` = 10 %).
+```csv
+project_name,periodo,fluxo,taxa
+Project A,0,-12000,0.10
+Project A,1,3000,0.10
+Project A,2,4000,0.10
+```
+
+**6.3 — Запуск с реальными данными:**
+```bash
+./run_all.sh          # sem --mock: sincroniza do Langfuse e usa fluxo_caixa.csv
+```
+
+### Шаг 7 (опционально) — Ускорение и PDF
+```bash
+cd analise_rs && maturin develop --release && cd ..   # Rust (PyO3): classificação mais rápida
+```
+Для питч-деков установите **tectonic** (например, `cargo install tectonic` или через пакетный менеджер дистрибутива).
+
+### Шаг 8 (опционально) — Запланировать обновление
+```bash
+crontab -e
+*/15 * * * * /CAMINHO/ABSOLUTO/foundations/pipeline/run_all.sh >> /tmp/bsc.log 2>&1
+```
+
+### 🩺 Частые проблемы
+
+| Симптом | Вероятная причина | Решение |
+|---|---|---|
+| `no such table: ...` | база не инициализирована | `python3 db.py` |
+| Сборка дашборда падает | старые артефакты | `rm -rf ../evidence/build && npm run build` |
+| `findfont: Failed to find font weight` | предупреждение matplotlib | безвредно, игнорируйте |
+| `Precisa de ≥2 projetos` | в портфеле только один проект | MCDM сравнивает альтернативы; добавьте ещё одну |
+| `KS p-значение < 0,05` на экране | распределение плохо описывает ваши данные | соберите больше наблюдений; фреймворк предупреждает, а не скрывает |
+| Числа меняются между запусками | изменено зерно | держите `MC_SEED` фиксированным для воспроизводимости |
 
 ---
 

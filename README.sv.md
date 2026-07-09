@@ -73,6 +73,7 @@ Norton), **investeringsanalys på Wall Street-nivå** och **flerkriteriebeslut**
 - [🧩 Medföljande Skills](#-medföljande-skills-build--analyze-your-own)
 - [📚 Resurser & referenser](#-resurser--referenser-awesome)
 - [🗺️ Färdplan](#️-färdplan)
+- [🧰 Steg-för-steg-installation (lokalt, från noll)](#-steg-för-steg-installation-lokalt-från-noll)
 - [🤝 Bidra](#-bidra)
 - [📄 Licens & upphovsrätt](#-licens--upphovsrätt)
 
@@ -478,6 +479,109 @@ Jättarnas axlar detta ramverk står på:
 - [ ] Fler observerbarhetskopplingar (OpenTelemetry, Helicone)
 - [ ] Fleranvändar-SaaS-läge + inbyggd schemaläggning
 - [ ] Publicering av statisk dashboard (GitHub Pages)
+
+---
+
+## 🧰 Steg-för-steg-installation (lokalt, från noll)
+
+> Allt körs **på din maskin**. Inga författarnycklar följer med paketet och ingen data lämnar din dator.
+
+### Steg 0 — Förutsättningar
+
+| Krav | Version | Obligatoriskt? | Till vad |
+|---|---|---|---|
+| **Python** | 3.10+ | ✅ | pipeline, KPI:er, Monte Carlo, MCDM |
+| **Node.js + npm** | 18+ | ✅ | dashboard (Evidence) |
+| **git** | valfri | ✅ | klona repot |
+| **Rust + maturin** | stabil | ⬜ valfritt | snabbar upp loggklassificering |
+| **tectonic** | valfri | ⬜ valfritt | bygger PDF-pitch-decks |
+
+*På Windows, använd **WSL** eller **Git Bash** — pipelinen är ett `bash`-skript.*
+
+### Steg 1 — Klona repot
+```bash
+git clone https://github.com/bpenedo/Gestao-de-Projetos-PM-IA-BSC-DashBoard.git
+cd Gestao-de-Projetos-PM-IA-BSC-DashBoard
+```
+
+### Steg 2 — Isolerad Python-miljö
+```bash
+cd foundations/pipeline
+python3 -m venv .venv
+source .venv/bin/activate        # Windows (PowerShell): .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+### Steg 3 — Dashboardens beroenden
+```bash
+cd ../evidence
+npm install
+```
+
+### Steg 4 — Kör demon (anonym, utan uppgifter)
+```bash
+cd ../pipeline
+./run_all.sh --mock
+```
+
+I tur och ordning: anonym demodata → KPI:er → NPV/IRR/MIRR/EAA/PI → **fördelningsanpassning till tokens** →
+**Monte Carlo (10 000 iterationer)** → AHP-TOPSIS 2n → **DEMATEL · ELECTRE · PROMETHEE · MAUT · MCDA-C** →
+**rangordningens robusthet (Dirichlet)** → grafer → administrativt dossier → 5D-karta → pitch decks → dashboardbygge.
+
+### Steg 5 — Öppna dashboarden
+```bash
+cd ../evidence
+npm run dev          # http://localhost:3000
+npm run preview      # (alternativa) serve o estático já compilado em build/
+```
+
+### Steg 6 — Byt till DINA data
+
+**6.1 — Uppgifter och parametrar** (alla valfria; utan `.env` används standardvärdena):
+```bash
+cd ../pipeline
+cp .env.example .env      # edite: LANGFUSE_PUBLIC_KEY, LANGFUSE_SECRET_KEY, SELIC_ANUAL, USD_BRL...
+```
+
+**6.2 — Ditt kassaflöde** (det matar NPV, IRR och Monte Carlo):
+```bash
+cp fluxo_caixa_template.csv fluxo_caixa.csv
+```
+Format: `periodo 0` är investeringen (negativt flöde) och `taxa` är diskonteringsräntan per period (`0.10` = 10 %).
+```csv
+project_name,periodo,fluxo,taxa
+Project A,0,-12000,0.10
+Project A,1,3000,0.10
+Project A,2,4000,0.10
+```
+
+**6.3 — Kör med verklig data:**
+```bash
+./run_all.sh          # sem --mock: sincroniza do Langfuse e usa fluxo_caixa.csv
+```
+
+### Steg 7 (valfritt) — Acceleration och PDF
+```bash
+cd analise_rs && maturin develop --release && cd ..   # Rust (PyO3): classificação mais rápida
+```
+För pitch-decks, installera **tectonic** (t.ex. `cargo install tectonic` eller din distros pakethanterare).
+
+### Steg 8 (valfritt) — Schemalägg uppdateringen
+```bash
+crontab -e
+*/15 * * * * /CAMINHO/ABSOLUTO/foundations/pipeline/run_all.sh >> /tmp/bsc.log 2>&1
+```
+
+### 🩺 Vanliga problem
+
+| Symptom | Trolig orsak | Lösning |
+|---|---|---|
+| `no such table: ...` | databasen inte initierad | `python3 db.py` |
+| Dashboardbygget misslyckas | gamla artefakter | `rm -rf ../evidence/build && npm run build` |
+| `findfont: Failed to find font weight` | matplotlib-varning | ofarlig, ignorera |
+| `Precisa de ≥2 projetos` | portfölj med bara ett projekt | MCDM jämför alternativ; lägg till ett till |
+| `KS p-värde < 0,05` på skärmen | fördelningen beskriver inte dina data väl | samla fler observationer; ramverket varnar i stället för att dölja |
+| Siffrorna ändras mellan körningar | fröet ändrades | håll `MC_SEED` fast för reproducerbarhet |
 
 ---
 

@@ -76,6 +76,7 @@ d'investissement de niveau Wall Street** et de la **décision multicritère**. C
 - [🧩 Skills incluses](#-skills-incluses-build--analyze-your-own)
 - [📚 Ressources & références](#-ressources--références-awesome)
 - [🗺️ Feuille de route](#️-feuille-de-route)
+- [🧰 Installation pas à pas (en local, depuis zéro)](#-installation-pas-à-pas-en-local-depuis-zéro)
 - [🤝 Contribuer](#-contribuer)
 - [📄 Licence & paternité](#-licence--paternité)
 
@@ -495,6 +496,109 @@ Les épaules de géants sur lesquelles ce framework s'appuie :
 - [ ] Connecteurs d'observabilité supplémentaires (OpenTelemetry, Helicone)
 - [ ] Mode SaaS multi-tenant + planification native
 - [ ] Publication du tableau de bord statique (GitHub Pages)
+
+---
+
+## 🧰 Installation pas à pas (en local, depuis zéro)
+
+> Tout tourne **sur votre machine**. Aucune clé de l'auteur n'accompagne le paquet et aucune donnée ne quitte votre ordinateur.
+
+### Étape 0 — Prérequis
+
+| Prérequis | Version | Obligatoire ? | Pour quoi |
+|---|---|---|---|
+| **Python** | 3.10+ | ✅ | pipeline, KPI, Monte-Carlo, MCDM |
+| **Node.js + npm** | 18+ | ✅ | tableau de bord (Evidence) |
+| **git** | n'importe | ✅ | cloner le dépôt |
+| **Rust + maturin** | stable | ⬜ optionnel | accélère la classification des logs |
+| **tectonic** | n'importe | ⬜ optionnel | génère les pitch decks en PDF |
+
+*Sous Windows, utilisez **WSL** ou **Git Bash** — la chaîne est un script `bash`.*
+
+### Étape 1 — Cloner le dépôt
+```bash
+git clone https://github.com/bpenedo/Gestao-de-Projetos-PM-IA-BSC-DashBoard.git
+cd Gestao-de-Projetos-PM-IA-BSC-DashBoard
+```
+
+### Étape 2 — Environnement Python isolé
+```bash
+cd foundations/pipeline
+python3 -m venv .venv
+source .venv/bin/activate        # Windows (PowerShell): .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+### Étape 3 — Dépendances du tableau de bord
+```bash
+cd ../evidence
+npm install
+```
+
+### Étape 4 — Lancer la démo (anonyme, sans identifiants)
+```bash
+cd ../pipeline
+./run_all.sh --mock
+```
+
+Dans l'ordre, la chaîne exécute : données de démo anonymes → KPI → VAN/TRI/TRIM/AÉ/IP → **ajustement de distributions
+aux tokens** → **Monte-Carlo (10 000 itérations)** → AHP-TOPSIS 2n → **DEMATEL · ELECTRE · PROMETHEE · MAUT · MCDA-C**
+→ **robustesse du classement (Dirichlet)** → graphiques → dossier administratif → carte 5D → pitch decks → build.
+
+### Étape 5 — Ouvrir le tableau de bord
+```bash
+cd ../evidence
+npm run dev          # http://localhost:3000
+npm run preview      # (alternativa) serve o estático já compilado em build/
+```
+
+### Étape 6 — Passer à VOS données
+
+**6.1 — Identifiants et paramètres** (tous optionnels ; sans `.env` la chaîne utilise les valeurs par défaut) :
+```bash
+cd ../pipeline
+cp .env.example .env      # edite: LANGFUSE_PUBLIC_KEY, LANGFUSE_SECRET_KEY, SELIC_ANUAL, USD_BRL...
+```
+
+**6.2 — Votre flux de trésorerie** (c'est lui qui alimente VAN, TRI et le Monte-Carlo) :
+```bash
+cp fluxo_caixa_template.csv fluxo_caixa.csv
+```
+Format : `periodo 0` est l'investissement (flux négatif) et `taxa` le taux d'actualisation par période (`0.10` = 10 %).
+```csv
+project_name,periodo,fluxo,taxa
+Project A,0,-12000,0.10
+Project A,1,3000,0.10
+Project A,2,4000,0.10
+```
+
+**6.3 — Lancer avec des données réelles :**
+```bash
+./run_all.sh          # sem --mock: sincroniza do Langfuse e usa fluxo_caixa.csv
+```
+
+### Étape 7 (optionnel) — Accélération et PDF
+```bash
+cd analise_rs && maturin develop --release && cd ..   # Rust (PyO3): classificação mais rápida
+```
+Pour les pitch decks, installez **tectonic** (ex. `cargo install tectonic` ou le gestionnaire de votre distribution).
+
+### Étape 8 (optionnel) — Planifier la mise à jour
+```bash
+crontab -e
+*/15 * * * * /CAMINHO/ABSOLUTO/foundations/pipeline/run_all.sh >> /tmp/bsc.log 2>&1
+```
+
+### 🩺 Problèmes courants
+
+| Symptôme | Cause probable | Solution |
+|---|---|---|
+| `no such table: ...` | base non initialisée | `python3 db.py` |
+| Le build du tableau de bord échoue | artefacts obsolètes | `rm -rf ../evidence/build && npm run build` |
+| `findfont: Failed to find font weight` | avertissement matplotlib | inoffensif, ignorez-le |
+| `Precisa de ≥2 projetos` | portefeuille à un seul projet | le MCDM compare des alternatives ; ajoutez-en une |
+| `KS p-valeur < 0,05` à l'écran | la distribution décrit mal vos données | collectez plus d'échantillons ; le framework prévient au lieu de cacher |
+| Les nombres changent d'une exécution à l'autre | la graine a été modifiée | gardez `MC_SEED` fixe pour la reproductibilité |
 
 ---
 

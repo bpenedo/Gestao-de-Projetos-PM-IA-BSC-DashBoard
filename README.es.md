@@ -73,6 +73,7 @@ inversiones de nivel Wall Street** y de la **decisión multicriterio**. Es la di
 - [🧩 Skills incluidas](#-skills-incluidas-build--analyze-your-own)
 - [📚 Recursos & referencias](#-recursos--referencias-awesome)
 - [🗺️ Roadmap](#️-roadmap)
+- [🧰 Setup paso a paso (local, desde cero)](#-setup-paso-a-paso-local-desde-cero)
 - [🤝 Contribuir](#-contribuir)
 - [📄 Licencia & autoría](#-licencia--autoría)
 
@@ -489,6 +490,109 @@ Hombros de gigantes sobre los que este framework se apoya:
 - [ ] Conectores extra de observabilidad (OpenTelemetry, Helicone)
 - [ ] Modo SaaS multi-tenant + agendamiento nativo
 - [ ] Publicación del dashboard estático (GitHub Pages)
+
+---
+
+## 🧰 Setup paso a paso (local, desde cero)
+
+> Todo corre **en tu máquina**. Ninguna clave del autor acompaña el paquete y ningún dato sale de tu computadora.
+
+### Paso 0 — Prerrequisitos
+
+| Requisito | Versión | ¿Obligatorio? | ¿Para qué? |
+|---|---|---|---|
+| **Python** | 3.10+ | ✅ | pipeline, KPIs, Monte Carlo, MCDM |
+| **Node.js + npm** | 18+ | ✅ | dashboard (Evidence) |
+| **git** | cualquiera | ✅ | clonar el repositorio |
+| **Rust + maturin** | estable | ⬜ opcional | acelera la clasificación de logs |
+| **tectonic** | cualquiera | ⬜ opcional | genera los pitch decks en PDF |
+
+*En Windows, usa **WSL** o **Git Bash** — la línea de montaje es un script `bash`.*
+
+### Paso 1 — Clonar el repositorio
+```bash
+git clone https://github.com/bpenedo/Gestao-de-Projetos-PM-IA-BSC-DashBoard.git
+cd Gestao-de-Projetos-PM-IA-BSC-DashBoard
+```
+
+### Paso 2 — Entorno Python aislado
+```bash
+cd foundations/pipeline
+python3 -m venv .venv
+source .venv/bin/activate        # Windows (PowerShell): .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+### Paso 3 — Dependencias del dashboard
+```bash
+cd ../evidence
+npm install
+```
+
+### Paso 4 — Ejecutar la demo (anónima, sin credenciales)
+```bash
+cd ../pipeline
+./run_all.sh --mock
+```
+
+En orden, la línea de montaje ejecuta: datos demo anónimos → KPIs → VAN/TIR/TIRM/VAE/IR → **ajuste de distribuciones
+a los tokens** → **Monte Carlo (10.000 iteraciones)** → AHP-TOPSIS 2n → **DEMATEL · ELECTRE · PROMETHEE · MAUT ·
+MCDA-C** → **robustez del ranking (Dirichlet)** → gráficos → dossier administrativo → mapa 5D → pitch decks → build.
+
+### Paso 5 — Abrir el dashboard
+```bash
+cd ../evidence
+npm run dev          # http://localhost:3000
+npm run preview      # (alternativa) serve o estático já compilado em build/
+```
+
+### Paso 6 — Cambiar a TUS datos
+
+**6.1 — Credenciales y parámetros** (todos opcionales; sin `.env` el pipeline usa los valores por defecto):
+```bash
+cd ../pipeline
+cp .env.example .env      # edite: LANGFUSE_PUBLIC_KEY, LANGFUSE_SECRET_KEY, SELIC_ANUAL, USD_BRL...
+```
+
+**6.2 — Tu flujo de caja** (es lo que alimenta VAN, TIR y el Monte Carlo):
+```bash
+cp fluxo_caixa_template.csv fluxo_caixa.csv
+```
+Formato: `periodo 0` es la inversión (flujo negativo) y `taxa` es el descuento por período (`0.10` = 10%).
+```csv
+project_name,periodo,fluxo,taxa
+Project A,0,-12000,0.10
+Project A,1,3000,0.10
+Project A,2,4000,0.10
+```
+
+**6.3 — Ejecutar con datos reales:**
+```bash
+./run_all.sh          # sem --mock: sincroniza do Langfuse e usa fluxo_caixa.csv
+```
+
+### Paso 7 (opcional) — Aceleración y PDFs
+```bash
+cd analise_rs && maturin develop --release && cd ..   # Rust (PyO3): classificação mais rápida
+```
+Para los pitch decks, instala **tectonic** (p. ej. `cargo install tectonic` o el gestor de paquetes de tu distro).
+
+### Paso 8 (opcional) — Programar la actualización
+```bash
+crontab -e
+*/15 * * * * /CAMINHO/ABSOLUTO/foundations/pipeline/run_all.sh >> /tmp/bsc.log 2>&1
+```
+
+### 🩺 Problemas comunes
+
+| Síntoma | Causa probable | Solución |
+|---|---|---|
+| `no such table: ...` | base no inicializada | `python3 db.py` |
+| El build del dashboard falla | artefactos viejos | `rm -rf ../evidence/build && npm run build` |
+| `findfont: Failed to find font weight` | aviso de matplotlib | inofensivo, ignóralo |
+| `Precisa de ≥2 projetos` | portafolio con un solo proyecto | el MCDM compara alternativas; agrega otra |
+| `KS p-valor < 0,05` en pantalla | la distribución no describe bien tus datos | recolecta más muestras; el framework avisa en vez de esconder |
+| Los números cambian entre corridas | se cambió la semilla | mantén `MC_SEED` fijo para reproducibilidad |
 
 ---
 

@@ -73,6 +73,7 @@ Tekoälystä maksamisen ja sillä **ansaitsemisen** välillä.
 - [🧩 Mukana tulevat Skillit](#-mukana-tulevat-skillit-build--analyze-your-own)
 - [📚 Resurssit & viitteet](#-resurssit--viitteet-awesome)
 - [🗺️ Tiekartta](#️-tiekartta)
+- [🧰 Vaiheittainen asennus (paikallisesti, tyhjästä)](#-vaiheittainen-asennus-paikallisesti-tyhjästä)
 - [🤝 Osallistuminen](#-osallistuminen)
 - [📄 Lisenssi & tekijyys](#-lisenssi--tekijyys)
 
@@ -481,6 +482,109 @@ Jättiläisten hartiat, joilla tämä kehys seisoo:
 - [ ] Lisää havainnoitavuuskonnektoreita (OpenTelemetry, Helicone)
 - [ ] Monivuokralainen SaaS-tila + natiivi ajastus
 - [ ] Staattisen dashboardin julkaisu (GitHub Pages)
+
+---
+
+## 🧰 Vaiheittainen asennus (paikallisesti, tyhjästä)
+
+> Kaikki pyörii **omalla koneellasi**. Tekijän avaimet eivät tule paketin mukana eikä mikään data lähde koneeltasi.
+
+### Vaihe 0 — Esivaatimukset
+
+| Vaatimus | Versio | Pakollinen? | Mihin |
+|---|---|---|---|
+| **Python** | 3.10+ | ✅ | putki, KPI:t, Monte Carlo, MCDM |
+| **Node.js + npm** | 18+ | ✅ | dashboard (Evidence) |
+| **git** | mikä tahansa | ✅ | repositorion kloonaus |
+| **Rust + maturin** | vakaa | ⬜ valinnainen | nopeuttaa lokien luokittelua |
+| **tectonic** | mikä tahansa | ⬜ valinnainen | rakentaa PDF-pitch deckit |
+
+*Windowsissa käytä **WSL:ää** tai **Git Bashia** — putki on `bash`-skripti.*
+
+### Vaihe 1 — Kloonaa repositorio
+```bash
+git clone https://github.com/bpenedo/Gestao-de-Projetos-PM-IA-BSC-DashBoard.git
+cd Gestao-de-Projetos-PM-IA-BSC-DashBoard
+```
+
+### Vaihe 2 — Eristetty Python-ympäristö
+```bash
+cd foundations/pipeline
+python3 -m venv .venv
+source .venv/bin/activate        # Windows (PowerShell): .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+### Vaihe 3 — Dashboardin riippuvuudet
+```bash
+cd ../evidence
+npm install
+```
+
+### Vaihe 4 — Aja demo (anonyymi, ilman tunnuksia)
+```bash
+cd ../pipeline
+./run_all.sh --mock
+```
+
+Järjestyksessä: anonyymi demodata → KPI:t → NPV/IRR/MIRR/EAA/PI → **jakaumien sovitus tokeneihin** →
+**Monte Carlo (10 000 iteraatiota)** → AHP-TOPSIS 2n → **DEMATEL · ELECTRE · PROMETHEE · MAUT · MCDA-C** →
+**rankingin robustius (Dirichlet)** → kuvaajat → hallinnollinen dossier → 5D-kartta → pitch deckit → dashboardin build.
+
+### Vaihe 5 — Avaa dashboard
+```bash
+cd ../evidence
+npm run dev          # http://localhost:3000
+npm run preview      # (alternativa) serve o estático já compilado em build/
+```
+
+### Vaihe 6 — Vaihda OMIIN tietoihisi
+
+**6.1 — Tunnukset ja parametrit** (kaikki valinnaisia; ilman `.env`-tiedostoa käytetään oletuksia):
+```bash
+cd ../pipeline
+cp .env.example .env      # edite: LANGFUSE_PUBLIC_KEY, LANGFUSE_SECRET_KEY, SELIC_ANUAL, USD_BRL...
+```
+
+**6.2 — Oma kassavirtasi** (se ruokkii NPV:n, IRR:n ja Monte Carlon):
+```bash
+cp fluxo_caixa_template.csv fluxo_caixa.csv
+```
+Muoto: `periodo 0` on investointi (negatiivinen virta) ja `taxa` on jaksokohtainen diskonttokorko (`0.10` = 10 %).
+```csv
+project_name,periodo,fluxo,taxa
+Project A,0,-12000,0.10
+Project A,1,3000,0.10
+Project A,2,4000,0.10
+```
+
+**6.3 — Aja oikealla datalla:**
+```bash
+./run_all.sh          # sem --mock: sincroniza do Langfuse e usa fluxo_caixa.csv
+```
+
+### Vaihe 7 (valinnainen) — Kiihdytys ja PDF:t
+```bash
+cd analise_rs && maturin develop --release && cd ..   # Rust (PyO3): classificação mais rápida
+```
+Pitch deckejä varten asenna **tectonic** (esim. `cargo install tectonic` tai jakelusi paketinhallinta).
+
+### Vaihe 8 (valinnainen) — Ajasta päivitys
+```bash
+crontab -e
+*/15 * * * * /CAMINHO/ABSOLUTO/foundations/pipeline/run_all.sh >> /tmp/bsc.log 2>&1
+```
+
+### 🩺 Yleiset ongelmat
+
+| Oire | Todennäköinen syy | Ratkaisu |
+|---|---|---|
+| `no such table: ...` | tietokantaa ei alustettu | `python3 db.py` |
+| Dashboardin build epäonnistuu | vanhat artefaktit | `rm -rf ../evidence/build && npm run build` |
+| `findfont: Failed to find font weight` | matplotlibin varoitus | vaaraton, ohita |
+| `Precisa de ≥2 projetos` | salkussa vain yksi projekti | MCDM vertailee vaihtoehtoja; lisää toinen |
+| `KS p-arvo < 0,05` ruudulla | jakauma ei kuvaa dataasi hyvin | kerää lisää havaintoja; kehys varoittaa eikä piilota |
+| Luvut muuttuvat ajokertojen välillä | siemen vaihdettu | pidä `MC_SEED` kiinteänä toistettavuuden vuoksi |
 
 ---
 

@@ -73,6 +73,7 @@
 - [🧩 शामिल Skills](#-शामिल-skills-build--analyze-your-own)
 - [📚 संसाधन और संदर्भ](#-संसाधन-और-संदर्भ-awesome)
 - [🗺️ रोडमैप](#️-रोडमैप)
+- [🧰 चरण-दर-चरण सेटअप (लोकल, शून्य से)](#-चरण-दर-चरण-सेटअप-लोकल-शून्य-से)
 - [🤝 योगदान](#-योगदान)
 - [📄 लाइसेंस और लेखकत्व](#-लाइसेंस-और-लेखकत्व)
 
@@ -468,6 +469,109 @@ Português · English · Español · Français · Deutsch · 中文 · 한국어
 - [ ] अतिरिक्त ऑब्ज़र्वेबिलिटी कनेक्टर (OpenTelemetry, Helicone)
 - [ ] मल्टी-टेनेंट SaaS मोड + नेटिव शेड्यूलिंग
 - [ ] स्थैतिक डैशबोर्ड प्रकाशन (GitHub Pages)
+
+---
+
+## 🧰 चरण-दर-चरण सेटअप (लोकल, शून्य से)
+
+> सब कुछ **आपकी मशीन पर** चलता है। पैकेज के साथ लेखक की कोई कुंजी नहीं आती और कोई डेटा आपके कंप्यूटर से बाहर नहीं जाता।
+
+### चरण 0 — पूर्व-आवश्यकताएँ
+
+| आवश्यकता | संस्करण | अनिवार्य? | किसलिए |
+|---|---|---|---|
+| **Python** | 3.10+ | ✅ | पाइपलाइन, KPI, मोंटे कार्लो, MCDM |
+| **Node.js + npm** | 18+ | ✅ | डैशबोर्ड (Evidence) |
+| **git** | कोई भी | ✅ | रिपॉज़िटरी क्लोन करना |
+| **Rust + maturin** | स्थिर | ⬜ वैकल्पिक | लॉग वर्गीकरण तेज़ करता है |
+| **tectonic** | कोई भी | ⬜ वैकल्पिक | PDF पिच डेक बनाता है |
+
+*Windows पर **WSL** या **Git Bash** का उपयोग करें — पाइपलाइन एक `bash` स्क्रिप्ट है।*
+
+### चरण 1 — रिपॉज़िटरी क्लोन करें
+```bash
+git clone https://github.com/bpenedo/Gestao-de-Projetos-PM-IA-BSC-DashBoard.git
+cd Gestao-de-Projetos-PM-IA-BSC-DashBoard
+```
+
+### चरण 2 — पृथक Python परिवेश
+```bash
+cd foundations/pipeline
+python3 -m venv .venv
+source .venv/bin/activate        # Windows (PowerShell): .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+### चरण 3 — डैशबोर्ड निर्भरताएँ
+```bash
+cd ../evidence
+npm install
+```
+
+### चरण 4 — डेमो चलाएँ (अनाम, बिना क्रेडेंशियल)
+```bash
+cd ../pipeline
+./run_all.sh --mock
+```
+
+क्रम से: अनाम डेमो डेटा → KPI → NPV/IRR/MIRR/EAA/PI → **टोकनों पर वितरण फ़िटिंग** → **मोंटे कार्लो (10,000 पुनरावृत्तियाँ)** →
+AHP-TOPSIS 2n → **DEMATEL · ELECTRE · PROMETHEE · MAUT · MCDA-C** → **रैंकिंग मज़बूती (डिरिख़्ले)** → ग्राफ़ →
+प्रशासनिक डोज़िए → 5D मानचित्र → पिच डेक → डैशबोर्ड बिल्ड।
+
+### चरण 5 — डैशबोर्ड खोलें
+```bash
+cd ../evidence
+npm run dev          # http://localhost:3000
+npm run preview      # (alternativa) serve o estático já compilado em build/
+```
+
+### चरण 6 — अपने डेटा पर स्विच करें
+
+**6.1 — क्रेडेंशियल और प्राचल** (सभी वैकल्पिक; `.env` न हो तो डिफ़ॉल्ट चलते हैं):
+```bash
+cd ../pipeline
+cp .env.example .env      # edite: LANGFUSE_PUBLIC_KEY, LANGFUSE_SECRET_KEY, SELIC_ANUAL, USD_BRL...
+```
+
+**6.2 — आपका नकदी प्रवाह** (यही NPV, IRR और मोंटे कार्लो को पोषित करता है):
+```bash
+cp fluxo_caixa_template.csv fluxo_caixa.csv
+```
+प्रारूप: `periodo 0` निवेश है (ऋणात्मक प्रवाह) और `taxa` प्रति-अवधि बट्टा दर (`0.10` = 10%)।
+```csv
+project_name,periodo,fluxo,taxa
+Project A,0,-12000,0.10
+Project A,1,3000,0.10
+Project A,2,4000,0.10
+```
+
+**6.3 — वास्तविक डेटा के साथ चलाएँ:**
+```bash
+./run_all.sh          # sem --mock: sincroniza do Langfuse e usa fluxo_caixa.csv
+```
+
+### चरण 7 (वैकल्पिक) — त्वरण और PDF
+```bash
+cd analise_rs && maturin develop --release && cd ..   # Rust (PyO3): classificação mais rápida
+```
+पिच डेक के लिए **tectonic** स्थापित करें (जैसे `cargo install tectonic` या अपने डिस्ट्रो का पैकेज प्रबंधक)।
+
+### चरण 8 (वैकल्पिक) — अद्यतन शेड्यूल करें
+```bash
+crontab -e
+*/15 * * * * /CAMINHO/ABSOLUTO/foundations/pipeline/run_all.sh >> /tmp/bsc.log 2>&1
+```
+
+### 🩺 सामान्य समस्याएँ
+
+| लक्षण | संभावित कारण | समाधान |
+|---|---|---|
+| `no such table: ...` | डेटाबेस आरंभीकृत नहीं | `python3 db.py` |
+| डैशबोर्ड बिल्ड विफल | पुराने आर्टिफ़ैक्ट | `rm -rf ../evidence/build && npm run build` |
+| `findfont: Failed to find font weight` | matplotlib चेतावनी | हानिरहित, अनदेखा करें |
+| `Precisa de ≥2 projetos` | पोर्टफोलियो में केवल एक परियोजना | MCDM विकल्पों की तुलना करता है; एक और जोड़ें |
+| स्क्रीन पर `KS p-मान < 0.05` | वह वितरण आपके डेटा को ठीक से नहीं दर्शाता | अधिक नमूने जुटाएँ; फ़्रेमवर्क छिपाने के बजाय चेताता है |
+| हर बार संख्याएँ बदलती हैं | बीज बदल गया | पुनरुत्पादन के लिए `MC_SEED` स्थिर रखें |
 
 ---
 

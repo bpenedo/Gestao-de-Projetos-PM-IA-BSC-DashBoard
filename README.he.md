@@ -70,6 +70,7 @@
 - [🧩 Skills כלולים](#-skills-כלולים-build--analyze-your-own)
 - [📚 משאבים והפניות](#-משאבים-והפניות-awesome)
 - [🗺️ מפת דרכים](#️-מפת-דרכים)
+- [🧰 התקנה שלב אחר שלב (מקומית, מאפס)](#-התקנה-שלב-אחר-שלב-מקומית-מאפס)
 - [🤝 תרומה](#-תרומה)
 - [📄 רישיון וזכויות יוצרים](#-רישיון-וזכויות-יוצרים)
 
@@ -450,6 +451,109 @@ Português · English · Español · Français · Deutsch · 中文 · 한국어
 - [ ] מחברי תצפיתיות נוספים (OpenTelemetry, Helicone)
 - [ ] מצב SaaS מרובה-דיירים + תזמון מובנה
 - [ ] פרסום דשבורד סטטי (GitHub Pages)
+
+---
+
+## 🧰 התקנה שלב אחר שלב (מקומית, מאפס)
+
+> הכול רץ **על המחשב שלכם**. אף מפתח של המחבר אינו מלווה את החבילה, ושום נתון אינו יוצא מהמחשב שלכם.
+
+### שלב 0 — דרישות מוקדמות
+
+| דרישה | גרסה | חובה? | לשם מה |
+|---|---|---|---|
+| **Python** | 3.10+ | ✅ | פייפליין, KPI, מונטה קרלו, MCDM |
+| **Node.js + npm** | 18+ | ✅ | דשבורד (Evidence) |
+| **git** | כל גרסה | ✅ | שכפול המאגר |
+| **Rust + maturin** | יציב | ⬜ אופציונלי | מאיץ את סיווג הלוגים |
+| **tectonic** | כל גרסה | ⬜ אופציונלי | מפיק את ה-pitch decks ב-PDF |
+
+*ב-Windows השתמשו ב-**WSL** או ב-**Git Bash** — הפייפליין הוא סקריפט `bash`.*
+
+### שלב 1 — שכפול המאגר
+```bash
+git clone https://github.com/bpenedo/Gestao-de-Projetos-PM-IA-BSC-DashBoard.git
+cd Gestao-de-Projetos-PM-IA-BSC-DashBoard
+```
+
+### שלב 2 — סביבת Python מבודדת
+```bash
+cd foundations/pipeline
+python3 -m venv .venv
+source .venv/bin/activate        # Windows (PowerShell): .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+### שלב 3 — תלויות הדשבורד
+```bash
+cd ../evidence
+npm install
+```
+
+### שלב 4 — הרצת ההדגמה (אנונימית, ללא אישורים)
+```bash
+cd ../pipeline
+./run_all.sh --mock
+```
+
+לפי הסדר: נתוני הדגמה אנונימיים → KPI → NPV/IRR/MIRR/EAA/PI → **התאמת התפלגויות לטוקנים** →
+**מונטה קרלו (10,000 איטרציות)** → AHP-TOPSIS 2n → **DEMATEL · ELECTRE · PROMETHEE · MAUT · MCDA-C** →
+**חוסן הדירוג (דיריכלה)** → גרפים → תיק ניהולי → מפת 5D → pitch decks → בניית הדשבורד.
+
+### שלב 5 — פתיחת הדשבורד
+```bash
+cd ../evidence
+npm run dev          # http://localhost:3000
+npm run preview      # (alternativa) serve o estático já compilado em build/
+```
+
+### שלב 6 — מעבר לנתונים שלכם
+
+**6.1 — אישורים ופרמטרים** (הכול אופציונלי; בלי `.env` הפייפליין משתמש בברירות המחדל):
+```bash
+cd ../pipeline
+cp .env.example .env      # edite: LANGFUSE_PUBLIC_KEY, LANGFUSE_SECRET_KEY, SELIC_ANUAL, USD_BRL...
+```
+
+**6.2 — תזרים המזומנים שלכם** (הוא שמזין את ה-NPV, ה-IRR ואת מונטה קרלו):
+```bash
+cp fluxo_caixa_template.csv fluxo_caixa.csv
+```
+מבנה: `periodo 0` היא ההשקעה (תזרים שלילי), ו-`taxa` הוא שיעור ההיוון לתקופה (`0.10` = 10%).
+```csv
+project_name,periodo,fluxo,taxa
+Project A,0,-12000,0.10
+Project A,1,3000,0.10
+Project A,2,4000,0.10
+```
+
+**6.3 — הרצה עם נתונים אמיתיים:**
+```bash
+./run_all.sh          # sem --mock: sincroniza do Langfuse e usa fluxo_caixa.csv
+```
+
+### שלב 7 (אופציונלי) — האצה ו-PDF
+```bash
+cd analise_rs && maturin develop --release && cd ..   # Rust (PyO3): classificação mais rápida
+```
+עבור ה-pitch decks התקינו **tectonic** (למשל `cargo install tectonic` או מנהל החבילות של ההפצה שלכם).
+
+### שלב 8 (אופציונלי) — תזמון הרענון
+```bash
+crontab -e
+*/15 * * * * /CAMINHO/ABSOLUTO/foundations/pipeline/run_all.sh >> /tmp/bsc.log 2>&1
+```
+
+### 🩺 תקלות נפוצות
+
+| תסמין | סיבה סבירה | פתרון |
+|---|---|---|
+| `no such table: ...` | בסיס הנתונים לא אותחל | `python3 db.py` |
+| בניית הדשבורד נכשלת | שאריות מבנייה קודמת | `rm -rf ../evidence/build && npm run build` |
+| `findfont: Failed to find font weight` | אזהרה של matplotlib | לא מזיקה, התעלמו |
+| `Precisa de ≥2 projetos` | תיק עם פרויקט יחיד | ה-MCDM משווה חלופות; הוסיפו עוד אחת |
+| `KS p-value < 0.05` על המסך | ההתפלגות אינה מתארת היטב את הנתונים | אספו עוד דגימות; המסגרת מתריעה במקום להסתיר |
+| המספרים משתנים בין הרצות | הזרע שונה | השאירו את `MC_SEED` קבוע לשחזוריות |
 
 ---
 

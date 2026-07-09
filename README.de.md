@@ -76,6 +76,7 @@ Unterschied zwischen *hoffen* und *wissen*. Zwischen für KI zahlen und mit ihr 
 - [🧩 Enthaltene Skills](#-enthaltene-skills-build--analyze-your-own)
 - [📚 Ressourcen & Referenzen](#-ressourcen--referenzen-awesome)
 - [🗺️ Roadmap](#️-roadmap)
+- [🧰 Schritt-für-Schritt-Setup (lokal, von null)](#-schritt-für-schritt-setup-lokal-von-null)
 - [🤝 Mitwirken](#-mitwirken)
 - [📄 Lizenz & Urheberschaft](#-lizenz--urheberschaft)
 
@@ -494,6 +495,109 @@ Schultern von Riesen, auf denen dieses Framework steht:
 - [ ] Zusätzliche Observability-Konnektoren (OpenTelemetry, Helicone)
 - [ ] Multi-Tenant-SaaS-Modus + native Planung
 - [ ] Veröffentlichung des statischen Dashboards (GitHub Pages)
+
+---
+
+## 🧰 Schritt-für-Schritt-Setup (lokal, von null)
+
+> Alles läuft **auf Ihrem Rechner**. Dem Paket liegen keine Autoren-Schlüssel bei, und keine Daten verlassen Ihren Computer.
+
+### Schritt 0 — Voraussetzungen
+
+| Voraussetzung | Version | Pflicht? | Wofür |
+|---|---|---|---|
+| **Python** | 3.10+ | ✅ | Pipeline, KPIs, Monte Carlo, MCDM |
+| **Node.js + npm** | 18+ | ✅ | Dashboard (Evidence) |
+| **git** | beliebig | ✅ | Repository klonen |
+| **Rust + maturin** | stabil | ⬜ optional | beschleunigt die Log-Klassifizierung |
+| **tectonic** | beliebig | ⬜ optional | erzeugt die PDF-Pitch-Decks |
+
+*Unter Windows nutzen Sie **WSL** oder **Git Bash** — die Pipeline ist ein `bash`-Skript.*
+
+### Schritt 1 — Repository klonen
+```bash
+git clone https://github.com/bpenedo/Gestao-de-Projetos-PM-IA-BSC-DashBoard.git
+cd Gestao-de-Projetos-PM-IA-BSC-DashBoard
+```
+
+### Schritt 2 — Isolierte Python-Umgebung
+```bash
+cd foundations/pipeline
+python3 -m venv .venv
+source .venv/bin/activate        # Windows (PowerShell): .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+### Schritt 3 — Dashboard-Abhängigkeiten
+```bash
+cd ../evidence
+npm install
+```
+
+### Schritt 4 — Demo starten (anonym, ohne Zugangsdaten)
+```bash
+cd ../pipeline
+./run_all.sh --mock
+```
+
+Der Reihe nach läuft: anonyme Demodaten → KPIs → Kapitalwert/IZF/MIRR/ÄJA/PI → **Verteilungsanpassung an Tokens** →
+**Monte Carlo (10.000 Iterationen)** → AHP-TOPSIS 2n → **DEMATEL · ELECTRE · PROMETHEE · MAUT · MCDA-C** →
+**Ranking-Robustheit (Dirichlet)** → Grafiken → Verwaltungs-Dossier → 5D-Karte → Pitch-Decks → Dashboard-Build.
+
+### Schritt 5 — Dashboard öffnen
+```bash
+cd ../evidence
+npm run dev          # http://localhost:3000
+npm run preview      # (alternativa) serve o estático já compilado em build/
+```
+
+### Schritt 6 — Auf IHRE Daten umstellen
+
+**6.1 — Zugangsdaten und Parameter** (alle optional; ohne `.env` nutzt die Pipeline die Standardwerte):
+```bash
+cd ../pipeline
+cp .env.example .env      # edite: LANGFUSE_PUBLIC_KEY, LANGFUSE_SECRET_KEY, SELIC_ANUAL, USD_BRL...
+```
+
+**6.2 — Ihr Cashflow** (er speist Kapitalwert, IZF und Monte Carlo):
+```bash
+cp fluxo_caixa_template.csv fluxo_caixa.csv
+```
+Format: `periodo 0` ist die Investition (negativer Fluss), `taxa` der Diskontsatz je Periode (`0.10` = 10 %).
+```csv
+project_name,periodo,fluxo,taxa
+Project A,0,-12000,0.10
+Project A,1,3000,0.10
+Project A,2,4000,0.10
+```
+
+**6.3 — Mit echten Daten ausführen:**
+```bash
+./run_all.sh          # sem --mock: sincroniza do Langfuse e usa fluxo_caixa.csv
+```
+
+### Schritt 7 (optional) — Beschleunigung und PDFs
+```bash
+cd analise_rs && maturin develop --release && cd ..   # Rust (PyO3): classificação mais rápida
+```
+Für die Pitch-Decks installieren Sie **tectonic** (z. B. `cargo install tectonic` oder über Ihre Distribution).
+
+### Schritt 8 (optional) — Aktualisierung planen
+```bash
+crontab -e
+*/15 * * * * /CAMINHO/ABSOLUTO/foundations/pipeline/run_all.sh >> /tmp/bsc.log 2>&1
+```
+
+### 🩺 Häufige Probleme
+
+| Symptom | Wahrscheinliche Ursache | Lösung |
+|---|---|---|
+| `no such table: ...` | Datenbank nicht initialisiert | `python3 db.py` |
+| Dashboard-Build schlägt fehl | veraltete Artefakte | `rm -rf ../evidence/build && npm run build` |
+| `findfont: Failed to find font weight` | matplotlib-Warnung | harmlos, ignorieren |
+| `Precisa de ≥2 projetos` | Portfolio mit nur einem Projekt | MCDM vergleicht Alternativen; fügen Sie eine hinzu |
+| `KS p-Wert < 0,05` auf dem Bildschirm | die Verteilung beschreibt Ihre Daten schlecht | mehr Stichproben sammeln; das Framework warnt, statt zu verbergen |
+| Zahlen ändern sich zwischen Läufen | Startwert geändert | `MC_SEED` fest lassen für Reproduzierbarkeit |
 
 ---
 

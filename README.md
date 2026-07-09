@@ -73,6 +73,7 @@ Entre pagar pela IA e **lucrar** com ela.
 - [🧩 Skills incluídas](#-skills-incluídas-build--analyze-your-own)
 - [📚 Recursos & referências](#-recursos--referências-awesome)
 - [🗺️ Roadmap](#️-roadmap)
+- [🧰 Setup passo a passo (local, do zero)](#-setup-passo-a-passo-local-do-zero)
 - [🤝 Contribuindo](#-contribuindo)
 - [📄 Licença & autoria](#-licença--autoria)
 
@@ -484,6 +485,109 @@ Ombros de gigantes sobre os quais este framework se apoia:
 - [ ] Conectores extras de observabilidade (OpenTelemetry, Helicone)
 - [ ] Modo SaaS multi-tenant + agendamento nativo
 - [ ] Publicação do dashboard estático (GitHub Pages)
+
+---
+
+## 🧰 Setup passo a passo (local, do zero)
+
+> Tudo roda **na sua máquina**. Nenhuma chave do autor acompanha o pacote e nenhum dado sai do seu computador.
+
+### Passo 0 — Pré-requisitos
+
+| Requisito | Versão | Obrigatório? | Para quê |
+|---|---|---|---|
+| **Python** | 3.10+ | ✅ | pipeline, KPIs, Monte Carlo, MCDM |
+| **Node.js + npm** | 18+ | ✅ | dashboard (Evidence) |
+| **git** | qualquer | ✅ | clonar o repositório |
+| **Rust + maturin** | estável | ⬜ opcional | acelera a classificação de logs |
+| **tectonic** | qualquer | ⬜ opcional | gera os pitch decks em PDF |
+
+*No Windows, use **WSL** ou **Git Bash** — a esteira é um script `bash`.*
+
+### Passo 1 — Clonar o repositório
+```bash
+git clone https://github.com/bpenedo/Gestao-de-Projetos-PM-IA-BSC-DashBoard.git
+cd Gestao-de-Projetos-PM-IA-BSC-DashBoard
+```
+
+### Passo 2 — Ambiente Python isolado
+```bash
+cd foundations/pipeline
+python3 -m venv .venv
+source .venv/bin/activate        # Windows (PowerShell): .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+### Passo 3 — Dependências do dashboard
+```bash
+cd ../evidence
+npm install
+```
+
+### Passo 4 — Rodar a demo (anônima, sem credenciais)
+```bash
+cd ../pipeline
+./run_all.sh --mock
+```
+
+Em ordem, a esteira executa: dados demo anônimos → KPIs → VPL/TIR/TIRM/VUL/ILL → **ajuste de distribuições aos
+tokens** → **Monte Carlo (10.000 iterações)** → AHP-TOPSIS 2n → **DEMATEL · ELECTRE · PROMETHEE · MAUT · MCDA-C** →
+**robustez do ranking (Dirichlet)** → gráficos → dossiê administrativo → mapa 5D → pitch decks → build do dashboard.
+
+### Passo 5 — Abrir o dashboard
+```bash
+cd ../evidence
+npm run dev          # http://localhost:3000
+npm run preview      # (alternativa) serve o estático já compilado em build/
+```
+
+### Passo 6 — Trocar para os SEUS dados
+
+**6.1 — Credenciais e parâmetros** (todos opcionais; sem `.env` o pipeline usa os defaults):
+```bash
+cd ../pipeline
+cp .env.example .env      # edite: LANGFUSE_PUBLIC_KEY, LANGFUSE_SECRET_KEY, SELIC_ANUAL, USD_BRL...
+```
+
+**6.2 — Seu fluxo de caixa** (é o que alimenta VPL, TIR e o Monte Carlo):
+```bash
+cp fluxo_caixa_template.csv fluxo_caixa.csv
+```
+Formato: `periodo 0` é o investimento (fluxo negativo) e `taxa` é o desconto por período (`0.10` = 10%).
+```csv
+project_name,periodo,fluxo,taxa
+Project A,0,-12000,0.10
+Project A,1,3000,0.10
+Project A,2,4000,0.10
+```
+
+**6.3 — Rodar com dados reais:**
+```bash
+./run_all.sh          # sem --mock: sincroniza do Langfuse e usa fluxo_caixa.csv
+```
+
+### Passo 7 (opcional) — Aceleração e PDFs
+```bash
+cd analise_rs && maturin develop --release && cd ..   # Rust (PyO3): classificação mais rápida
+```
+Para os pitch decks, instale o **tectonic** (ex.: `cargo install tectonic` ou o gerenciador da sua distro).
+
+### Passo 8 (opcional) — Agendar a atualização
+```bash
+crontab -e
+*/15 * * * * /CAMINHO/ABSOLUTO/foundations/pipeline/run_all.sh >> /tmp/bsc.log 2>&1
+```
+
+### 🩺 Problemas comuns
+
+| Sintoma | Causa provável | Solução |
+|---|---|---|
+| `no such table: ...` | banco não inicializado | `python3 db.py` |
+| O build do dashboard falha | artefatos antigos | `rm -rf ../evidence/build && npm run build` |
+| `findfont: Failed to find font weight` | aviso do matplotlib | inofensivo, pode ignorar |
+| `Precisa de ≥2 projetos` | portfólio com um projeto só | o MCDM compara alternativas; adicione outra |
+| `KS p-valor < 0,05` na tela | a distribuição não descreve bem seus dados | colete mais amostras; o framework avisa em vez de esconder |
+| Números mudam entre execuções | semente alterada | mantenha `MC_SEED` fixo para reprodutibilidade |
 
 ---
 

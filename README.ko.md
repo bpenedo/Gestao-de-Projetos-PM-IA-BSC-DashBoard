@@ -72,6 +72,7 @@
 - [🧩 포함된 Skills](#-포함된-skills-build--analyze-your-own)
 - [📚 리소스 & 참고문헌](#-리소스--참고문헌-awesome)
 - [🗺️ 로드맵](#️-로드맵)
+- [🧰 처음부터 시작하는 로컬 설치 단계](#-처음부터-시작하는-로컬-설치-단계)
 - [🤝 기여](#-기여)
 - [📄 라이선스 & 저작권](#-라이선스--저작권)
 
@@ -457,6 +458,109 @@ Português · English · Español · Français · Deutsch · 中文 · 한국어
 - [ ] 추가 관측 가능성 커넥터(OpenTelemetry, Helicone)
 - [ ] 멀티테넌트 SaaS 모드 + 네이티브 스케줄링
 - [ ] 정적 대시보드 게시(GitHub Pages)
+
+---
+
+## 🧰 처음부터 시작하는 로컬 설치 단계
+
+> 모든 것이 **당신의 컴퓨터에서** 돌아갑니다. 작성자의 키는 패키지에 포함되지 않으며, 어떤 데이터도 밖으로 나가지 않습니다.
+
+### 0단계 — 사전 요구사항
+
+| 요구사항 | 버전 | 필수? | 용도 |
+|---|---|---|---|
+| **Python** | 3.10+ | ✅ | 파이프라인, KPI, 몬테카를로, MCDM |
+| **Node.js + npm** | 18+ | ✅ | 대시보드(Evidence) |
+| **git** | 아무거나 | ✅ | 저장소 복제 |
+| **Rust + maturin** | 안정판 | ⬜ 선택 | 로그 분류 가속 |
+| **tectonic** | 아무거나 | ⬜ 선택 | PDF 피치 덱 생성 |
+
+*Windows에서는 **WSL** 또는 **Git Bash**를 사용하세요 — 파이프라인은 `bash` 스크립트입니다.*
+
+### 1단계 — 저장소 복제
+```bash
+git clone https://github.com/bpenedo/Gestao-de-Projetos-PM-IA-BSC-DashBoard.git
+cd Gestao-de-Projetos-PM-IA-BSC-DashBoard
+```
+
+### 2단계 — 격리된 Python 환경
+```bash
+cd foundations/pipeline
+python3 -m venv .venv
+source .venv/bin/activate        # Windows (PowerShell): .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+### 3단계 — 대시보드 의존성
+```bash
+cd ../evidence
+npm install
+```
+
+### 4단계 — 데모 실행(익명, 자격증명 불필요)
+```bash
+cd ../pipeline
+./run_all.sh --mock
+```
+
+순서대로: 익명 데모 데이터 → KPI → NPV/IRR/MIRR/EAA/PI → **토큰에 분포 적합** → **몬테카를로(10,000회)** →
+AHP-TOPSIS 2n → **DEMATEL · ELECTRE · PROMETHEE · MAUT · MCDA-C** → **순위 견고성(디리클레)** → 그래프 →
+관리 도시에 → 5D 지도 → 피치 덱 → 대시보드 빌드.
+
+### 5단계 — 대시보드 열기
+```bash
+cd ../evidence
+npm run dev          # http://localhost:3000
+npm run preview      # (alternativa) serve o estático já compilado em build/
+```
+
+### 6단계 — 당신의 데이터로 전환
+
+**6.1 — 자격증명과 파라미터**(모두 선택; `.env`가 없으면 기본값 사용):
+```bash
+cd ../pipeline
+cp .env.example .env      # edite: LANGFUSE_PUBLIC_KEY, LANGFUSE_SECRET_KEY, SELIC_ANUAL, USD_BRL...
+```
+
+**6.2 — 당신의 현금흐름**(NPV, IRR, 몬테카를로를 먹이는 것):
+```bash
+cp fluxo_caixa_template.csv fluxo_caixa.csv
+```
+형식: `periodo 0`은 투자(음의 흐름), `taxa`는 기간당 할인율(`0.10` = 10%).
+```csv
+project_name,periodo,fluxo,taxa
+Project A,0,-12000,0.10
+Project A,1,3000,0.10
+Project A,2,4000,0.10
+```
+
+**6.3 — 실제 데이터로 실행:**
+```bash
+./run_all.sh          # sem --mock: sincroniza do Langfuse e usa fluxo_caixa.csv
+```
+
+### 7단계(선택) — 가속과 PDF
+```bash
+cd analise_rs && maturin develop --release && cd ..   # Rust (PyO3): classificação mais rápida
+```
+피치 덱을 원하면 **tectonic**을 설치하세요(예: `cargo install tectonic` 또는 배포판 패키지 관리자).
+
+### 8단계(선택) — 갱신 예약
+```bash
+crontab -e
+*/15 * * * * /CAMINHO/ABSOLUTO/foundations/pipeline/run_all.sh >> /tmp/bsc.log 2>&1
+```
+
+### 🩺 자주 겪는 문제
+
+| 증상 | 유력한 원인 | 해결 |
+|---|---|---|
+| `no such table: ...` | DB 미초기화 | `python3 db.py` |
+| 대시보드 빌드 실패 | 오래된 산출물 | `rm -rf ../evidence/build && npm run build` |
+| `findfont: Failed to find font weight` | matplotlib 경고 | 무해하므로 무시 |
+| `Precisa de ≥2 projetos` | 프로젝트가 하나뿐인 포트폴리오 | MCDM은 대안을 비교합니다; 하나 더 추가 |
+| 화면의 `KS p-값 < 0.05` | 그 분포가 데이터를 잘 설명하지 못함 | 표본을 더 모으세요; 프레임워크는 숨기지 않고 경고합니다 |
+| 실행할 때마다 숫자가 달라짐 | 시드를 바꿈 | 재현성을 위해 `MC_SEED`를 고정하세요 |
 
 ---
 
