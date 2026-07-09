@@ -783,6 +783,99 @@ n'est pas du bruit — c'est l'avertissement que votre choix dépend de votre pr
 que l'*utilité*. Et la **perturbation de Dirichlet** sur les poids répond à la question finale : *« la 1re place
 survit-elle à une erreur de deux points de pourcentage dans le calibrage ? »*
 
+
+### 🧪 Les quatre rouages : Iman-Conover, Kolmogorov-Smirnov, Dirichlet et le tornado
+
+Les deux grandes méthodes ci-dessus reposent sur quatre pièces plus petites — et c'est en elles que se loge la différence
+entre une simulation honnête et un joli chiffre. Elles méritent d'être connues.
+
+#### 🔗 Iman-Conover — imposer la corrélation **sans détruire les lois**
+
+**Ce que c'est.** Proposé par **Ronald Iman et William Conover (1982)**. Il résout un problème qui paraît trivial et ne
+l'est pas : *comment tirer des variables corrélées lorsque les lois marginales ne sont pas normales ?* La voie naïve —
+générer des normales corrélées par Cholesky puis les transformer — **déforme les marginales**. Or si vous venez d'ajuster
+une LogNormale à vos données, la déformer jette précisément le travail accompli.
+
+**Comment ça marche.** C'est une **réordination par rangs**, non une transformation de valeurs. On construit une référence
+à partir des **scores de van der Waerden** `Φ⁻¹(i/(n+1))`, mélangés par colonne ; on calcule `P = chol(R)` (la cible) et
+`Q = chol(corr(M))` (la corrélation accidentelle de la référence) ; on forme `S = M·(Q⁻¹P)ᵀ`. Chaque colonne de
+l'échantillon initial est alors **réordonnée selon les rangs de `S`**. Comme seul l'*ordre* des valeurs déjà tirées change,
+les **lois marginales restent exactes** — au bit près.
+
+**Un détail fin, et honnête.** `R` est la corrélation de la *référence normale*, non celle de Pearson du résultat. La
+corrélation des rangs induite suit la copule normale : `ρ_S = (6/π)·arcsin(R/2)`. Pour `R = 0,80`, cela donne **0,7859** —
+exactement ce que nous avons mesuré en test (0,786). Ce n'est pas une erreur de la méthode ; c'est sa mathématique.
+
+**Usages généraux.** Risque financier (actifs corrélés), fiabilité structurelle, échantillonnage par hypercube latin.
+
+**🔒 Dans ce projet.** C'est ce qui permet de corréler les flux de trésorerie **sans sacrifier** la loi ajustée à vos tokens.
+Avant usage, la matrice est validée : symétrique, diagonale unitaire et **définie positive** (via Cholesky). Une matrice de
+corrélation incohérente est rejetée avec la plus petite valeur propre indiquée — plutôt que de produire silencieusement des
+nombres dénués de sens.
+
+#### 📏 Kolmogorov-Smirnov — la distance entre ce que vous **supposez** et ce que les données **disent**
+
+**Ce que c'est.** Un test d'adéquation **non paramétrique**. La statistique est simple et belle : `D = sup |Fₙ(x) − F(x)|`,
+le plus grand écart vertical entre la **fonction de répartition empirique** de vos données et la **théorique** que vous avez
+proposée. Sous l'hypothèse nulle, la loi de `D` **ne dépend pas de quelle est `F`** — d'où *distribution-free*.
+
+**Une réserve d'honnêteté méthodologique.** La p-valeur classique du KS suppose que les paramètres de `F` ont été fixés
+**avant** de voir les données. Lorsqu'ils sont **estimés sur les mêmes données** (comme ici, par maximum de vraisemblance),
+le test devient **optimiste** : il accepte trop facilement. La rigueur exigerait la correction de **Lilliefors** ou un
+**bootstrap paramétrique**. Nous traitons donc le KS comme un **diagnostic**, non comme une preuve — et ne l'employons que
+pour **rejeter** de mauvais ajustements, jamais pour déclarer un ajustement « correct ».
+
+**Usages généraux.** Qualité d'ajustement ; comparaison de deux échantillons (KS à deux échantillons) ; détection de *drift*
+de données dans les systèmes d'apprentissage automatique en production.
+
+**🔒 Dans ce projet.** Il mesure à quel point la loi gagnante par AIC décrit réellement votre série de tokens. Quand la
+p-valeur tombe sous 0,05, l'écran affiche **`ADÉQUATION FAIBLE` en rouge** — dans le portefeuille de démonstration cela se
+produit pour l'un des projets, et le framework le **montre** au lieu de le cacher. Un chiffre honnête vaut mieux qu'un beau
+chiffre.
+
+#### 🎲 Perturbation de Dirichlet — l'**intervalle de confiance de la décision**
+
+**Ce que c'est.** La loi de **Dirichlet** est la loi naturelle sur le **simplexe** : des vecteurs de nombres positifs dont la
+somme vaut 1 — exactement ce qu'est un vecteur de poids. Elle est la conjuguée de la multinomiale et la généralisation de la
+loi Bêta.
+
+**Pourquoi elle, et non un bruit gaussien.** Ajouter un bruit normal à des poids produit des valeurs négatives et rompt la
+somme unitaire. La Dirichlet vit *à l'intérieur* de l'espace valide. Et, paramétrée comme `w' ~ Dir(κ·w)`, elle possède deux
+propriétés qui la rendent parfaite : `E[w'] = w` (elle perturbe **sans biaiser**) et `Var(w'ᵢ) = wᵢ(1−wᵢ)/(κ+1)` (la
+dispersion se règle avec un seul bouton). Quand `κ → ∞`, elle s'effondre sur les poids d'origine.
+
+**Usages généraux.** *Prior* bayésien pour des proportions ; allocation de Dirichlet latente (**LDA**) en modélisation de
+thèmes ; le **bootstrap bayésien** de Rubin (1981) ; et l'analyse de sensibilité des poids en décision multicritère.
+
+**🔒 Dans ce projet.** Avec `κ = 200`, un poids de 13 % oscille d'environ **±2,37 points de pourcentage** — la marge d'erreur
+plausible d'un jugement d'expert. Nous reclassons **2 000 fois** et obtenons `P(victoire)` pour chaque projet. C'est ce rouage
+qui a révélé la découverte la plus inconfortable du portefeuille : le consensus est robuste (99,9 %), mais **PROMETHEE II élit
+le leader dans seulement 25,4 % des univers**. Sans la Dirichlet, cette divergence resterait invisible.
+
+#### 🌪️ Tornado de sensibilité — quelle variable meut **vraiment** le résultat
+
+**Ce que c'est.** Un graphique en barres horizontales, trié par effet absolu, qui répond : *parmi toutes les entrées
+incertaines, lesquelles meuvent la sortie ?* Le nom vient de la forme — barres larges en haut, étroites en bas.
+
+**Deux mesures qui semblent identiques et ne le sont pas.**
+- Le **bêta** d'une régression multiple répond : *« si cette entrée augmente d'une unité, de combien augmente la sortie ? »*
+  C'est un effet **unitaire**, indifférent à l'ampleur réelle de la variation de cette entrée.
+- La **corrélation de Pearson** répond : *« quelle part de l'incertitude de la sortie est dictée par cette entrée ? »* Elle
+  intègre déjà l'**échelle de l'incertitude** (approximativement `β·σᵢ/σ_y`).
+
+Une variable peut avoir un bêta énorme et une corrélation nulle : elle *ferait* beaucoup bouger le résultat, mais en pratique
+elle **ne varie presque pas**. Ne rapporter qu'une des deux, c'est une demi-vérité.
+
+**Usages généraux.** Risque projet, modèles financiers, ingénierie de la fiabilité, calibration de simulateurs.
+
+**🔒 Dans ce projet.** Ici, le tornado a fait quelque chose de rare : il a **dénoncé une limite du modèle lui-même**. Appliqué
+à la VAN, les bêtas sont sortis **exactement égaux à `1/(1+i)ᵗ`** — les facteurs d'actualisation — car la VAN est *linéaire*
+dans les flux. Le tornado de régression est alors **dégénéré** : il n'apprend rien au-delà du taux. C'est la **corrélation** qui
+porte le signal. Et lorsque le coût des tokens est entré comme variable, son bêta a donné `−1/(1+i)ᵗ` (le coût entre avec un
+signe négatif) et sa corrélation est restée proche de zéro. La lecture conjointe est précise et honnête : *« chaque unité de
+plus en tokens retire 0,91 à la VAN — mais, dans ce projet, l'incertitude de la VAN ne vient pas des tokens. »* Aucune des deux
+mesures, seule, ne dirait cela.
+
 ---
 
 ## 🌐 12 langues

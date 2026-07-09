@@ -746,6 +746,93 @@ mellan dem **information**: när fyra är eniga och en avviker rakt av är det i
 beror på om du föredrar *överklassning* framför *nytta*. Och **Dirichlet-störningen** av vikterna besvarar den sista
 frågan: *"överlever förstaplatsen ett fel på två procentenheter i kalibreringen?"*
 
+
+### 🧪 De fyra kugghjulen: Iman-Conover, Kolmogorov-Smirnov, Dirichlet och tornadon
+
+De två stora metoderna ovan vilar på fyra mindre delar — och det är i dem skillnaden bor mellan en ärlig simulering och en
+vacker siffra. De är värda att känna till.
+
+#### 🔗 Iman-Conover — att påtvinga korrelation **utan att förstöra fördelningarna**
+
+**Vad det är.** Föreslogs av **Ronald Iman och William Conover (1982)**. Det löser ett problem som ser trivialt ut och inte är
+det: *hur drar man korrelerade variabler när marginalfördelningarna inte är normala?* Den naiva vägen — generera korrelerade
+normalfördelningar via Cholesky och transformera dem — **deformerar marginalerna**. Och har du just anpassat en LogNormal till
+dina data kastar deformationen bort precis det arbete du gjort.
+
+**Hur det fungerar.** Det är en **omordning efter rang**, inte en värdetransformation. En referens byggs av **van der
+Waerden-poängen** `Φ⁻¹(i/(n+1))`, blandade kolumnvis; man beräknar `P = chol(R)` (målet) och `Q = chol(corr(M))` (referensens
+oavsiktliga korrelation); man bildar `S = M·(Q⁻¹P)ᵀ`. Sedan **omordnas varje kolumn i det ursprungliga stickprovet efter rangen
+i `S`**. Eftersom endast *ordningen* på redan dragna värden ändras förblir **marginalfördelningarna exakta** — bit för bit.
+
+**En fin och ärlig detalj.** `R` är korrelationen hos den *normala referensen*, inte resultatets Pearsonkorrelation. Den
+inducerade rangkorrelationen följer normalkopulan: `ρ_S = (6/π)·arcsin(R/2)`. För `R = 0,80` ger det **0,7859** — exakt vad vi
+mätte vid test (0,786). Det är inget fel i metoden; det är dess matematik.
+
+**Allmän användning.** Finansiell risk (korrelerade tillgångar), strukturell tillförlitlighet, latinsk hyperkubsampling.
+
+**🔒 I detta projekt.** Det är detta som låter oss korrelera kassaflödena **utan att offra** den fördelning som anpassats till
+dina tokens. Före användning valideras matrisen: symmetrisk, enhetsdiagonal och **positivt definit** (via Cholesky). En
+inkonsekvent korrelationsmatris avvisas med det minsta egenvärdet rapporterat — i stället för att tyst producera meningslösa tal.
+
+#### 📏 Kolmogorov-Smirnov — avståndet mellan vad du **antar** och vad data **säger**
+
+**Vad det är.** Ett **icke-parametriskt** anpassningstest. Statistikan är enkel och vacker: `D = sup |Fₙ(x) − F(x)|`, det största
+vertikala avståndet mellan dina datas **empiriska fördelningsfunktion** och den **teoretiska** du föreslog. Under nollhypotesen
+**beror `D`:s fördelning inte på vilket `F` det är** — därav *distribution-free*.
+
+**En metodologisk ärlighetsreservation.** Det klassiska KS p-värdet förutsätter att parametrarna i `F` fixerades **innan** man såg
+data. När de **skattas ur samma data** (som här, med maximum likelihood) blir testet **optimistiskt**: det accepterar för lätt.
+Stringens skulle kräva **Lilliefors**-korrektionen eller en **parametrisk bootstrap**. Därför behandlar vi KS som en **diagnos**,
+inte ett bevis — och använder det bara för att **förkasta** dåliga anpassningar, aldrig för att förklara en anpassning "riktig".
+
+**Allmän användning.** Anpassningsgrad; jämförelse av två stickprov (två-stickprovs-KS); upptäckt av data-*drift* i
+maskininlärningssystem i produktion.
+
+**🔒 I detta projekt.** Det mäter hur väl den AIC-vinnande fördelningen faktiskt beskriver din tokenserie. När p-värdet faller
+under 0,05 skriver skärmen **`SVAG ANPASSNING` i rött** — i demoportföljen inträffar det för ett av projekten, och ramverket
+**visar** det i stället för att dölja. En ärlig siffra slår en vacker.
+
+#### 🎲 Dirichlet-störning — beslutets **konfidensintervall**
+
+**Vad det är.** **Dirichlet**-fördelningen är den naturliga fördelningen på **simplexet**: vektorer av positiva tal som summerar
+till 1 — precis vad en viktvektor är. Den är multinomialfördelningens konjugat och Betafördelningens generalisering.
+
+**Varför den, och inte gaussiskt brus.** Att addera normalbrus till vikter ger negativa värden och bryter enhetssumman.
+Dirichlet lever *inuti* det giltiga rummet. Och parametriserad som `w' ~ Dir(κ·w)` har den två egenskaper som gör den perfekt:
+`E[w'] = w` (den stör **utan att snedvrida**) och `Var(w'ᵢ) = wᵢ(1−wᵢ)/(κ+1)` (spridningen styrs med ett enda vred). När
+`κ → ∞` kollapsar den på de ursprungliga vikterna.
+
+**Allmän användning.** Bayesiansk *prior* för proportioner; Latent Dirichlet Allocation (**LDA**) i ämnesmodellering; Rubins
+**bayesianska bootstrap** (1981); och viktkänslighetsanalys i flerkriteriebeslut.
+
+**🔒 I detta projekt.** Med `κ = 200` svänger en vikt på 13 % med ungefär **±2,37 procentenheter** — den rimliga felmarginalen i
+ett expertomdöme. Vi rangordnar om **2 000 gånger** och får `P(vinst)` för varje projekt. Det var detta kugghjul som avslöjade
+portföljens obekvämaste fynd: konsensus är robust (99,9 %), men **PROMETHEE II väljer ledaren i endast 25,4 % av universumen**.
+Utan Dirichlet skulle den oenigheten förbli osynlig.
+
+#### 🌪️ Känslighetstornado — vilken variabel som **verkligen** rör resultatet
+
+**Vad det är.** Ett liggande stapeldiagram, sorterat efter absolut effekt, som besvarar: *bland alla osäkra indata, vilka rör
+utfallet?* Namnet kommer av formen — breda staplar överst, smala nederst.
+
+**Två mått som ser lika ut och inte är det.**
+- **Betat** i en multipel regression svarar: *"om detta indata ökar med 1 enhet, hur mycket ökar utfallet?"* Det är en
+  **enhets**effekt, likgiltig för hur mycket det indatat faktiskt varierar.
+- **Pearsonkorrelationen** svarar: *"hur mycket av utfallets osäkerhet styrs av detta indata?"* Den bär redan med sig
+  **osäkerhetens skala** (ungefär `β·σᵢ/σ_y`).
+
+En variabel kan ha ett enormt beta och noll korrelation: den *skulle* röra resultatet mycket, men i praktiken **varierar den
+knappt**. Att rapportera bara ett av de två är en halv sanning.
+
+**Allmän användning.** Projektrisk, finansiella modeller, tillförlitlighetsteknik, simulatorkalibrering.
+
+**🔒 I detta projekt.** Här gjorde tornadon något ovanligt: den **avslöjade en begränsning i modellen själv**. Körd mot NPV kom
+betana ut **exakt lika med `1/(1+i)ᵗ`** — diskonteringsfaktorerna — eftersom NPV är *linjärt* i flödena. Regressionstornadon är i
+det fallet **degenererad**: den säger inget utöver räntan. Det är **korrelationen** som bär signalen. Och när tokenkostnaden kom in
+som variabel blev dess beta `−1/(1+i)ᵗ` (kostnaden går in med minustecken) och dess korrelation nära noll. Lästa tillsammans är
+utsagan precis och ärlig: *"varje extra enhet i tokens tar 0,91 från NPV — men i detta projekt kommer NPV:s osäkerhet inte från
+tokens."* Inget av måtten ensamt skulle säga det.
+
 ---
 
 ## 🌐 12 språk

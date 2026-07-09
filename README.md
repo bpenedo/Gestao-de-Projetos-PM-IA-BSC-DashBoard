@@ -766,6 +766,97 @@ ruído — é o aviso de que a sua escolha depende de você preferir *sobreclass
 **perturbação de Dirichlet** nos pesos ainda responde a pergunta final: *"o 1º lugar sobrevive a um erro de dois
 pontos percentuais na calibração?"*
 
+
+### 🧪 As quatro engrenagens: Iman-Conover, Kolmogorov-Smirnov, Dirichlet e o tornado
+
+Os dois grandes métodos acima repousam sobre quatro peças menores — e é nelas que mora a diferença entre uma simulação
+honesta e um número bonito. Vale conhecê-las.
+
+#### 🔗 Iman-Conover — impor correlação **sem destruir as distribuições**
+
+**O que é.** Proposto por **Ronald Iman e William Conover (1982)**. Ele resolve um problema que parece trivial e não é:
+*como sortear variáveis correlacionadas quando as marginais não são normais?* O caminho ingênuo — gerar normais
+correlacionadas por Cholesky e transformá-las — **deforma as marginais**. E se você acabou de ajustar uma LogNormal aos
+seus dados, deformá-la joga fora exatamente o trabalho que você fez.
+
+**Como funciona.** É uma **reordenação por postos**, não uma transformação de valores. Constrói-se uma referência com
+os **escores de van der Waerden** `Φ⁻¹(i/(n+1))`, embaralhados por coluna; calcula-se `P = chol(R)` (alvo) e
+`Q = chol(corr(M))` (a correlação acidental da referência); forma-se `S = M·(Q⁻¹P)ᵀ`. Então cada coluna da amostra
+original é **reordenada segundo os postos de `S`**. Como só se troca a *ordem* dos valores já sorteados, as
+**distribuições marginais permanecem exatas** — bit a bit.
+
+**Um detalhe fino, e honesto.** `R` é a correlação da *referência normal*, não a de Pearson do resultado. A correlação
+de postos induzida segue a cópula normal: `ρ_S = (6/π)·arcsin(R/2)`. Para `R = 0,80` isso dá **0,7859** — e é
+exatamente o que medimos ao testar (0,786). Não é um erro do método; é a matemática dele.
+
+**Usos gerais.** Risco financeiro (ativos correlacionados), confiabilidade estrutural, amostragem por hipercubo latino.
+
+**🔒 Neste projeto.** É o que permite correlacionar os fluxos de caixa **sem sacrificar** a distribuição ajustada aos
+seus tokens. Antes de usar, a matriz é validada: simétrica, diagonal 1 e **positiva definida** (via Cholesky). Uma
+matriz de correlação inconsistente é rejeitada com a mensagem do menor autovalor — em vez de produzir números sem
+sentido silenciosamente.
+
+#### 📏 Kolmogorov-Smirnov — a distância entre o que você **supõe** e o que os dados **dizem**
+
+**O que é.** Um teste **não paramétrico** de aderência. A estatística é simples e bonita: `D = sup |Fₙ(x) − F(x)|`, o
+maior afastamento vertical entre a **função de distribuição empírica** dos seus dados e a **teórica** que você
+propôs. Sob a hipótese nula, a distribuição de `D` **não depende de qual seja `F`** — daí o nome *distribution-free*.
+
+**Uma ressalva de honestidade metodológica.** O p-valor clássico do KS pressupõe que os parâmetros de `F` foram
+fixados **antes** de ver os dados. Quando eles são **estimados dos mesmos dados** (como aqui, por máxima
+verossimilhança), o teste torna-se **otimista**: tende a aceitar demais. O rigor pediria a correção de **Lilliefors**
+ou um **bootstrap paramétrico**. Por isso tratamos o KS como **diagnóstico**, não como prova — e o usamos apenas para
+**rejeitar** ajustes ruins, nunca para declarar um ajuste "correto".
+
+**Usos gerais.** Qualidade de ajuste; comparação de duas amostras (KS bi-amostral); detecção de *drift* de dados em
+sistemas de aprendizado de máquina em produção.
+
+**🔒 Neste projeto.** Ele mede o quanto a distribuição vencedora por AIC realmente descreve a sua série de tokens.
+Quando o p-valor cai abaixo de 0,05, a tela estampa **`ADERÊNCIA FRACA` em vermelho** — no portfólio de demonstração
+isso acontece com um dos projetos, e o framework **mostra** em vez de esconder. Um número honesto vale mais que um
+número bonito.
+
+#### 🎲 Perturbação de Dirichlet — o **intervalo de confiança da decisão**
+
+**O que é.** A distribuição **Dirichlet** é a distribuição natural sobre o **simplex**: vetores de números positivos
+que somam 1 — exatamente o que é um vetor de pesos. É a conjugada da multinomial e a generalização da Beta.
+
+**Por que ela, e não ruído gaussiano.** Somar ruído normal a pesos produz valores negativos e quebra a soma unitária.
+A Dirichlet vive *dentro* do espaço válido. E, parametrizada como `w' ~ Dir(κ·w)`, tem duas propriedades que a fazem
+perfeita para o trabalho: `E[w'] = w` (perturba **sem enviesar**) e `Var(w'ᵢ) = wᵢ(1−wᵢ)/(κ+1)` (a dispersão é
+controlada por um único botão). Quando `κ → ∞`, ela colapsa nos pesos originais.
+
+**Usos gerais.** *Prior* bayesiano para proporções; alocação latente de Dirichlet (**LDA**) em modelagem de tópicos;
+o **bootstrap bayesiano** de Rubin (1981); e análise de sensibilidade de pesos em decisão multicritério.
+
+**🔒 Neste projeto.** Com `κ = 200`, um peso de 13% oscila cerca de **±2,37 pontos percentuais** — a margem de erro
+plausível de um julgamento de especialista. Reranqueamos **2.000 vezes** e obtemos `P(vitória)` para cada projeto.
+Foi essa engrenagem que revelou o achado mais desconfortável do portfólio: o consenso é robusto (99,9%), mas o
+**PROMETHEE II elege o líder em apenas 25,4% dos universos**. Sem a Dirichlet, essa divergência ficaria invisível.
+
+#### 🌪️ Tornado de sensibilidade — qual variável **realmente** move o resultado
+
+**O que é.** Um gráfico de barras horizontais, ordenado pelo efeito absoluto, que responde: *entre todas as entradas
+incertas, quais movem a saída?* O nome vem do formato — barras largas no topo, estreitas embaixo.
+
+**Duas medidas que parecem a mesma coisa e não são.**
+- O **beta** de uma regressão múltipla responde: *"se esta entrada subir 1 unidade, quanto sobe a saída?"* É um efeito
+  **unitário**, indiferente ao quanto aquela entrada de fato varia.
+- A **correlação de Pearson** responde: *"quanto da incerteza da saída é ditada por esta entrada?"* Ela já incorpora a
+  **escala da incerteza** (aproximadamente `β·σᵢ/σ_y`).
+
+Uma variável pode ter beta enorme e correlação zero: ela *moveria* muito o resultado, mas na prática **quase não
+varia**. Reportar só uma das duas é meia verdade.
+
+**Usos gerais.** Risco de projeto, modelos financeiros, engenharia de confiabilidade, calibração de simuladores.
+
+**🔒 Neste projeto.** Aqui o tornado fez algo raro: **denunciou uma limitação do próprio modelo**. Ao rodá-lo sobre o
+VPL, os betas vieram **exatamente iguais a `1/(1+i)ᵗ`** — os fatores de desconto — porque o VPL é *linear* nos fluxos.
+O tornado de regressão, nesse caso, é **degenerado**: não informa nada além da taxa. É a **correlação** que carrega o
+sinal. E quando o custo de tokens entrou como variável, seu beta deu `−1/(1+i)ᵗ` (o custo entra com sinal negativo) e
+sua correlação ficou próxima de zero. A leitura conjunta é precisa e honesta: *"cada R$ 1 a mais em tokens tira R$ 0,91
+do VPL — mas, neste projeto, a incerteza do VPL não vem dos tokens."* Nenhuma das duas medidas, sozinha, diria isso.
+
 ---
 
 ## 🌐 12 idiomas

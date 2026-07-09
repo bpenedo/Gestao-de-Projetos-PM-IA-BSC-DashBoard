@@ -759,6 +759,95 @@ suoraan eri mieltä, se ei ole kohinaa — se on varoitus, että valintasi riipp
 vai *hyötyä*. Ja painojen **Dirichlet-häirintä** vastaa viimeiseen kysymykseen: *"kestääkö ykkössija kahden
 prosenttiyksikön virheen kalibroinnissa?"*
 
+
+### 🧪 Neljä hammasratasta: Iman-Conover, Kolmogorov-Smirnov, Dirichlet ja tornado
+
+Yllä olevat kaksi suurta menetelmää lepäävät neljän pienemmän osan varassa — ja juuri niissä asuu ero rehellisen simulaation ja
+kauniin luvun välillä. Ne kannattaa tuntea.
+
+#### 🔗 Iman-Conover — pakottaa korrelaatio **tuhoamatta jakaumia**
+
+**Mikä se on.** Esittivät **Ronald Iman ja William Conover (1982)**. Se ratkaisee ongelman, joka näyttää triviaalilta muttei ole:
+*miten arvotaan korreloituneita muuttujia, kun reunajakaumat eivät ole normaaleja?* Naiivi tie — tuottaa korreloituneita
+normaaleja Choleskyllä ja muuntaa ne — **vääristää reunajakaumat**. Ja jos olet juuri sovittanut LogNormalin dataasi, sen
+vääristäminen heittää menemään täsmälleen sen työn, jonka teit.
+
+**Miten se toimii.** Kyseessä on **järjestyslukujen uudelleenjärjestely**, ei arvojen muunnos. Viite rakennetaan **van der Waerdenin
+pisteistä** `Φ⁻¹(i/(n+1))`, sekoitettuna sarakkeittain; lasketaan `P = chol(R)` (tavoite) ja `Q = chol(corr(M))` (viitteen
+satunnainen korrelaatio); muodostetaan `S = M·(Q⁻¹P)ᵀ`. Sitten alkuperäisen otoksen jokainen sarake **järjestetään uudelleen
+`S`:n järjestyslukujen mukaan**. Koska vain jo arvottujen arvojen *järjestys* muuttuu, **reunajakaumat säilyvät täsmällisinä** —
+bitilleen.
+
+**Hieno ja rehellinen yksityiskohta.** `R` on *normaaliviitteen* korrelaatio, ei tuloksen Pearsonin korrelaatio. Indusoitu
+järjestyskorrelaatio noudattaa normaalikopulaa: `ρ_S = (6/π)·arcsin(R/2)`. Arvolla `R = 0,80` tämä antaa **0,7859** — täsmälleen
+sen, minkä mittasimme testissä (0,786). Se ei ole menetelmän virhe; se on sen matematiikkaa.
+
+**Yleinen käyttö.** Rahoitusriski (korreloituneet omaisuuserät), rakenteellinen luotettavuus, latinalainen hyperkuutio-otanta.
+
+**🔒 Tässä projektissa.** Juuri tämä sallii kassavirtojen korreloinnin **uhraamatta** tokeneihisi sovitettua jakaumaa. Ennen käyttöä
+matriisi validoidaan: symmetrinen, ykkösdiagonaali ja **positiivisesti definiitti** (Choleskyn kautta). Epäjohdonmukainen
+korrelaatiomatriisi hylätään pienin ominaisarvo raportoiden — sen sijaan että tuotettaisiin hiljaa merkityksettömiä lukuja.
+
+#### 📏 Kolmogorov-Smirnov — etäisyys sen välillä, mitä **oletat**, ja sen, mitä data **sanoo**
+
+**Mikä se on.** **Ei-parametrinen** yhteensopivuustesti. Testisuure on yksinkertainen ja kaunis: `D = sup |Fₙ(x) − F(x)|`, suurin
+pystysuora ero datasi **empiirisen kertymäfunktion** ja ehdottamasi **teoreettisen** välillä. Nollahypoteesin vallitessa `D`:n
+jakauma **ei riipu siitä, mikä `F` on** — tästä nimitys *distribution-free*.
+
+**Metodologisen rehellisyyden varaus.** Klassinen KS:n p-arvo olettaa, että `F`:n parametrit kiinnitettiin **ennen** datan
+näkemistä. Kun ne **estimoidaan samasta datasta** (kuten tässä, suurimman uskottavuuden menetelmällä), testistä tulee
+**optimistinen**: se hyväksyy liian helposti. Tarkkuus vaatisi **Lillieforsin** korjausta tai **parametrista bootstrappia**. Siksi
+kohtelemme KS:ää **diagnoosina**, emme todisteena — ja käytämme sitä vain huonojen sovitusten **hylkäämiseen**, emme koskaan
+julistamaan sovitusta "oikeaksi".
+
+**Yleinen käyttö.** Yhteensopivuus; kahden otoksen vertailu (kahden otoksen KS); datan *ajautumisen* havaitseminen tuotannon
+koneoppimisjärjestelmissä.
+
+**🔒 Tässä projektissa.** Se mittaa, kuinka hyvin AIC:llä voittanut jakauma todella kuvaa tokensarjaasi. Kun p-arvo putoaa alle
+0,05:n, ruutu tulostaa **`HEIKKO SOPIVUUS` punaisella** — demosalkussa näin todella käy yhdelle projektille, ja kehys **näyttää** sen
+sen sijaan että piilottaisi. Rehellinen luku voittaa kauniin.
+
+#### 🎲 Dirichlet-häirintä — päätöksen **luottamusväli**
+
+**Mikä se on.** **Dirichlet**-jakauma on simplexin luonnollinen jakauma: positiivisten lukujen vektoreita, joiden summa on 1 —
+täsmälleen se, mitä painovektori on. Se on multinomijakauman konjugaatti ja beta-jakauman yleistys.
+
+**Miksi se eikä gaussinen kohina.** Normaalikohinan lisääminen painoihin tuottaa negatiivisia arvoja ja rikkoo ykkössumman.
+Dirichlet elää kelvollisen avaruuden *sisällä*. Ja parametroituna muotoon `w' ~ Dir(κ·w)` sillä on kaksi ominaisuutta, jotka tekevät
+siitä täydellisen tähän: `E[w'] = w` (häiritsee **vinouttamatta**) ja `Var(w'ᵢ) = wᵢ(1−wᵢ)/(κ+1)` (hajontaa säädetään yhdellä
+nupilla). Kun `κ → ∞`, se romahtaa alkuperäisiin painoihin.
+
+**Yleinen käyttö.** Bayesilainen *priori* osuuksille; latentti Dirichlet-allokaatio (**LDA**) aihemallinnuksessa; Rubinin
+**bayesilainen bootstrap** (1981); ja painojen herkkyysanalyysi monikriteeripäätöksissä.
+
+**🔒 Tässä projektissa.** Kun `κ = 200`, 13 %:n paino heilahtelee noin **±2,37 prosenttiyksikköä** — asiantuntija-arvion uskottava
+virhemarginaali. Järjestämme uudelleen **2 000 kertaa** ja saamme `P(voitto)` kullekin projektille. Juuri tämä hammasratas paljasti
+salkun kiusallisimman löydön: konsensus on robusti (99,9 %), mutta **PROMETHEE II valitsee johtajan vain 25,4 %:ssa universumeista**.
+Ilman Dirichlet'tä tuo erimielisyys pysyisi näkymättömänä.
+
+#### 🌪️ Herkkyystornado — mikä muuttuja **todella** liikuttaa tulosta
+
+**Mikä se on.** Vaakapylväskaavio, järjestettynä itseisvaikutuksen mukaan, joka vastaa: *mitkä epävarmoista syötteistä liikuttavat
+tuotosta?* Nimi tulee muodosta — leveät pylväät ylhäällä, kapeat alhaalla.
+
+**Kaksi mittaria, jotka näyttävät samalta eivätkä ole.**
+- Monimuuttujaregression **beeta** vastaa: *"jos tämä syöte nousee yhdellä yksiköllä, kuinka paljon tuotos nousee?"* Se on
+  **yksikkö**vaikutus, välinpitämätön sille, kuinka paljon kyseinen syöte todellisuudessa vaihtelee.
+- **Pearsonin korrelaatio** vastaa: *"kuinka paljon tuotoksen epävarmuudesta tämä syöte sanelee?"* Se sisältää jo **epävarmuuden
+  mittakaavan** (suunnilleen `β·σᵢ/σ_y`).
+
+Muuttujalla voi olla valtava beeta ja nollakorrelaatio: se *liikuttaisi* tulosta paljon, mutta käytännössä **tuskin vaihtelee**.
+Vain toisen raportoiminen on puolikas totuus.
+
+**Yleinen käyttö.** Projektiriski, rahoitusmallit, luotettavuustekniikka, simulaattorien kalibrointi.
+
+**🔒 Tässä projektissa.** Täällä tornado teki jotain harvinaista: se **paljasti mallin oman rajoituksen**. NPV:tä vastaan ajettuna
+beetat tulivat **täsmälleen yhtä suuriksi kuin `1/(1+i)ᵗ`** — diskonttaustekijät — koska NPV on *lineaarinen* kassavirroissa.
+Regressiotornado on tässä tapauksessa **degeneroitunut**: se ei kerro mitään korkoa enempää. Signaalin kantaa **korrelaatio**. Ja kun
+tokenkustannus tuli mukaan muuttujana, sen beeta oli `−1/(1+i)ᵗ` (kustannus tulee miinusmerkkisenä) ja korrelaatio lähellä nollaa.
+Yhdessä luettuna väite on täsmällinen ja rehellinen: *"jokainen ylimääräinen yksikkö tokeneita vie 0,91 NPV:stä — mutta tässä
+projektissa NPV:n epävarmuus ei tule tokeneista."* Kumpikaan mittari yksinään ei sanoisi tuota.
+
 ---
 
 ## 🌐 12 kieltä

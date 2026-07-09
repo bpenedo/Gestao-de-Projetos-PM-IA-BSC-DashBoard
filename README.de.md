@@ -778,6 +778,99 @@ Rauschen — es ist die Warnung, dass Ihre Wahl davon abhängt, ob Sie *Outranki
 **Dirichlet-Perturbation** der Gewichte beantwortet die letzte Frage: *„Übersteht Platz 1 einen Fehler von zwei
 Prozentpunkten in der Kalibrierung?"*
 
+
+### 🧪 Die vier Zahnräder: Iman-Conover, Kolmogorov-Smirnov, Dirichlet und der Tornado
+
+Die beiden großen Methoden oben ruhen auf vier kleineren Bauteilen — und in ihnen liegt der Unterschied zwischen einer
+ehrlichen Simulation und einer hübschen Zahl. Sie sind es wert, gekannt zu werden.
+
+#### 🔗 Iman-Conover — Korrelation aufprägen, **ohne die Verteilungen zu zerstören**
+
+**Was es ist.** Vorgeschlagen von **Ronald Iman und William Conover (1982)**. Es löst ein Problem, das trivial aussieht und
+es nicht ist: *Wie zieht man korrelierte Variablen, wenn die Randverteilungen nicht normal sind?* Der naive Weg — korrelierte
+Normalverteilungen per Cholesky erzeugen und transformieren — **verformt die Ränder**. Und wenn Sie soeben eine LogNormal an
+Ihre Daten angepasst haben, wirft ihre Verformung genau die geleistete Arbeit fort.
+
+**Wie es funktioniert.** Es ist eine **Rang-Umordnung**, keine Werttransformation. Eine Referenz wird aus den **van-der-Waerden-
+Scores** `Φ⁻¹(i/(n+1))` gebaut, spaltenweise gemischt; man berechnet `P = chol(R)` (das Ziel) und `Q = chol(corr(M))` (die
+zufällige Korrelation der Referenz); daraus `S = M·(Q⁻¹P)ᵀ`. Jede Spalte der ursprünglichen Stichprobe wird dann **gemäß den
+Rängen von `S` umgeordnet**. Da sich nur die *Reihenfolge* bereits gezogener Werte ändert, bleiben die **Randverteilungen
+exakt** — bitgenau.
+
+**Ein feines, ehrliches Detail.** `R` ist die Korrelation der *normalen Referenz*, nicht die Pearson-Korrelation des Ergebnisses.
+Die induzierte Rangkorrelation folgt der Normal-Copula: `ρ_S = (6/π)·arcsin(R/2)`. Für `R = 0,80` ergibt das **0,7859** — genau
+das haben wir im Test gemessen (0,786). Es ist kein Fehler der Methode; es ist ihre Mathematik.
+
+**Allgemeine Nutzung.** Finanzrisiko (korrelierte Anlagen), strukturelle Zuverlässigkeit, Latin-Hypercube-Sampling.
+
+**🔒 In diesem Projekt.** Es erlaubt, die Cashflows zu korrelieren, **ohne** die an Ihre Tokens angepasste Verteilung zu opfern.
+Vor der Verwendung wird die Matrix validiert: symmetrisch, Einheitsdiagonale und **positiv definit** (per Cholesky). Eine
+inkonsistente Korrelationsmatrix wird unter Angabe des kleinsten Eigenwerts zurückgewiesen — statt stillschweigend sinnlose
+Zahlen zu erzeugen.
+
+#### 📏 Kolmogorov-Smirnov — der Abstand zwischen dem, was Sie **annehmen**, und dem, was die Daten **sagen**
+
+**Was es ist.** Ein **nichtparametrischer** Anpassungstest. Die Statistik ist schlicht und schön: `D = sup |Fₙ(x) − F(x)|`, der
+größte vertikale Abstand zwischen der **empirischen Verteilungsfunktion** Ihrer Daten und der **theoretischen**, die Sie
+vorschlugen. Unter der Nullhypothese **hängt die Verteilung von `D` nicht davon ab, welches `F` es ist** — daher
+*distribution-free*.
+
+**Ein Vorbehalt methodischer Ehrlichkeit.** Der klassische KS-p-Wert setzt voraus, dass die Parameter von `F` **vor** dem Blick
+auf die Daten fixiert wurden. Werden sie **aus denselben Daten geschätzt** (wie hier, per Maximum-Likelihood), wird der Test
+**optimistisch**: Er akzeptiert zu bereitwillig. Strenge verlangte die **Lilliefors**-Korrektur oder einen **parametrischen
+Bootstrap**. Deshalb behandeln wir KS als **Diagnose**, nicht als Beweis — und nutzen ihn nur, um schlechte Anpassungen zu
+**verwerfen**, nie um eine Anpassung als „richtig" zu erklären.
+
+**Allgemeine Nutzung.** Anpassungsgüte; Vergleich zweier Stichproben (Zwei-Stichproben-KS); Erkennung von Daten-*Drift* in
+produktiven Machine-Learning-Systemen.
+
+**🔒 In diesem Projekt.** Er misst, wie gut die per AIC gewinnende Verteilung Ihre Token-Reihe tatsächlich beschreibt. Fällt der
+p-Wert unter 0,05, druckt der Bildschirm **`SCHWACHE ANPASSUNG` in Rot** — im Demoportfolio geschieht das bei einem der
+Projekte, und das Framework **zeigt** es, statt es zu verbergen. Eine ehrliche Zahl schlägt eine hübsche.
+
+#### 🎲 Dirichlet-Perturbation — das **Konfidenzintervall der Entscheidung**
+
+**Was es ist.** Die **Dirichlet**-Verteilung ist die natürliche Verteilung auf dem **Simplex**: Vektoren positiver Zahlen mit
+Summe 1 — genau das, was ein Gewichtsvektor ist. Sie ist die Konjugierte der Multinomialverteilung und die Verallgemeinerung der
+Beta.
+
+**Warum sie und nicht gaußsches Rauschen.** Normalrauschen auf Gewichte zu addieren erzeugt negative Werte und zerstört die
+Einheitssumme. Die Dirichlet lebt *innerhalb* des gültigen Raums. Und als `w' ~ Dir(κ·w)` parametrisiert besitzt sie zwei
+Eigenschaften, die sie perfekt machen: `E[w'] = w` (sie stört **verzerrungsfrei**) und `Var(w'ᵢ) = wᵢ(1−wᵢ)/(κ+1)` (die Streuung
+regelt ein einziger Knopf). Für `κ → ∞` kollabiert sie auf die ursprünglichen Gewichte.
+
+**Allgemeine Nutzung.** Bayesscher *Prior* für Anteile; Latent Dirichlet Allocation (**LDA**) in der Themenmodellierung; Rubins
+**bayesscher Bootstrap** (1981); und Gewichts-Sensitivitätsanalyse in multikriterieller Entscheidung.
+
+**🔒 In diesem Projekt.** Mit `κ = 200` schwankt ein Gewicht von 13 % um etwa **±2,37 Prozentpunkte** — die plausible Fehlermarge
+eines Expertenurteils. Wir ranken **2.000-mal** neu und erhalten `P(Sieg)` je Projekt. Dieses Zahnrad brachte den unbequemsten
+Befund des Portfolios zutage: Der Konsens ist robust (99,9 %), doch **PROMETHEE II wählt den Führenden in nur 25,4 % der
+Universen**. Ohne die Dirichlet bliebe diese Uneinigkeit unsichtbar.
+
+#### 🌪️ Sensitivitäts-Tornado — welche Variable das Ergebnis **wirklich** bewegt
+
+**Was es ist.** Ein horizontales Balkendiagramm, sortiert nach absolutem Effekt, das beantwortet: *Welche der unsicheren Eingaben
+bewegen die Ausgabe?* Der Name kommt von der Form — breite Balken oben, schmale unten.
+
+**Zwei Maße, die gleich aussehen und es nicht sind.**
+- Das **Beta** einer multiplen Regression beantwortet: *„Wenn diese Eingabe um 1 Einheit steigt, um wie viel steigt die Ausgabe?"*
+  Es ist ein **Einheits**effekt, gleichgültig dagegen, wie stark jene Eingabe tatsächlich schwankt.
+- Die **Pearson-Korrelation** beantwortet: *„Wie viel der Unsicherheit der Ausgabe wird von dieser Eingabe diktiert?"* Sie bezieht
+  die **Skala der Unsicherheit** bereits ein (näherungsweise `β·σᵢ/σ_y`).
+
+Eine Variable kann ein riesiges Beta und null Korrelation haben: Sie *würde* das Ergebnis stark bewegen, schwankt in der Praxis aber
+**kaum**. Nur eines der beiden zu berichten, ist eine halbe Wahrheit.
+
+**Allgemeine Nutzung.** Projektrisiko, Finanzmodelle, Zuverlässigkeitstechnik, Simulator-Kalibrierung.
+
+**🔒 In diesem Projekt.** Hier tat der Tornado etwas Seltenes: Er **entlarvte eine Grenze des Modells selbst**. Auf den Kapitalwert
+angewandt, kamen die Betas **exakt gleich `1/(1+i)ᵗ`** heraus — den Abzinsungsfaktoren —, weil der Kapitalwert in den Flüssen
+*linear* ist. Der Regressions-Tornado ist in diesem Fall **entartet**: Er sagt nichts über den Zins hinaus. Die **Korrelation**
+trägt das Signal. Und als die Tokenkosten als Variable hinzukamen, ergab ihr Beta `−1/(1+i)ᵗ` (Kosten gehen mit negativem Vorzeichen
+ein) und ihre Korrelation lag nahe null. Zusammen gelesen ist die Aussage präzise und ehrlich: *„Jede zusätzliche Einheit an Tokens
+nimmt 0,91 vom Kapitalwert — doch in diesem Projekt kommt die Unsicherheit des Kapitalwerts nicht von den Tokens."* Keines der beiden
+Maße allein würde das sagen.
+
 ---
 
 ## 🌐 12 Sprachen

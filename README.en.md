@@ -760,6 +760,98 @@ between them into **information**: when four agree and one flatly dissents, that
 that your choice depends on whether you prefer *outranking* over *utility*. And the **Dirichlet perturbation** of
 the weights answers the final question: *"does 1st place survive a two-percentage-point error in the calibration?"*
 
+
+### 🧪 The four gears: Iman-Conover, Kolmogorov-Smirnov, Dirichlet and the tornado
+
+The two great methods above rest on four smaller parts — and it is in them that the difference lies between an honest
+simulation and a pretty number. They are worth knowing.
+
+#### 🔗 Iman-Conover — imposing correlation **without destroying the distributions**
+
+**What it is.** Proposed by **Ronald Iman and William Conover (1982)**. It solves a problem that looks trivial and is
+not: *how do you draw correlated variables when the marginals are not normal?* The naive route — generate correlated
+normals via Cholesky and transform them — **deforms the marginals**. And if you have just fitted a LogNormal to your
+data, deforming it throws away exactly the work you did.
+
+**How it works.** It is a **rank reordering**, not a value transformation. A reference is built from the **van der
+Waerden scores** `Φ⁻¹(i/(n+1))`, shuffled per column; one computes `P = chol(R)` (the target) and `Q = chol(corr(M))`
+(the reference's accidental correlation); then `S = M·(Q⁻¹P)ᵀ`. Each column of the original sample is then
+**reordered according to the ranks of `S`**. Because only the *order* of already-drawn values changes, the **marginal
+distributions remain exact** — bit for bit.
+
+**A fine, honest detail.** `R` is the correlation of the *normal reference*, not the Pearson correlation of the result.
+The induced rank correlation follows the normal copula: `ρ_S = (6/π)·arcsin(R/2)`. For `R = 0.80` that gives **0.7859**
+— exactly what we measured when testing (0.786). It is not an error of the method; it is its mathematics.
+
+**General uses.** Financial risk (correlated assets), structural reliability, Latin hypercube sampling.
+
+**🔒 In this project.** It is what lets us correlate the cash flows **without sacrificing** the distribution fitted to
+your tokens. Before use, the matrix is validated: symmetric, unit diagonal and **positive definite** (via Cholesky). An
+inconsistent correlation matrix is rejected with the smallest eigenvalue reported — instead of silently producing
+meaningless numbers.
+
+#### 📏 Kolmogorov-Smirnov — the distance between what you **assume** and what the data **say**
+
+**What it is.** A **non-parametric** goodness-of-fit test. The statistic is simple and beautiful:
+`D = sup |Fₙ(x) − F(x)|`, the largest vertical gap between the **empirical distribution function** of your data and the
+**theoretical** one you proposed. Under the null hypothesis, the distribution of `D` **does not depend on which `F` it
+is** — hence *distribution-free*.
+
+**A methodological honesty caveat.** The classic KS p-value assumes the parameters of `F` were fixed **before** seeing
+the data. When they are **estimated from the same data** (as here, by maximum likelihood), the test becomes
+**optimistic**: it accepts too readily. Rigor would call for the **Lilliefors** correction or a **parametric
+bootstrap**. We therefore treat KS as a **diagnostic**, not a proof — and use it only to **reject** bad fits, never to
+declare a fit "correct".
+
+**General uses.** Goodness of fit; comparing two samples (two-sample KS); detecting data *drift* in production machine
+learning systems.
+
+**🔒 In this project.** It measures how well the AIC-winning distribution really describes your token series. When the
+p-value drops below 0.05, the screen prints **`WEAK FIT` in red** — in the demo portfolio this happens for one of the
+projects, and the framework **shows it** rather than hiding it. An honest number beats a pretty one.
+
+#### 🎲 Dirichlet perturbation — the **confidence interval of the decision**
+
+**What it is.** The **Dirichlet** distribution is the natural distribution over the **simplex**: vectors of positive
+numbers summing to 1 — exactly what a weight vector is. It is the conjugate of the multinomial and the generalization
+of the Beta.
+
+**Why it, and not Gaussian noise.** Adding normal noise to weights produces negative values and breaks the unit sum.
+The Dirichlet lives *inside* the valid space. And, parameterized as `w' ~ Dir(κ·w)`, it has two properties that make it
+perfect for the job: `E[w'] = w` (it perturbs **without bias**) and `Var(w'ᵢ) = wᵢ(1−wᵢ)/(κ+1)` (dispersion is
+controlled by a single knob). As `κ → ∞`, it collapses onto the original weights.
+
+**General uses.** Bayesian *prior* for proportions; Latent Dirichlet Allocation (**LDA**) in topic modeling; Rubin's
+**Bayesian bootstrap** (1981); and weight-sensitivity analysis in multi-criteria decision.
+
+**🔒 In this project.** With `κ = 200`, a 13% weight wobbles by about **±2.37 percentage points** — the plausible margin
+of error of an expert judgment. We re-rank **2,000 times** and obtain `P(win)` for each project. It was this gear that
+revealed the portfolio's most uncomfortable finding: the consensus is robust (99.9%), but **PROMETHEE II elects the
+leader in only 25.4% of the universes**. Without the Dirichlet, that disagreement would stay invisible.
+
+#### 🌪️ Sensitivity tornado — which variable **really** moves the result
+
+**What it is.** A horizontal bar chart, sorted by absolute effect, answering: *among all the uncertain inputs, which
+ones move the output?* The name comes from the shape — wide bars on top, narrow at the bottom.
+
+**Two measures that look alike and are not.**
+- The **beta** of a multiple regression answers: *"if this input rises by 1 unit, how much does the output rise?"* It is
+  a **unit** effect, indifferent to how much that input actually varies.
+- The **Pearson correlation** answers: *"how much of the output's uncertainty is dictated by this input?"* It already
+  embeds the **scale of the uncertainty** (roughly `β·σᵢ/σ_y`).
+
+A variable can have a huge beta and zero correlation: it *would* move the result a lot, but in practice it **barely
+varies**. Reporting only one of the two is half the truth.
+
+**General uses.** Project risk, financial models, reliability engineering, simulator calibration.
+
+**🔒 In this project.** Here the tornado did something rare: it **exposed a limitation of the model itself**. Run against
+NPV, the betas came out **exactly equal to `1/(1+i)ᵗ`** — the discount factors — because NPV is *linear* in the flows.
+The regression tornado is, in this case, **degenerate**: it says nothing beyond the rate. It is the **correlation** that
+carries the signal. And when token cost entered as a variable, its beta was `−1/(1+i)ᵗ` (cost enters with a minus sign)
+and its correlation was near zero. Read together, the statement is precise and honest: *"each extra $1 in tokens takes
+$0.91 off NPV — but in this project, NPV's uncertainty does not come from tokens."* Neither measure alone would say that.
+
 ---
 
 ## 🌐 12 languages
