@@ -67,6 +67,7 @@ Norton), **investeringsanalys på Wall Street-nivå** och **flerkriteriebeslut**
 - [🏆 Flerkriteriebeslut + Dossier](#-flerkriteriebeslut-ahp-topsis-2n--kronjuvelsdossier)
 - [🎲 Monte Carlo — risken som medelvärdet döljer](#-monte-carlo--risken-som-medelvärdet-döljer)
 - [🧮 Fem beslutsskolor. En dom.](#-fem-beslutsskolor-en-dom)
+- [🔬 Signalen ligger uppströms — och där bor hävstången](#-signalen-ligger-uppströms--och-där-bor-hävstången)
 - [🌐 12 språk](#-12-språk)
 - [🙋 Invändningar (frågorna du ställer dig just nu)](#-invändningar-frågorna-du-ställer-dig-just-nu)
 - [🧩 Medföljande Skills](#-medföljande-skills-build--analyze-your-own)
@@ -286,8 +287,7 @@ presenterar en dom.**
 Ett **i genomsnitt** positivt NPV skyddar ingen. Medelvärdet är finansvärldens bekvämaste lögn: det beskriver ett
 scenario som kanske aldrig inträffar. Det som avgör ditt öde är **svansen** — den dåliga dagen.
 
-Detta ramverk simulerar **10 000 framtider** för varje projekt (motor kompatibel med **SimulAr v2.5**, av Luciano
-Machain, UNR/Argentina): varje kassaflöde blir en **slumpvariabel** och hela portföljen räknas om iteration för
+Detta ramverk simulerar **10 000 framtider** för varje projekt: varje kassaflöde blir en **slumpvariabel** och hela portföljen räknas om iteration för
 iteration. Till slut har du inte ett tal — du har **hela fördelningen av dina pengar**:
 
 - **`P(NPV < 0)`** — den verkliga sannolikheten för förlust. Talet ingen visar dig.
@@ -295,7 +295,7 @@ iteration. Till slut har du inte ett tal — du har **hela fördelningen av dina
 - **CVaR 5 %** — när katastrofen väl inträffar, vad den kostar i genomsnitt.
 - **Känslighetstornado** — multipel regression och Pearsonkorrelation: vilken variabel som verkligen rör ditt NPV.
 - **20 indatafördelningar**, en validerad **korrelationsmatris** (Iman-Conover, som bevarar marginalfördelningarna
-  exakt) och **percentiler från 1 % till 99 %**, med ett histogram på 100 klasser identiskt med SimulAr-manualens.
+  exakt) och **percentiler från 1 % till 99 %**, med ett histogram på 100 klasser.
 
 Fast frö: kör igen och du får **exakt** samma resultat. Granskningsbart — inte "magi".
 
@@ -351,6 +351,70 @@ för slöseri är densamma — bara antalet nollor ändras.
 arbetstimme**. **DEMATEL** avslöjar att minska hallucination (IITA) är en **orsak**, inte ett symptom: agera där, så
 förbättras NPV, IRR och risk *tillsammans*. Det är AI-styrning som slutar vara åsikt och blir **ingenjörskonst**.
 
+
+---
+
+## 🔬 Signalen ligger uppströms — och där bor hävstången
+
+Jag upptäckte det genom att mäta ramverket självt: NPV:s känslighetstornado returnerade **exakt**
+`1,0 · 0,9091 · 0,8264 · 0,7513…` — diskonteringsfaktorerna `1/(1+i)ᵗ`. Eftersom NPV är **linjärt** i kassaflödena
+säger en simulering av enbart flödena ingenting utöver räntan. **Den verkliga stokastiska signalen ligger uppströms:
+i tokens.**
+
+### 1️⃣ Sluta godtyckligt välja fördelning. Anpassa den till dina data.
+
+Elva kandidatfördelningar anpassas med **maximum likelihood** till din verkliga tokenförbrukningsserie
+(`logs_langfuse`). Den med **lägst AIC** vinner — AIC bestraffar varje extra parameter och förhindrar överanpassning —
+och **Kolmogorov-Smirnov**-testet mäter anpassningsgraden. Detta är den klassiska *fördelningsanpassningen till data*, och det är
+vad som avslöjar förbrukningens **tunga svans**: vissa prompter kostar 10× det typiska, och det är den svansen som
+spränger budgeten — osynlig för den som använder medelvärden.
+
+**Och när anpassningen är dålig skriker ramverket.** Om KS p-värdet faller under 0,05 varnar skärmen `SVAG ANPASSNING`
+i rött, i stället för att låtsas precision. En ärlig siffra slår en vacker.
+
+![Fördelningsanpassning till verkliga tokens — 11 kandidater, AIC-urval, Kolmogorov-Smirnov-anpassning](docs/screenshots/ajuste-distribuicoes.png)
+
+### 2️⃣ Överlever din rangordning ett fel på 2 punkter i en vikt?
+
+Varje flerkriteriemetod returnerar en vinnare med **implicit 100 % säkerhet**. Men kriterievikter är skattningar, inte
+uppenbarade sanningar. Om två procentenheter på IITA-vikten byter plats på 1:a och 2:a, är "vinnaren" en artefakt av
+kalibreringen.
+
+Så vi stör DEMATEL-vikterna med en **Dirichlet** — `w' ~ Dir(κ·w)`, som lever exakt på simplexet och bevarar
+`E[w'] = w`, alltså stör **utan att snedvrida** — och rangordnar om **2 000 gånger**. Domen byter natur:
+
+> *"Project C är bäst"* ⟶ **"Project C vinner i 99,9 % av de rimliga preferensuniversumen"**
+
+Det är ett **konfidensintervall för själva beslutet**. Och det avslöjar vad konsensus dolde: i skärmen nedan
+**väljer PROMETHEE II ledaren i endast 25,4 % av universumen**. Fyra skolor är eniga; en avviker rakt av. Det är inte
+brus — det är varningen att valet beror på om du föredrar *överklassning* framför *nytta*. Ingen enskild rangordning
+skulle någonsin berätta det.
+
+![Rangordningens robusthet via Dirichlet-störning — vinstsannolikhet och oenighet mellan skolor](docs/screenshots/robustez-dirichlet.png)
+
+### ⚡ Den konkreta hävstången
+
+| Resurs | Före | Efter |
+|---|---|---|
+| **Tid** | veckor av debatt om vilket projekt som ska skalas | domen kommer med en sannolikhet — debatten avslutas på ett möte |
+| **Beräkning** | 10 000 iterationer × 10 projekt, vektoriserat i NumPy | sekunder, på din maskin, utan moln och utan kostnad |
+| **Kapital** | budget fördelad efter övertygelse | fördelad efter `P(vinst)` och `VaR` — värsta fallet redan prissatt |
+| **Anseende** | *"jag tror att den här är bäst"* | *"den vinner i 99,9 % av scenarierna; och här är metoden som avviker, och varför"* |
+| **Granskningsbarhet** | ett kalkylark ingen kan reproducera | fast frö: vem som helst kör om och får **exakt** samma siffra |
+
+### 💼 Från 20-dollarsabonnemanget till 200 000-dollarskontraktet
+
+**Är du frilansare eller SMB:** den anpassade fördelningen säger vad **den dåliga tokenmånaden kommer att kosta**
+innan den kommer — och robustheten säger om det verkligen lönar sig att flytta insatsen till det andra projektet,
+eller om båda är jämna inom felmarginalen. Du slutar optimera i mörker med tight kassa.
+
+**Är du ett storföretag:** `P(vinst)` är den saknade pusselbiten i investeringskommittén. Den förvandlar *"team A
+förespråkar projekt X"* till **"projekt X vinner under 99,9 % av försvarbara viktkalibreringar, och den enda
+avvikande skolan är överklassning, på kriterium Y"**. Politisk debatt blir **teknisk debatt** — och CFO får en siffra
+som överlever revision.
+
+> **Den sista vändningen:** ramverket slutar mäta risken i **pengarna** och börjar mäta risken i **själva beslutet**.
+> Väldigt få platser i världen gör detta.
 
 ---
 

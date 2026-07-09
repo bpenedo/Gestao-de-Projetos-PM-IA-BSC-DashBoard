@@ -67,6 +67,7 @@ Entre pagar pela IA e **lucrar** com ela.
 - [🏆 Decisão multicritério + Dossiê](#-decisão-multicritério-ahp-topsis-2n--dossiê-da-jóia-da-coroa)
 - [🎲 Monte Carlo — o risco que a média esconde](#-monte-carlo--o-risco-que-a-média-esconde)
 - [🧮 Cinco escolas de decisão. Um único veredito.](#-cinco-escolas-de-decisão-um-único-veredito)
+- [🔬 O sinal está a montante — e é aí que mora a alavancagem](#-o-sinal-está-a-montante--e-é-aí-que-mora-a-alavancagem)
 - [🌐 12 idiomas](#-12-idiomas)
 - [🙋 Objeções (as perguntas que você está se fazendo agora)](#-objeções-as-perguntas-que-você-está-se-fazendo-agora)
 - [🧩 Skills incluídas](#-skills-incluídas-build--analyze-your-own)
@@ -173,7 +174,7 @@ minutos**. A pergunta não é *"posso pagar para medir?"*. É ***"quanto tempo m
 - **🏆 Decisão multicritério (5 métodos):** **DEMATEL** (estrutura causal + pesos por influência) alimentando
   **ELECTRE I · PROMETHEE II · MAUT · MCDA-C · AHP-TOPSIS 2n**, com **consenso de Borda** e **dossiê administrativo**
   (SWOT, PESTELC, 5W4H, Pareto, GUT, Radar).
-- **🎲 Risco (Monte Carlo, estilo SimulAr v2.5):** **10.000 iterações** por projeto, **20 distribuições**, matriz de
+- **🎲 Risco (Monte Carlo):** **10.000 iterações** por projeto, **20 distribuições**, matriz de
   correlação (Iman-Conover), **P(VPL<0)**, **VaR/CVaR 5%**, percentis 1–99% e **tornado** (regressão + correlação).
 - **🗺️ Visual C-Level:** **mapa 5D interativo**, donuts com profundidade, quadrante de sustentabilidade,
   tendências e **pitch decks** em LaTeX dos projetos elegíveis.
@@ -292,8 +293,7 @@ apresenta uma planilha. Você apresenta um veredito.**
 Um VPL positivo **na média** não protege ninguém. A média é a mentira mais confortável das finanças: descreve
 um cenário que talvez nunca aconteça. Quem decide o seu destino é a **cauda** — o dia ruim.
 
-Este framework simula **10.000 futuros** para cada projeto (motor compatível com o **SimulAr v2.5**, de Luciano
-Machain, UNR/Argentina): cada fluxo de caixa vira uma **variável aleatória** e o portfólio é reprocessado iteração
+Este framework simula **10.000 futuros** para cada projeto: cada fluxo de caixa vira uma **variável aleatória** e o portfólio é reprocessado iteração
 a iteração. No fim você não tem um número — você tem **a distribuição inteira do seu dinheiro**:
 
 - **`P(VPL < 0)`** — a probabilidade real de prejuízo. O número que ninguém te mostra.
@@ -301,7 +301,7 @@ a iteração. No fim você não tem um número — você tem **a distribuição 
 - **CVaR 5%** — quando o desastre acontece, quanto ele custa em média.
 - **Tornado de sensibilidade** — regressão múltipla e correlação de Pearson: qual variável realmente move o seu VPL.
 - **20 distribuições** de entrada, **matriz de correlação** validada (Iman-Conover, que preserva as marginais exatas)
-  e **percentis de 1% a 99%**, com histograma de 100 classes idêntico ao do manual do SimulAr.
+  e **percentis de 1% a 99%**, com histograma de 100 classes.
 
 Semente fixa: rodar de novo dá **exatamente** o mesmo resultado. Auditável — não "mágico".
 
@@ -357,6 +357,69 @@ desperdício é a mesma — só muda o número de zeros.
 trabalho**. O **DEMATEL** revela que reduzir alucinação (IITA) é **causa**, não sintoma: você mexe ali e VPL, TIR e
 risco melhoram *juntos*. É a gestão de IA deixando de ser opinião e virando **engenharia**.
 
+
+---
+
+## 🔬 O sinal está a montante — e é aí que mora a alavancagem
+
+Descobri isto medindo o próprio framework: o tornado de sensibilidade do VPL devolvia **exatamente**
+`1,0 · 0,9091 · 0,8264 · 0,7513…` — os fatores de desconto `1/(1+i)ᵗ`. Como o VPL é **linear** nos fluxos de caixa,
+simular só os fluxos não informa nada além da taxa. **O sinal estocástico de verdade está a montante: nos tokens.**
+
+### 1️⃣ Pare de arbitrar a distribuição. Ajuste-a aos seus dados.
+
+Onze distribuições candidatas são ajustadas por **máxima verossimilhança** à sua série real de consumo de tokens
+(`logs_langfuse`). Vence a de **menor AIC** — que penaliza parâmetro a mais e evita sobreajuste — e o teste de
+**Kolmogorov-Smirnov** mede a aderência. É o clássico *ajuste de distribuições a dados*, e é o que revela a **cauda
+pesada** do consumo: alguns prompts custam 10× o típico, e é essa cauda que estoura o orçamento — invisível para
+quem usa a média.
+
+**E quando o ajuste é ruim, o framework grita.** Se o p-valor do KS cai abaixo de 0,05, a tela avisa
+`ADERÊNCIA FRACA` em vermelho, em vez de fingir precisão. Um número honesto vale mais que um número bonito.
+
+![Ajuste de distribuições aos tokens reais — 11 candidatas, seleção por AIC, aderência por Kolmogorov-Smirnov](docs/screenshots/ajuste-distribuicoes.png)
+
+### 2️⃣ Seu ranking sobrevive a um erro de 2 pontos no peso?
+
+Todo método multicritério devolve um vencedor com **confiança implícita de 100%**. Mas os pesos dos critérios são
+estimativas, não verdades reveladas. Se dois pontos percentuais no peso do IITA trocam o 1º com o 2º lugar, o
+"vencedor" é um artefato da calibração.
+
+Então perturbamos os pesos do DEMATEL com uma **Dirichlet** — `w' ~ Dir(κ·w)`, que vive exatamente no simplex e
+preserva `E[w'] = w`, perturbando **sem enviesar** — e reranqueamos **2.000 vezes**. O veredito muda de natureza:
+
+> *"Project C é o melhor"* ⟶ **"Project C vence em 99,9% dos universos de preferência plausíveis"**
+
+É um **intervalo de confiança sobre a própria decisão**. E ele expõe o que o consenso escondia: na tela abaixo,
+**o PROMETHEE II elege o líder em apenas 25,4% dos universos**. As outras quatro escolas concordam; uma discorda
+frontalmente. Isso não é ruído — é o aviso de que a escolha depende de você preferir *sobreclassificação* a
+*utilidade*. Nenhum ranking sozinho te contaria isso.
+
+![Robustez do ranking por perturbação de Dirichlet — probabilidade de vitória e divergência entre escolas](docs/screenshots/robustez-dirichlet.png)
+
+### ⚡ A alavancagem concreta
+
+| Recurso | Antes | Depois |
+|---|---|---|
+| **Tempo** | semanas discutindo qual projeto escalar | o veredito vem com probabilidade — a discussão acaba em uma reunião |
+| **Processamento** | 10.000 iterações × 10 projetos, vetorizado em NumPy | segundos, na sua máquina, sem nuvem e sem custo |
+| **Capital** | orçamento alocado por convicção | alocado por `P(vitória)` e `VaR` — com o pior caso já precificado |
+| **Reputação** | *"acho que este é o melhor"* | *"vence em 99,9% dos cenários; e o método que discorda é este, pelo motivo tal"* |
+| **Auditoria** | planilha impossível de reproduzir | semente fixa: qualquer pessoa reroda e obtém **exatamente** o mesmo número |
+
+### 💼 Do plano de US$ 20 ao contrato de US$ 200 mil
+
+**Se você é autônomo ou SMB:** o ajuste de distribuição diz **quanto o mês ruim de tokens vai custar** antes que ele
+chegue — e a robustez diz se vale mesmo migrar o esforço para o outro projeto, ou se os dois estão empatados dentro
+da margem de erro. Você para de otimizar no escuro com o caixa curto.
+
+**Se você é uma grande empresa:** o `P(vitória)` é a peça que falta no comitê de investimento. Ele transforma
+*"o time A defende o projeto X"* em **"o projeto X vence em 99,9% das calibrações de peso defensáveis, e a única
+escola que discorda é a de sobreclassificação, pelo critério Y"**. Discussão política vira **discussão técnica** — e
+o CFO ganha um número que sobrevive à auditoria.
+
+> **A virada final:** o framework deixa de medir o risco do **dinheiro** e passa a medir o risco da **própria
+> decisão**. Poucos lugares no mundo fazem isso.
 
 ---
 

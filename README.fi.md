@@ -67,6 +67,7 @@ Tekoälystä maksamisen ja sillä **ansaitsemisen** välillä.
 - [🏆 Monikriteeripäätös + Dossier](#-monikriteeripäätös-ahp-topsis-2n--kruununjalokivi-dossier)
 - [🎲 Monte Carlo — riski, jonka keskiarvo kätkee](#-monte-carlo--riski-jonka-keskiarvo-kätkee)
 - [🧮 Viisi päätöksenteon koulukuntaa. Yksi tuomio.](#-viisi-päätöksenteon-koulukuntaa-yksi-tuomio)
+- [🔬 Signaali on ylävirrassa — ja siellä asuu vipuvarsi](#-signaali-on-ylävirrassa--ja-siellä-asuu-vipuvarsi)
 - [🌐 12 kieltä](#-12-kieltä)
 - [🙋 Vastaväitteet (kysymykset, joita kysyt itseltäsi juuri nyt)](#-vastaväitteet-kysymykset-joita-kysyt-itseltäsi-juuri-nyt)
 - [🧩 Mukana tulevat Skillit](#-mukana-tulevat-skillit-build--analyze-your-own)
@@ -288,8 +289,7 @@ johtotason **Bottom-Linen** ja rehellisten **johtotason oivallusten** kera. **Et
 **Keskimäärin** positiivinen NPV ei suojaa ketään. Keskiarvo on rahoituksen mukavin valhe: se kuvaa skenaariota, jota
 ei ehkä koskaan tule. Kohtalosi ratkaisee **häntä** — se huono päivä.
 
-Tämä kehys simuloi **10 000 tulevaisuutta** jokaiselle projektille (moottori yhteensopiva **SimulAr v2.5**:n kanssa,
-Luciano Machain, UNR/Argentiina): jokainen kassavirta muuttuu **satunnaismuuttujaksi** ja koko salkku lasketaan uudelleen
+Tämä kehys simuloi **10 000 tulevaisuutta** jokaiselle projektille: jokainen kassavirta muuttuu **satunnaismuuttujaksi** ja koko salkku lasketaan uudelleen
 iteraatio kerrallaan. Lopussa sinulla ei ole lukua — sinulla on **rahojesi koko jakauma**:
 
 - **`P(NPV < 0)`** — todellinen tappion todennäköisyys. Se luku, jota kukaan ei näytä sinulle.
@@ -297,7 +297,7 @@ iteraatio kerrallaan. Lopussa sinulla ei ole lukua — sinulla on **rahojesi kok
 - **CVaR 5 %** — kun katastrofi todella iskee, paljonko se keskimäärin maksaa.
 - **Herkkyystornado** — monimuuttujaregressio ja Pearsonin korrelaatio: mikä muuttuja todella liikuttaa NPV:täsi.
 - **20 syötejakaumaa**, validoitu **korrelaatiomatriisi** (Iman-Conover, joka säilyttää reunajakaumat täsmälleen) ja
-  **prosenttipisteet 1 %:sta 99 %:iin**, sekä 100 luokan histogrammi, identtinen SimulArin käsikirjan kanssa.
+  **prosenttipisteet 1 %:sta 99 %:iin**, sekä 100 luokan histogrammi.
 
 Kiinteä siemen: aja uudelleen ja saat **täsmälleen** saman tuloksen. Auditoitavaa — ei "taikuutta".
 
@@ -353,6 +353,70 @@ sama — vain nollien määrä muuttuu.
 **DEMATEL** paljastaa, että hallusinaation vähentäminen (IITA) on **syy**, ei oire: toimi siellä, niin NPV, IRR ja riski
 paranevat *yhdessä*. Näin tekoälyn hallinnasta lakkaa olemasta mielipide ja tulee **insinööritaitoa**.
 
+
+---
+
+## 🔬 Signaali on ylävirrassa — ja siellä asuu vipuvarsi
+
+Löysin tämän mittaamalla itse kehystä: NPV:n herkkyystornado palautti **täsmälleen**
+`1,0 · 0,9091 · 0,8264 · 0,7513…` — diskonttaustekijät `1/(1+i)ᵗ`. Koska NPV on **lineaarinen** kassavirroissa,
+pelkkien virtojen simulointi ei kerro mitään korkoa enempää. **Todellinen satunnaissignaali on ylävirrassa:
+tokeneissa.**
+
+### 1️⃣ Lopeta jakauman arvaaminen. Sovita se dataasi.
+
+Yksitoista ehdokasjakaumaa sovitetaan **suurimman uskottavuuden** menetelmällä todelliseen tokenien
+kulutussarjaasi (`logs_langfuse`). Voittaa se, jolla on **pienin AIC** — AIC rankaisee jokaisesta ylimääräisestä
+parametrista ja estää ylisovituksen — ja **Kolmogorov-Smirnov**-testi mittaa sopivuutta. Tämä on klassinen
+*jakaumien sovitus dataan*, ja juuri se paljastaa kulutuksen **raskaan hännän**: jotkin promptit maksavat 10×
+tyypillisen, ja juuri se häntä räjäyttää budjetin — näkymätön sille, joka käyttää keskiarvoja.
+
+**Ja kun sovitus on huono, kehys huutaa.** Jos KS:n p-arvo putoaa alle 0,05:n, ruutu varoittaa `HEIKKO SOPIVUUS`
+punaisella sen sijaan, että teeskentelisi tarkkuutta. Rehellinen luku voittaa kauniin.
+
+![Jakaumien sovitus todellisiin tokeneihin — 11 ehdokasta, AIC-valinta, Kolmogorov-Smirnov-sopivuus](docs/screenshots/ajuste-distribuicoes.png)
+
+### 2️⃣ Kestääkö rankingisi 2 prosenttiyksikön virheen painossa?
+
+Jokainen monikriteerimenetelmä palauttaa voittajan **implisiittisellä 100 %:n varmuudella**. Mutta kriteerien painot
+ovat arvioita, eivät ilmoitettuja totuuksia. Jos kaksi prosenttiyksikköä IITA:n painossa vaihtaa 1. ja 2. sijan,
+"voittaja" on kalibroinnin artefakti.
+
+Siksi häiritsemme DEMATELin painoja **Dirichlet'llä** — `w' ~ Dir(κ·w)`, joka elää täsmälleen simplexillä ja säilyttää
+`E[w'] = w`, eli häiritsee **vinouttamatta** — ja järjestämme uudelleen **2 000 kertaa**. Tuomion luonne muuttuu:
+
+> *"Project C on paras"* ⟶ **"Project C voittaa 99,9 %:ssa uskottavista preferenssiuniversumeista"**
+
+Se on **luottamusväli itse päätökselle**. Ja se paljastaa, mitä konsensus kätki: alla olevassa ruudussa
+**PROMETHEE II valitsee johtajan vain 25,4 %:ssa universumeista**. Neljä koulukuntaa on samaa mieltä; yksi on
+suoraan eri mieltä. Se ei ole kohinaa — se on varoitus siitä, että valinta riippuu siitä, suositko *ylivertaisuutta*
+vai *hyötyä*. Yksikään yksittäinen ranking ei kertoisi sitä.
+
+![Rankingin robustius Dirichlet-häirinnällä — voittotodennäköisyys ja koulukuntien erimielisyys](docs/screenshots/robustez-dirichlet.png)
+
+### ⚡ Konkreettinen vipuvarsi
+
+| Resurssi | Ennen | Jälkeen |
+|---|---|---|
+| **Aika** | viikkoja väittelyä siitä, mikä projekti skaalataan | tuomio saapuu todennäköisyyden kera — väittely päättyy yhteen kokoukseen |
+| **Laskenta** | 10 000 iteraatiota × 10 projektia, vektoroituna NumPyllä | sekunteja, omalla koneellasi, ilman pilveä ja ilman kustannusta |
+| **Pääoma** | budjetti jaettu vakaumuksen mukaan | jaettu `P(voitto)`:n ja `VaR`:n mukaan — pahin tapaus jo hinnoiteltu |
+| **Maine** | *"minusta tämä on paras"* | *"se voittaa 99,9 %:ssa skenaarioista; ja tässä on eri mieltä oleva menetelmä, ja miksi"* |
+| **Auditoitavuus** | taulukko, jota kukaan ei voi toistaa | kiinteä siemen: kuka tahansa ajaa uudelleen ja saa **täsmälleen** saman luvun |
+
+### 💼 20 dollarin tilauksesta 200 000 dollarin sopimukseen
+
+**Jos olet freelancer tai pk-yritys:** sovitettu jakauma kertoo, **mitä huono tokenikuukausi maksaa** ennen kuin se
+saapuu — ja robustius kertoo, kannattaako todella siirtää panostus toiseen projektiin, vai ovatko molemmat tasoissa
+virhemarginaalin sisällä. Lakkaat optimoimasta pimeässä tiukalla kassalla.
+
+**Jos olet suuryritys:** `P(voitto)` on investointikomitean puuttuva pala. Se muuttaa *"tiimi A ajaa projektia X"*
+muotoon **"projekti X voittaa 99,9 %:ssa puolustettavista painokalibroinneista, ja ainoa eri mieltä oleva koulukunta
+on ylivertaisuus, kriteerillä Y"**. Poliittisesta väittelystä tulee **tekninen väittely** — ja talousjohtaja saa
+luvun, joka kestää tilintarkastuksen.
+
+> **Viimeinen käänne:** kehys lakkaa mittaamasta **rahan** riskiä ja alkaa mitata **itse päätöksen** riskiä.
+> Hyvin harvat paikat maailmassa tekevät tämän.
 
 ---
 

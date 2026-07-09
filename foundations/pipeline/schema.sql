@@ -240,3 +240,47 @@ CREATE TABLE IF NOT EXISTS mc_tornado (
     ordem             INTEGER,
     PRIMARY KEY (project_name, variavel_saida, variavel_entrada)
 );
+
+-- ===========================================================================
+-- 10. "Fit distributions to data" (SimulAr, manual p.67): distribuições
+--     candidatas ajustadas por MLE à série real de tokens, ordenadas por AIC.
+--     A vencedora (escolhida=1) vira a variável de entrada do Monte Carlo.
+-- ===========================================================================
+CREATE TABLE IF NOT EXISTS mc_ajuste_distribuicao (
+    project_name TEXT,
+    variavel     TEXT,      -- 'TOKENS'
+    distribuicao TEXT,      -- rótulo legível (Normal, LogNormal, Gamma, ...)
+    parametros   TEXT,      -- JSON: {scipy, params, n_obs}
+    loglik       REAL,
+    aic          REAL,      -- 2k - 2·logL  (menor = melhor)
+    ks_stat      REAL,      -- estatística D de Kolmogorov-Smirnov
+    ks_pvalue    REAL,      -- p-valor (alto = não rejeitamos a aderência)
+    rank_        INTEGER,
+    escolhida    INTEGER,   -- 1 = menor AIC
+    PRIMARY KEY (project_name, variavel, distribuicao)
+);
+
+-- ===========================================================================
+-- 11. Robustez do ranking: perturbação de Dirichlet nos pesos do DEMATEL.
+--     w' ~ Dirichlet(κ·w) preserva E[w']=w e κ controla a dispersão.
+--     Reranqueamos N vezes: o veredito deixa de ser "X é o melhor" e passa a
+--     ser "X vence em P% dos universos de preferência".
+-- ===========================================================================
+CREATE TABLE IF NOT EXISTS mcdm_robustez (
+    project_name  TEXT,
+    metodo        TEXT,     -- método de ranqueamento ou 'CONSENSO (Borda)'
+    prob_vitoria  REAL,     -- % das simulações em que ficou em 1º
+    prob_top3     REAL,     -- % em que ficou entre os 3 primeiros
+    rank_medio    REAL,
+    rank_p05      REAL,     -- percentil 5% da posição (melhor caso plausível)
+    rank_p95      REAL,     -- percentil 95% da posição (pior caso plausível)
+    PRIMARY KEY (project_name, metodo)
+);
+
+CREATE TABLE IF NOT EXISTS mcdm_robustez_dist (
+    project_name TEXT,
+    posicao      INTEGER,
+    frequencia   INTEGER,
+    pct          REAL,
+    PRIMARY KEY (project_name, posicao)
+);

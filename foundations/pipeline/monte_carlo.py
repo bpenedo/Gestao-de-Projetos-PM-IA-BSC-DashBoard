@@ -32,9 +32,10 @@ Framework Gestão de Projetos (PM) IA com Painel BSC e DashBoard · ©️ Bruno 
 import numpy as np
 
 from db import get_conn, init_schema
-from config import MC_ITERACOES, MC_BINS, MC_SEED, MC_VAR_PCT
+from config import MC_ITERACOES, MC_BINS, MC_SEED, MC_VAR_PCT, PRECO_API_POR_1K
+from ajuste_distribuicoes import melhor_ajuste, amostrar_ajustada
 
-SAIDAS = ("VPL", "TIR", "TIRM", "VUL", "ILL")
+SAIDAS = ("VPL", "TIR", "TIRM", "VUL", "ILL", "CUSTO_TOKENS")
 
 
 # ---------------------------------------------------------------------------
@@ -295,7 +296,35 @@ def _ill(F, taxa):
 # ---------------------------------------------------------------------------
 # 7) Simulação de um projeto.
 # ---------------------------------------------------------------------------
-def simular_projeto(fluxos_base, taxa, n_iter=MC_ITERACOES, rng=None, pct=MC_VAR_PCT, correlacao=None):
+def simular_custo_tokens(conn, projeto, n_per, n_iter, rng):
+    """Custo de tokens por período, sorteado da distribuição AJUSTADA aos dados reais.
+
+    O consumo de tokens é o verdadeiro motor estocástico do custo de IA — e o único
+    com cauda pesada. Em vez de arbitrar a distribuição, usamos a que o
+    `ajuste_distribuicoes.py` elegeu por AIC sobre a série real de `logs_langfuse`.
+
+    O custo do período t é a soma de S sorteios iid (S = gerações observadas ÷ nº de
+    períodos), convertidos a dinheiro por PRECO_API_POR_1K. O período 0 (investimento)
+    não consome tokens. Devolve (custo (n_iter × n_per), rótulo da distribuição) ou None.
+    """
+    ajuste = melhor_ajuste(conn, projeto)
+    if not ajuste:
+        return None
+    nome_scipy, params, n_obs = ajuste
+    periodos_op = max(n_per - 1, 1)
+    sorteios = max(int(round(n_obs / periodos_op)), 1)   # gerações por período
+
+    custo = np.zeros((n_iter, n_per))
+    for t in range(1, n_per):
+        # soma de S sorteios da distribuição ajustada -> tokens do período
+        amostras = amostrar_ajustada(nome_scipy, params, n_iter * sorteios, rng)
+        tokens = np.clip(amostras, 0, None).reshape(n_iter, sorteios).sum(axis=1)
+        custo[:, t] = tokens * PRECO_API_POR_1K / 1000.0
+    return custo, nome_scipy
+
+
+def simular_projeto(fluxos_base, taxa, n_iter=MC_ITERACOES, rng=None, pct=MC_VAR_PCT,
+                    correlacao=None, custo_tokens=None):
     """Cada fluxo de caixa periódico vira uma variável de entrada Triangular.
 
     Triangular(min, moda, max) com moda = fluxo determinístico e caudas a ±`pct`.
@@ -303,6 +332,9 @@ def simular_projeto(fluxos_base, taxa, n_iter=MC_ITERACOES, rng=None, pct=MC_VAR
     negativo (investimento) as caudas se invertem, mantendo min < moda < max.
 
     `correlacao`: matriz (n_periodos × n_periodos) opcional entre os fluxos.
+    `custo_tokens`: matriz (n_iter × n_periodos) de custo de tokens a SUBTRAIR do
+    fluxo de cada período — vinda da distribuição ajustada aos dados reais. Entra no
+    tornado como variável própria, competindo com os fluxos.
     """
     rng = rng or np.random.default_rng(MC_SEED)
     fluxos_base = np.asarray(fluxos_base, float)
@@ -320,6 +352,14 @@ def simular_projeto(fluxos_base, taxa, n_iter=MC_ITERACOES, rng=None, pct=MC_VAR
         F = iman_conover(F, correlacao, rng)
         entradas = {f"Periodo_{t}": F[:, t] for t in range(n_per)}
 
+    custo_total = np.zeros(n_iter)
+    if custo_tokens is not None:
+        custo_tokens = np.asarray(custo_tokens, float)
+        F = F - custo_tokens                       # o consumo de IA come o fluxo
+        custo_total = custo_tokens.sum(axis=1)
+        for t in range(1, n_per):
+            entradas[f"CustoTokens_{t}"] = custo_tokens[:, t]
+
     vpl = _vpl(F, taxa)
     resultados = {
         "VPL": vpl,
@@ -328,6 +368,8 @@ def simular_projeto(fluxos_base, taxa, n_iter=MC_ITERACOES, rng=None, pct=MC_VAR
         "VUL": _vul(vpl, taxa, n_per - 1),
         "ILL": _ill(F, taxa),
     }
+    if custo_tokens is not None:
+        resultados["CUSTO_TOKENS"] = custo_total
     return entradas, resultados
 
 
@@ -393,12 +435,19 @@ def main():
             (proj,)).fetchall()
         fluxos = [r["fluxo"] for r in linhas]
         taxa = linhas[0]["taxa"]
-        entradas, resultados = simular_projeto(fluxos, taxa, rng=rng)
+
+        ajustado = simular_custo_tokens(conn, proj, len(fluxos), MC_ITERACOES, rng)
+        custo, dist = (ajustado if ajustado else (None, "—"))
+        entradas, resultados = simular_projeto(fluxos, taxa, rng=rng, custo_tokens=custo)
         _gravar(conn, proj, entradas, resultados)
 
         vpl = resultados["VPL"]
+        extra = ""
+        if custo is not None:
+            ct = resultados["CUSTO_TOKENS"]
+            extra = f"  tokens~{dist:9} custo médio={ct.mean():8,.2f} (p99={np.percentile(ct,99):,.2f})"
         print(f"  {proj:12} VPL médio={vpl.mean():10,.2f}  P(VPL<0)={prob_menor_que(vpl, 0):5.2f}%  "
-              f"VaR5%={np.percentile(vpl, 5):10,.2f}")
+              f"VaR5%={np.percentile(vpl, 5):10,.2f}{extra}")
 
     conn.commit()
     conn.close()

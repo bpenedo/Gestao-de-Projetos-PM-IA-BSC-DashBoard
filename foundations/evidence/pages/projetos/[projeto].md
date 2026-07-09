@@ -50,6 +50,37 @@ from bsc.mc_estatisticas where project_name = '${params.projeto}'
 select metodo, score, rank_ from bsc.decisao_mcdm where project_name = '${params.projeto}' order by metodo
 ```
 
+```sql ajuste_proj
+select distribuicao, aic, ks_stat, ks_pvalue, rank_, escolhida
+from bsc.mc_ajuste_distribuicao
+where project_name = '${params.projeto}' and variavel = 'TOKENS' order by rank_
+```
+
+```sql ajuste_top_proj
+select distribuicao, aic, ks_pvalue from bsc.mc_ajuste_distribuicao
+where project_name = '${params.projeto}' and variavel = 'TOKENS' and escolhida = 1
+```
+
+```sql custo_tokens_proj
+select media, desvio_padrao, maximo, var_5, cvar_5
+from bsc.mc_estatisticas where project_name = '${params.projeto}' and variavel = 'CUSTO_TOKENS'
+```
+
+```sql robustez_proj
+select metodo, prob_vitoria, prob_top3, rank_medio, rank_p05, rank_p95
+from bsc.mcdm_robustez where project_name = '${params.projeto}' order by metodo
+```
+
+```sql robustez_consenso_proj
+select prob_vitoria, prob_top3, rank_medio, rank_p05, rank_p95
+from bsc.mcdm_robustez where project_name = '${params.projeto}' and metodo = 'CONSENSO (Borda)'
+```
+
+```sql robustez_dist_proj
+select posicao, frequencia, pct from bsc.mcdm_robustez_dist
+where project_name = '${params.projeto}' order by posicao
+```
+
 # 🛠️ {params.projeto}
 
 <BigValue data={proj} value=kpi_psr title="PSR (0-5)" fmt=num2/>
@@ -172,6 +203,72 @@ daquele período sobre o VPL; a **correlação** mede o quanto a incerteza daque
 </DataTable>
 
 <BarChart data={mcdm_proj} x=metodo y=rank_ title="Posição deste projeto por método (menor = melhor)" yAxisTitle="Posição" swapXY=true/>
+
+## 🔎 Distribuição ajustada aos tokens REAIS deste projeto
+
+> Em vez de **arbitrar** a distribuição do consumo de tokens, nós a **inferimos** da série histórica
+> (`logs_langfuse`) — é o *"Fit distributions to data"* do SimulAr. Onze candidatas são ajustadas por máxima
+> verossimilhança; vence a de **menor AIC**, e o teste de **Kolmogorov-Smirnov** mede a aderência.
+>
+> **Por que isto importa:** o VPL é *linear* nos fluxos de caixa, então simular só os fluxos com uma Triangular
+> simétrica gera um tornado que apenas devolve os fatores de desconto `1/(1+i)ᵗ` — informação nenhuma. O sinal
+> estocástico de verdade está **a montante**, nos tokens, que têm cauda pesada: alguns prompts consomem 10× o
+> típico, e é essa cauda que estoura o orçamento.
+
+<BigValue data={ajuste_top_proj} value=distribuicao title="Distribuição vencedora (menor AIC)"/>
+<BigValue data={ajuste_top_proj} value=ks_pvalue title="Aderência KS (p-valor)" fmt=num3/>
+<BigValue data={custo_tokens_proj} value=media title="Custo de tokens médio (R$)" fmt='$#,##0.00'/>
+<BigValue data={custo_tokens_proj} value=maximo title="Pior caso simulado (R$)" fmt='$#,##0.00'/>
+
+> ⚠️ **Como ler o p-valor:** acima de 0,05 não rejeitamos a aderência (o ajuste é plausível). **Abaixo de 0,05, a
+> distribuição escolhida não descreve bem os seus dados** — use-a com ressalva, colete mais amostras ou trate a
+> série como multimodal. O framework reporta isso em vez de esconder.
+
+<DataTable data={ajuste_proj} rows=all rowShading=true>
+  <Column id=rank_ title="#"/>
+  <Column id=distribuicao title="Distribuição"/>
+  <Column id=aic title="AIC (menor = melhor)" fmt=num1 contentType=colorscale/>
+  <Column id=ks_stat title="KS D" fmt=num4/>
+  <Column id=ks_pvalue title="KS p-valor" fmt=num4/>
+  <Column id=escolhida title="Escolhida" fmt=boolean/>
+</DataTable>
+
+<BarChart data={ajuste_proj} x=distribuicao y=aic title="Comparação das candidatas por AIC (menor é melhor)" yAxisTitle="AIC" swapXY=true sort=true/>
+
+## 🎯 Robustez da decisão — este projeto vence em quantos universos?
+
+> Os pesos dos critérios **nunca são exatos**: são estimativas. Se 2 pontos percentuais no peso do IITA trocam o 1º
+> com o 2º lugar, o "vencedor" é um artefato da calibração, não um fato do portfólio. Então perturbamos os pesos
+> do DEMATEL com uma **Dirichlet** — `w' ~ Dir(κ·w)`, que preserva `E[w'] = w` e vive exatamente no simplex — e
+> **reranqueamos 2.000 vezes**.
+>
+> O veredito deixa de ser *"este é o melhor"* e passa a ser **"este vence em P% dos universos de preferência
+> plausíveis"**. É um intervalo de confiança sobre a **própria decisão**.
+
+<BigValue data={robustez_consenso_proj} value=prob_vitoria title="Vence o consenso em (%)" fmt=num1/>
+<BigValue data={robustez_consenso_proj} value=prob_top3 title="Fica no Top-3 em (%)" fmt=num1/>
+<BigValue data={robustez_consenso_proj} value=rank_medio title="Posição típica" fmt=num2/>
+<BigValue data={robustez_consenso_proj} value=rank_p95 title="Pior posição plausível (p95)" fmt=num0/>
+
+**Distribuição das posições sob pesos perturbados** — uma barra única em 1º significa veredito **robusto**; barras
+espalhadas significam que a posição deste projeto **depende de como você calibra os critérios**.
+
+<BarChart data={robustez_dist_proj} x=posicao y=pct title="Em quantos % dos universos este projeto cai em cada posição" yAxisTitle="% dos universos" xAxisTitle="Posição no ranking" colorPalette={['#8E44AD']}/>
+
+**Por método** — quando um método discorda muito dos demais, o consenso de Borda está *mascarando* uma divergência
+de escola. Isso é informação: significa que a escolha depende de você preferir sobreclassificação, utilidade ou
+função de valor.
+
+<DataTable data={robustez_proj} rows=all rowShading=true>
+  <Column id=metodo title="Método"/>
+  <Column id=prob_vitoria title="Vence em (%)" fmt=num1 contentType=colorscale/>
+  <Column id=prob_top3 title="Top-3 em (%)" fmt=num1/>
+  <Column id=rank_medio title="Posição média" fmt=num2/>
+  <Column id=rank_p05 title="Melhor caso (p05)" fmt=num0/>
+  <Column id=rank_p95 title="Pior caso (p95)" fmt=num0/>
+</DataTable>
+
+<BarChart data={robustez_proj} x=metodo y=prob_vitoria title="Probabilidade de vitória por método (pesos perturbados)" yAxisTitle="% dos universos" swapXY=true/>
 
 # 📌 Bottom-Line — Diagnóstico Conclusivo & Solução Definitiva
 _Padrão de melhoria contínua — fonte canônica: `foundations/solucoes_relatorios.md`._

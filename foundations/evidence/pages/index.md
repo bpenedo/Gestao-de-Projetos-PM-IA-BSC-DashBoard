@@ -97,6 +97,27 @@ order by c.rank_final
 ```sql consenso_top
 select * from bsc.decisao_consenso where rank_final = 1
 ```
+```sql robustez
+select project_name, prob_vitoria, prob_top3, rank_medio, rank_p05, rank_p95
+from bsc.mcdm_robustez where metodo = 'CONSENSO (Borda)' order by prob_vitoria desc
+```
+```sql robustez_metodos
+select project_name, metodo, prob_vitoria from bsc.mcdm_robustez
+where metodo <> 'CONSENSO (Borda)' order by metodo
+```
+```sql robustez_lider
+select project_name, prob_vitoria, rank_p95 from bsc.mcdm_robustez
+where metodo = 'CONSENSO (Borda)' order by prob_vitoria desc limit 1
+```
+```sql ajustes
+select a.project_name, a.distribuicao, a.aic, a.ks_stat, a.ks_pvalue,
+       c.media as custo_medio, c.maximo as custo_max, c.cvar_5 as custo_cvar
+from bsc.mc_ajuste_distribuicao a
+left join bsc.mc_estatisticas c
+  on c.project_name = a.project_name and c.variavel = 'CUSTO_TOKENS'
+where a.variavel = 'TOKENS' and a.escolhida = 1
+order by a.project_name
+```
 
 ## 📈 Sumário Executivo do Portfólio
 
@@ -470,6 +491,54 @@ sensível à escola de decisão adotada.
   <Column id=prob_menor_zero title="P(VPL<0) %" fmt=num2/>
   <Column id=var_5 title="VaR 5% (R$)" fmt='$#,##0'/>
 </DataTable>
+
+
+## 🔎 Distribuições ajustadas aos tokens reais + 🎯 Robustez da decisão
+
+> **Onde está o sinal.** O VPL é *linear* nos fluxos de caixa: simular só os fluxos devolve um tornado com os
+> próprios fatores de desconto `1/(1+i)ᵗ` — informação nenhuma. O motor estocástico de verdade está **a montante**,
+> no **consumo de tokens**, que tem cauda pesada. Por isso ajustamos 11 distribuições candidatas à série real de
+> `logs_langfuse` (*"Fit distributions to data"* do SimulAr) e usamos a vencedora — a de **menor AIC** — como
+> variável de entrada do Monte Carlo.
+
+<DataTable data={ajustes} rows=all rowShading=true>
+  <Column id=project_name title="Projeto"/>
+  <Column id=distribuicao title="Distribuição ajustada"/>
+  <Column id=aic title="AIC" fmt=num0/>
+  <Column id=ks_stat title="KS D" fmt=num4/>
+  <Column id=ks_pvalue title="KS p-valor" fmt=num4 contentType=colorscale/>
+  <Column id=custo_medio title="Custo de tokens médio (R$)" fmt='$#,##0.00'/>
+  <Column id=custo_max title="Pior caso (R$)" fmt='$#,##0.00'/>
+  <Column id=custo_cvar title="CVaR 5% (R$)" fmt='$#,##0.00'/>
+</DataTable>
+
+> ⚠️ **p-valor abaixo de 0,05 = ajuste ruim.** O framework reporta em vez de esconder: naquele projeto a
+> distribuição escolhida não descreve bem os dados — colete mais amostras ou trate a série como multimodal.
+
+**Robustez do ranking (perturbação de Dirichlet).** Os pesos dos critérios são estimativas, não verdades. Perturbamos
+os pesos do DEMATEL com `w' ~ Dir(κ·w)` — que preserva `E[w'] = w` — e **reranqueamos 2.000 vezes**. O veredito deixa
+de ser *"X é o melhor"* e passa a ser **"X vence em P% dos universos de preferência plausíveis"**: um intervalo de
+confiança sobre a **própria decisão**.
+
+<BigValue data={robustez_lider} value=project_name title="Líder sob pesos perturbados"/>
+<BigValue data={robustez_lider} value=prob_vitoria title="Vence em (% dos universos)" fmt=num1/>
+<BigValue data={robustez_lider} value=rank_p95 title="Pior posição plausível do líder" fmt=num0/>
+
+<DataTable data={robustez} rows=all rowShading=true>
+  <Column id=project_name title="Projeto"/>
+  <Column id=prob_vitoria title="Vence o consenso (%)" fmt=num1 contentType=colorscale/>
+  <Column id=prob_top3 title="Top-3 (%)" fmt=num1/>
+  <Column id=rank_medio title="Posição típica" fmt=num2/>
+  <Column id=rank_p05 title="Melhor caso (p05)" fmt=num0/>
+  <Column id=rank_p95 title="Pior caso (p95)" fmt=num0/>
+</DataTable>
+
+<BarChart data={robustez} x=project_name y=prob_vitoria title="Probabilidade de vencer o consenso sob pesos perturbados" yAxisTitle="% dos universos" sort=true/>
+
+**Concordância entre escolas.** Se um método elege o líder em poucos universos, o consenso de Borda está *mascarando*
+uma divergência de escola — e a decisão merece o olho do decisor, não só o número.
+
+<BarChart data={robustez_metodos} x=project_name y=prob_vitoria series=metodo type=grouped title="Probabilidade de vitória por método (pesos perturbados)" yAxisTitle="% dos universos"/>
 
 ## 💳 Planos de Assinatura de IA — Custo Total com IOF
 > Câmbio **R$ 5,40/US$** · **IOF 3,5%** sobre operação internacional (cartão). `Total = US$ × câmbio × (1 + IOF)`.

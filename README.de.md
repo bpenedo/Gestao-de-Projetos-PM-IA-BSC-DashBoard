@@ -70,6 +70,7 @@ Unterschied zwischen *hoffen* und *wissen*. Zwischen für KI zahlen und mit ihr 
 - [🏆 Multikriterielle Entscheidung + Dossier](#-multikriterielle-entscheidung-ahp-topsis-2n--kronjuwel-dossier)
 - [🎲 Monte Carlo — das Risiko, das der Mittelwert verbirgt](#-monte-carlo--das-risiko-das-der-mittelwert-verbirgt)
 - [🧮 Fünf Entscheidungsschulen. Ein Urteil.](#-fünf-entscheidungsschulen-ein-urteil)
+- [🔬 Das Signal liegt stromaufwärts — dort sitzt der Hebel](#-das-signal-liegt-stromaufwärts--dort-sitzt-der-hebel)
 - [🌐 12 Sprachen](#-12-sprachen)
 - [🙋 Einwände (die Fragen, die Sie sich gerade stellen)](#-einwände-die-fragen-die-sie-sich-gerade-stellen)
 - [🧩 Enthaltene Skills](#-enthaltene-skills-build--analyze-your-own)
@@ -300,8 +301,7 @@ GUT · Radar), von Grund auf per Code erzeugt, mit einer **Bottom-Line** für di
 Ein **im Mittel** positiver Kapitalwert schützt niemanden. Der Mittelwert ist die bequemste Lüge der Finanzwelt: Er
 beschreibt ein Szenario, das vielleicht nie eintritt. Über Ihr Schicksal entscheidet der **Rand** — der schlechte Tag.
 
-Dieses Framework simuliert **10.000 Zukünfte** je Projekt (Engine kompatibel mit **SimulAr v2.5** von Luciano Machain,
-UNR/Argentinien): Jeder Cashflow wird zur **Zufallsvariablen**, und das gesamte Portfolio wird Iteration für Iteration
+Dieses Framework simuliert **10.000 Zukünfte** je Projekt: Jeder Cashflow wird zur **Zufallsvariablen**, und das gesamte Portfolio wird Iteration für Iteration
 neu berechnet. Am Ende haben Sie keine Zahl — Sie haben **die gesamte Verteilung Ihres Geldes**:
 
 - **`P(Kapitalwert < 0)`** — die reale Verlustwahrscheinlichkeit. Die Zahl, die Ihnen niemand zeigt.
@@ -309,7 +309,7 @@ neu berechnet. Am Ende haben Sie keine Zahl — Sie haben **die gesamte Verteilu
 - **CVaR 5 %** — wenn die Katastrophe eintritt, was sie im Mittel kostet.
 - **Sensitivitäts-Tornado** — multiple Regression und Pearson-Korrelation: Welche Variable bewegt den Kapitalwert wirklich.
 - **20 Eingangsverteilungen**, eine validierte **Korrelationsmatrix** (Iman-Conover, das die Randverteilungen exakt
-  erhält) und **Perzentile von 1 % bis 99 %**, mit einem 100-Klassen-Histogramm wie im SimulAr-Handbuch.
+  erhält) und **Perzentile von 1 % bis 99 %**, mit einem 100-Klassen-Histogramm.
 
 Fester Startwert: erneut ausführen liefert **exakt** dasselbe Ergebnis. Prüfbar — nicht „magisch".
 
@@ -366,6 +366,70 @@ Arbeitsstunde investieren**. **DEMATEL** enthüllt, dass Halluzination zu senken
 Symptom: Dort ansetzen, und Kapitalwert, IZF und Risiko verbessern sich *gemeinsam*. So hört KI-Management auf, Meinung
 zu sein, und wird **Ingenieurskunst**.
 
+
+---
+
+## 🔬 Das Signal liegt stromaufwärts — dort sitzt der Hebel
+
+Ich fand es, indem ich das Framework selbst maß: Der Sensitivitäts-Tornado des Kapitalwerts lieferte
+**exakt** `1,0 · 0,9091 · 0,8264 · 0,7513…` — die Abzinsungsfaktoren `1/(1+i)ᵗ`. Da der Kapitalwert **linear** in den
+Cashflows ist, sagt die Simulation der Flüsse allein nichts über den Zins hinaus. **Das echte stochastische Signal
+liegt stromaufwärts: in den Tokens.**
+
+### 1️⃣ Hören Sie auf, die Verteilung zu setzen. Passen Sie sie an Ihre Daten an.
+
+Elf Kandidatenverteilungen werden per **Maximum-Likelihood** an Ihre reale Token-Verbrauchsreihe (`logs_langfuse`)
+angepasst. Es gewinnt die mit dem **niedrigsten AIC** — der AIC bestraft jeden zusätzlichen Parameter und verhindert
+Overfitting — und der **Kolmogorov-Smirnov**-Test misst die Anpassungsgüte. Das ist die klassische *Verteilungsanpassung an Daten*, und sie enthüllt den **schweren Rand** des Verbrauchs: Manche Prompts kosten das 10-Fache des Typischen, und
+genau dieser Rand sprengt das Budget — unsichtbar für jeden, der mit Mittelwerten arbeitet.
+
+**Und wenn die Anpassung schlecht ist, schreit das Framework.** Fällt der KS-p-Wert unter 0,05, warnt der Bildschirm
+`SCHWACHE ANPASSUNG` in Rot, statt Präzision vorzutäuschen. Eine ehrliche Zahl schlägt eine hübsche.
+
+![Verteilungsanpassung an reale Tokens — 11 Kandidaten, AIC-Auswahl, Kolmogorov-Smirnov-Güte](docs/screenshots/ajuste-distribuicoes.png)
+
+### 2️⃣ Übersteht Ihr Ranking einen Fehler von 2 Punkten in einem Gewicht?
+
+Jede multikriterielle Methode liefert einen Sieger mit **impliziter 100-%-Zuversicht**. Doch Kriteriengewichte sind
+Schätzungen, keine offenbarten Wahrheiten. Wenn zwei Prozentpunkte beim IITA-Gewicht Platz 1 und 2 tauschen, ist der
+„Sieger" ein Artefakt der Kalibrierung.
+
+Also perturbieren wir die DEMATEL-Gewichte mit einer **Dirichlet** — `w' ~ Dir(κ·w)`, die exakt auf dem Simplex lebt
+und `E[w'] = w` erhält, also **verzerrungsfrei** stört — und ranken **2.000-mal** neu. Das Urteil ändert seine Natur:
+
+> *„Project C ist das beste"* ⟶ **„Project C gewinnt in 99,9 % der plausiblen Präferenzuniversen"**
+
+Das ist ein **Konfidenzintervall über die Entscheidung selbst**. Und es entlarvt, was der Konsens verbarg: Im
+Bildschirm unten **wählt PROMETHEE II den Führenden in nur 25,4 % der Universen**. Vier Schulen stimmen zu; eine
+widerspricht frontal. Das ist kein Rauschen — es ist die Warnung, dass die Wahl davon abhängt, ob Sie *Outranking*
+dem *Nutzen* vorziehen. Kein einzelnes Ranking würde Ihnen das je sagen.
+
+![Ranking-Robustheit durch Dirichlet-Perturbation — Siegwahrscheinlichkeit und Uneinigkeit der Schulen](docs/screenshots/robustez-dirichlet.png)
+
+### ⚡ Der konkrete Hebel
+
+| Ressource | Vorher | Nachher |
+|---|---|---|
+| **Zeit** | Wochen Streit darüber, welches Projekt skaliert | das Urteil kommt mit Wahrscheinlichkeit — der Streit endet in einem Meeting |
+| **Rechenleistung** | 10.000 Iterationen × 10 Projekte, in NumPy vektorisiert | Sekunden, auf Ihrem Rechner, ohne Cloud und ohne Kosten |
+| **Kapital** | Budget nach Überzeugung verteilt | verteilt nach `P(Sieg)` und `VaR` — der schlechteste Fall ist eingepreist |
+| **Reputation** | *„ich glaube, dieses ist das beste"* | *„es gewinnt in 99,9 % der Szenarien; und dies ist die abweichende Methode, und warum"* |
+| **Prüfbarkeit** | eine nicht reproduzierbare Tabelle | fester Startwert: jeder führt es erneut aus und erhält **exakt** dieselbe Zahl |
+
+### 💼 Vom 20-US$-Tarif zum 200.000-US$-Vertrag
+
+**Wenn Sie Freelancer oder KMU sind:** Die angepasste Verteilung sagt Ihnen, **was der schlechte Token-Monat kosten
+wird**, bevor er eintritt — und die Robustheit sagt, ob es sich wirklich lohnt, den Aufwand auf das andere Projekt zu
+verlagern, oder ob beide innerhalb der Fehlermarge gleichauf liegen. Sie hören auf, im Dunkeln bei knapper Kasse zu
+optimieren.
+
+**Wenn Sie ein Großunternehmen sind:** `P(Sieg)` ist das fehlende Stück im Investitionsausschuss. Es verwandelt
+*„Team A verficht Projekt X"* in **„Projekt X gewinnt unter 99,9 % der vertretbaren Gewichtskalibrierungen, und die
+einzige abweichende Schule ist Outranking, beim Kriterium Y"**. Politische Debatte wird **technische Debatte** — und
+der CFO bekommt eine Zahl, die die Prüfung übersteht.
+
+> **Die letzte Wende:** Das Framework misst nicht mehr das Risiko des **Geldes**, sondern das Risiko der
+> **Entscheidung selbst**. Sehr wenige Orte auf der Welt tun das.
 
 ---
 

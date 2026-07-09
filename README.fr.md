@@ -70,6 +70,7 @@ d'investissement de niveau Wall Street** et de la **décision multicritère**. C
 - [🏆 Décision multicritère + Dossier](#-décision-multicritère-ahp-topsis-2n--dossier-du-joyau-de-la-couronne)
 - [🎲 Monte-Carlo — le risque que la moyenne cache](#-monte-carlo--le-risque-que-la-moyenne-cache)
 - [🧮 Cinq écoles de décision. Un seul verdict.](#-cinq-écoles-de-décision-un-seul-verdict)
+- [🔬 Le signal est en amont — et c'est là que réside le levier](#-le-signal-est-en-amont--et-cest-là-que-réside-le-levier)
 - [🌐 12 langues](#-12-langues)
 - [🙋 Objections (les questions que vous vous posez maintenant)](#-objections-les-questions-que-vous-vous-posez-maintenant)
 - [🧩 Skills incluses](#-skills-incluses-build--analyze-your-own)
@@ -302,8 +303,7 @@ honnêtes. **Vous ne présentez pas un tableur. Vous présentez un verdict.**
 Une VAN positive **en moyenne** ne protège personne. La moyenne est le mensonge le plus confortable de la finance :
 elle décrit un scénario qui n'arrivera peut-être jamais. Ce qui décide de votre sort, c'est la **queue** — le mauvais jour.
 
-Ce framework simule **10 000 futurs** pour chaque projet (moteur compatible **SimulAr v2.5**, de Luciano Machain,
-UNR/Argentine) : chaque flux de trésorerie devient une **variable aléatoire** et tout le portefeuille est recalculé
+Ce framework simule **10 000 futurs** pour chaque projet : chaque flux de trésorerie devient une **variable aléatoire** et tout le portefeuille est recalculé
 itération après itération. À la fin, vous n'avez pas un nombre — vous avez **toute la distribution de votre argent** :
 
 - **`P(VAN < 0)`** — la probabilité réelle de perte. Le nombre que personne ne vous montre.
@@ -311,7 +311,7 @@ itération après itération. À la fin, vous n'avez pas un nombre — vous avez
 - **CVaR 5 %** — quand le désastre survient, combien il coûte en moyenne.
 - **Tornado de sensibilité** — régression multiple et corrélation de Pearson : quelle variable meut vraiment votre VAN.
 - **20 distributions** d'entrée, **matrice de corrélation** validée (Iman-Conover, qui préserve exactement les
-  marginales) et **percentiles de 1 % à 99 %**, avec un histogramme à 100 classes identique à celui du manuel SimulAr.
+  marginales) et **percentiles de 1 % à 99 %**, avec un histogramme à 100 classes.
 
 Graine fixe : relancez et vous obtenez **exactement** le même résultat. Auditable — pas « magique ».
 
@@ -368,6 +368,69 @@ travail**. Le **DEMATEL** révèle que réduire l'hallucination (IITA) est une *
 VAN, TRI et risque s'améliorent *ensemble*. C'est la gestion de l'IA qui cesse d'être une opinion pour devenir de
 l'**ingénierie**.
 
+
+---
+
+## 🔬 Le signal est en amont — et c'est là que réside le levier
+
+Je l'ai découvert en mesurant le framework lui-même : le tornado de sensibilité de la VAN renvoyait
+**exactement** `1,0 · 0,9091 · 0,8264 · 0,7513…` — les facteurs d'actualisation `1/(1+i)ᵗ`. Comme la VAN est
+**linéaire** dans les flux, simuler les seuls flux n'apprend rien au-delà du taux. **Le vrai signal stochastique est
+en amont : dans les tokens.**
+
+### 1️⃣ Cessez d'arbitrer la distribution. Ajustez-la à vos données.
+
+Onze distributions candidates sont ajustées par **maximum de vraisemblance** à votre série réelle de consommation de
+tokens (`logs_langfuse`). Celle au **plus faible AIC** l'emporte — l'AIC pénalise chaque paramètre superflu et évite
+le surajustement — et le test de **Kolmogorov-Smirnov** mesure l'adéquation. C'est le classique *ajustement de distributions aux données*, et c'est ce qui révèle la **queue lourde** de la consommation : certains prompts coûtent 10× le typique,
+et c'est cette queue qui fait exploser le budget — invisible pour qui utilise la moyenne.
+
+**Et quand l'ajustement est mauvais, le framework crie.** Si la p-valeur du KS tombe sous 0,05, l'écran affiche
+`ADÉQUATION FAIBLE` en rouge, plutôt que de feindre la précision. Un chiffre honnête vaut mieux qu'un beau chiffre.
+
+![Ajustement de distributions aux tokens réels — 11 candidates, sélection par AIC, adéquation par Kolmogorov-Smirnov](docs/screenshots/ajuste-distribuicoes.png)
+
+### 2️⃣ Votre classement survit-il à une erreur de 2 points sur un poids ?
+
+Toute méthode multicritère renvoie un gagnant avec une **confiance implicite de 100 %**. Mais les poids sont des
+estimations, pas des vérités révélées. Si deux points de pourcentage sur le poids de l'IITA échangent la 1re et la
+2e place, le « gagnant » est un artefact de la calibration.
+
+Nous perturbons donc les poids du DEMATEL par une **Dirichlet** — `w' ~ Dir(κ·w)`, qui vit exactement sur le simplexe
+et préserve `E[w'] = w`, perturbant **sans biaiser** — et nous reclassons **2 000 fois**. Le verdict change de nature :
+
+> *« Project C est le meilleur »* ⟶ **« Project C gagne dans 99,9 % des univers de préférence plausibles »**
+
+C'est un **intervalle de confiance sur la décision elle-même**. Et il expose ce que le consensus masquait : sur
+l'écran ci-dessous, **PROMETHEE II élit le leader dans seulement 25,4 % des univers**. Quatre écoles s'accordent ;
+une dissent frontalement. Ce n'est pas du bruit — c'est l'avertissement que le choix dépend de votre préférence pour
+le *surclassement* plutôt que l'*utilité*. Aucun classement seul ne vous le dirait.
+
+![Robustesse du classement par perturbation de Dirichlet — probabilité de victoire et divergence entre écoles](docs/screenshots/robustez-dirichlet.png)
+
+### ⚡ Le levier concret
+
+| Ressource | Avant | Après |
+|---|---|---|
+| **Temps** | des semaines à débattre du projet à déployer | le verdict arrive avec une probabilité — le débat s'achève en une réunion |
+| **Calcul** | 10 000 itérations × 10 projets, vectorisées en NumPy | quelques secondes, sur votre machine, sans cloud ni coût |
+| **Capital** | budget alloué par conviction | alloué par `P(victoire)` et `VaR` — le pire cas déjà valorisé |
+| **Réputation** | *« je pense que c'est celui-ci »* | *« il gagne dans 99,9 % des scénarios ; voici la méthode qui dissent, et pourquoi »* |
+| **Auditabilité** | un tableur irreproductible | graine fixe : n'importe qui relance et obtient **exactement** le même nombre |
+
+### 💼 Du forfait à 20 US$ au contrat à 200 000 US$
+
+**Si vous êtes indépendant ou PME :** la distribution ajustée vous dit **ce que coûtera le mauvais mois de tokens**
+avant qu'il n'arrive — et la robustesse vous dit s'il vaut vraiment la peine de basculer l'effort sur l'autre projet,
+ou si les deux sont à égalité dans la marge d'erreur. Vous cessez d'optimiser à l'aveugle avec une trésorerie tendue.
+
+**Si vous êtes une grande entreprise :** `P(victoire)` est la pièce manquante du comité d'investissement. Elle
+transforme *« l'équipe A défend le projet X »* en **« le projet X gagne sous 99,9 % des calibrations de poids
+défendables, et la seule école dissidente est le surclassement, sur le critère Y »**. Le débat politique devient
+**débat technique** — et le directeur financier obtient un chiffre qui survit à l'audit.
+
+> **Le basculement final :** le framework cesse de mesurer le risque de l'**argent** et se met à mesurer le risque de
+> la **décision elle-même**. Très peu d'endroits au monde le font.
 
 ---
 

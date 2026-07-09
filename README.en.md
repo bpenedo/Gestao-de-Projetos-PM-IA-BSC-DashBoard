@@ -67,6 +67,7 @@ Norton), **Wall-Street-grade investment analysis** and **multi-criteria decision
 - [🏆 Multi-criteria decision + Dossier](#-multi-criteria-decision-ahp-topsis-2n--crown-jewel-dossier)
 - [🎲 Monte Carlo — the risk the average hides](#-monte-carlo--the-risk-the-average-hides)
 - [🧮 Five schools of decision. One verdict.](#-five-schools-of-decision-one-verdict)
+- [🔬 The signal is upstream — and that is where the leverage lives](#-the-signal-is-upstream--and-that-is-where-the-leverage-lives)
 - [🌐 12 languages](#-12-languages)
 - [🙋 Objections (the questions you're asking right now)](#-objections-the-questions-youre-asking-right-now)
 - [🧩 Bundled skills](#-bundled-skills-build--analyze-your-own)
@@ -174,7 +175,7 @@ minutes**. The question isn't *"can I afford to measure?"*. It's ***"how much lo
 - **🏆 Multi-criteria decision (5 methods):** **DEMATEL** (causal structure + influence-derived weights) feeding
   **ELECTRE I · PROMETHEE II · MAUT · MCDA-C · AHP-TOPSIS 2n**, with **Borda consensus** and an **administrative
   dossier** (SWOT, PESTELC, 5W4H, Pareto, GUT, Radar).
-- **🎲 Risk (Monte Carlo, SimulAr v2.5 style):** **10,000 iterations** per project, **20 distributions**, correlation
+- **🎲 Risk (Monte Carlo):** **10,000 iterations** per project, **20 distributions**, correlation
   matrix (Iman-Conover), **P(NPV<0)**, **VaR/CVaR 5%**, percentiles 1–99% and a **tornado** (regression + correlation).
 - **🗺️ C-Level visuals:** **interactive 5D map**, depth donuts, sustainability quadrant, trends and LaTeX **pitch decks** for eligible projects.
 - **⚙️ Real pipeline:** **Langfuse → SQLite → Evidence**, with **asynchronous concurrent** sync and classification accelerated in **Rust (PyO3)**.
@@ -290,8 +291,7 @@ spreadsheet. You present a verdict.**
 A positive NPV **on average** protects no one. The average is the most comfortable lie in finance: it describes a
 scenario that may never happen. What decides your fate is the **tail** — the bad day.
 
-This framework simulates **10,000 futures** for each project (engine compatible with **SimulAr v2.5**, by Luciano
-Machain, UNR/Argentina): every cash flow becomes a **random variable** and the whole portfolio is recomputed iteration
+This framework simulates **10,000 futures** for each project: every cash flow becomes a **random variable** and the whole portfolio is recomputed iteration
 by iteration. In the end you don't have a number — you have **the entire distribution of your money**:
 
 - **`P(NPV < 0)`** — the real probability of loss. The number nobody shows you.
@@ -299,7 +299,7 @@ by iteration. In the end you don't have a number — you have **the entire distr
 - **CVaR 5%** — when disaster strikes, how much it costs on average.
 - **Sensitivity tornado** — multiple regression and Pearson correlation: which variable actually moves your NPV.
 - **20 input distributions**, a validated **correlation matrix** (Iman-Conover, which preserves the exact marginals)
-  and **percentiles from 1% to 99%**, with a 100-bin histogram identical to the SimulAr manual's.
+  and **percentiles from 1% to 99%**, with a 100-bin histogram.
 
 Fixed seed: run it again and you get **exactly** the same result. Auditable — not "magic".
 
@@ -355,6 +355,68 @@ is the same — only the number of zeros changes.
 hour of work**. **DEMATEL** reveals that cutting hallucination (IITA) is a **cause**, not a symptom: act there and NPV,
 IRR and risk improve *together*. This is AI management ceasing to be opinion and becoming **engineering**.
 
+
+---
+
+## 🔬 The signal is upstream — and that is where the leverage lives
+
+I found this by measuring the framework itself: the NPV sensitivity tornado returned **exactly**
+`1.0 · 0.9091 · 0.8264 · 0.7513…` — the discount factors `1/(1+i)ᵗ`. Because NPV is **linear** in the cash flows,
+simulating only the flows tells you nothing beyond the rate. **The real stochastic signal is upstream: in the tokens.**
+
+### 1️⃣ Stop arbitrating the distribution. Fit it to your data.
+
+Eleven candidate distributions are fitted by **maximum likelihood** to your real token-consumption series
+(`logs_langfuse`). The one with the **lowest AIC** wins — AIC penalizes each extra parameter and prevents
+overfitting — and the **Kolmogorov-Smirnov** test measures goodness of fit. This is the classic *fit-distributions-to-data* step, and it is what reveals the **heavy tail** of consumption: some prompts cost 10× the typical one, and that
+tail is what blows up the budget — invisible to anyone using the mean.
+
+**And when the fit is bad, the framework shouts.** If the KS p-value drops below 0.05, the screen warns
+`WEAK FIT` in red instead of faking precision. An honest number beats a pretty one.
+
+![Fitting distributions to real tokens — 11 candidates, AIC selection, Kolmogorov-Smirnov goodness of fit](docs/screenshots/ajuste-distribuicoes.png)
+
+### 2️⃣ Does your ranking survive a 2-point error in a weight?
+
+Every multi-criteria method returns a winner with an **implicit 100% confidence**. But criteria weights are
+estimates, not revealed truths. If two percentage points on the IITA weight swap 1st and 2nd place, the "winner" is
+an artifact of the calibration.
+
+So we perturb the DEMATEL weights with a **Dirichlet** — `w' ~ Dir(κ·w)`, which lives exactly on the simplex and
+preserves `E[w'] = w`, perturbing **without bias** — and re-rank **2,000 times**. The verdict changes nature:
+
+> *"Project C is the best"* ⟶ **"Project C wins in 99.9% of plausible preference universes"**
+
+That is a **confidence interval on the decision itself**. And it exposes what the consensus was hiding: in the
+screen below, **PROMETHEE II elects the leader in only 25.4% of universes**. Four schools agree; one flatly
+dissents. That is not noise — it is the warning that the choice depends on whether you prefer *outranking* over
+*utility*. No single ranking would ever tell you that.
+
+![Ranking robustness via Dirichlet perturbation — win probability and disagreement between schools](docs/screenshots/robustez-dirichlet.png)
+
+### ⚡ The concrete leverage
+
+| Resource | Before | After |
+|---|---|---|
+| **Time** | weeks arguing about which project to scale | the verdict arrives with a probability — the argument ends in one meeting |
+| **Processing** | 10,000 iterations × 10 projects, vectorized in NumPy | seconds, on your machine, no cloud and no cost |
+| **Capital** | budget allocated by conviction | allocated by `P(win)` and `VaR` — with the worst case already priced |
+| **Reputation** | *"I think this one is best"* | *"it wins in 99.9% of scenarios; and here is the method that dissents, and why"* |
+| **Auditability** | a spreadsheet nobody can reproduce | fixed seed: anyone reruns it and gets **exactly** the same number |
+
+### 💼 From the US$ 20 plan to the US$ 200k contract
+
+**If you are a freelancer or SMB:** the fitted distribution tells you **what the bad token month will cost** before
+it arrives — and the robustness tells you whether it's really worth moving effort to the other project, or whether
+both are tied inside the margin of error. You stop optimizing in the dark with tight cash.
+
+**If you are a large enterprise:** `P(win)` is the missing piece in the investment committee. It turns *"team A
+champions project X"* into **"project X wins under 99.9% of defensible weight calibrations, and the only dissenting
+school is outranking, on criterion Y"**. Political debate becomes **technical debate** — and the CFO gets a number
+that survives audit.
+
+> **The final turn:** the framework stops measuring the risk of the **money** and starts measuring the risk of the
+> **decision itself**. Very few places in the world do this.
 
 ---
 

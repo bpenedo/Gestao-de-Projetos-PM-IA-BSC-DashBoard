@@ -39,6 +39,10 @@ MC_BINS = int(os.environ.get("MC_BINS", "100"))              # 100 classes, do m
 MC_SEED = int(os.environ.get("MC_SEED", "42"))               # semente -> simulação reprodutível
 MC_VAR_PCT = float(os.environ.get("MC_VAR_PCT", "0.30"))     # caudas da Triangular: ±30% do fluxo base
 
+# Robustez do ranking MCDM: w' ~ Dirichlet(κ·w). E[w']=w; Var(w_i)=w_i(1-w_i)/(κ+1).
+MC_ROBUSTEZ_ITER = int(os.environ.get("MC_ROBUSTEZ_ITER", "2000"))   # universos de preferência
+MC_ROBUSTEZ_KAPPA = float(os.environ.get("MC_ROBUSTEZ_KAPPA", "200"))  # concentração (maior = pesos mais fiéis)
+
 PESO_RATE_LIMIT = 1.5   # penalidade de cota
 PESO_ALUCINACAO = 2.0   # penalidade de código/alucinação
 LIMITE_LATENCIA_S = 3.0  # latência aceitável (Lean); excedente = waste
