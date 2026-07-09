@@ -1,15 +1,15 @@
 """
-Gráficos de Monte Carlo replicando o SimulAr v2.5 (janela "Simulation Results").
+Gráficos de Monte Carlo no estilo clássico de "Simulation Results" de planilha.
 
-Reproduz, com os mesmos elementos visuais do manual (foundations/mc/simularusermanual.pdf):
+Elementos visuais:
 
-  • Histograma de frequência (p.60): 100 classes do mínimo ao máximo, barras
+  • Histograma de frequência: 100 classes do mínimo ao máximo, barras
     vermelhas com borda escura, área de plotagem cinza com grades horizontais,
     título sublinhado em negrito, eixo Y "Frequency" em itálico, rótulos do eixo X
     com as bordas inferiores das classes girados a 90°, e o rodapé
     "Probability less than => v  Equals to => p %".
-  • Histograma acumulado (p.62): a opção "Cumulative %" da mesma janela.
-  • Tornado de sensibilidade (p.63-64): barras horizontais vermelhas a partir do
+  • Histograma acumulado: percentual acumulado das mesmas classes.
+  • Tornado de sensibilidade: barras horizontais vermelhas a partir do
     zero, ordenadas pelo |beta| decrescente (maior no topo), rótulo de cada barra
     com "variável, valor", e eixo X em itálico ("Regression" ou "Correlation").
 
@@ -31,7 +31,7 @@ from config import FOUNDATIONS_DIR
 
 STATIC = FOUNDATIONS_DIR / "evidence" / "static" / "mc"
 
-# Paleta do SimulAr (janela "Simulation Results").
+# Paleta da janela "Simulation Results".
 VERMELHO = "#FF0000"
 BORDA_BARRA = "#800000"
 FUNDO_PLOT = "#D9D9D9"
@@ -39,7 +39,7 @@ ROTULO = {"VPL": "NPV", "TIR": "IRR", "TIRM": "MIRR", "VUL": "EAA", "ILL": "PI"}
 
 
 def _titulo_sublinhado(fig, ax, texto):
-    """Título em negrito com sublinhado, como no SimulAr."""
+    """Título em negrito com sublinhado."""
     t = ax.set_title(texto, fontsize=13, fontweight="bold", color="black", pad=12)
     fig.canvas.draw()
     bb = t.get_window_extent(renderer=fig.canvas.get_renderer())
@@ -49,7 +49,7 @@ def _titulo_sublinhado(fig, ax, texto):
 
 
 def _moldura(ax):
-    """Área de plotagem cinza com grades horizontais — o visual da janela do SimulAr."""
+    """Área de plotagem cinza com grades horizontais."""
     ax.set_facecolor(FUNDO_PLOT)
     ax.grid(axis="y", color="black", lw=0.4, alpha=0.55)
     ax.set_axisbelow(True)
@@ -162,7 +162,7 @@ def main():
                 gerados += 1
                 print(f"  🖼️  {caminho.relative_to(FOUNDATIONS_DIR)}")
     conn.close()
-    print(f"\n✅ {gerados} gráficos de Monte Carlo (estilo SimulAr) em {STATIC.relative_to(FOUNDATIONS_DIR)}/")
+    print(f"\n✅ {gerados} gráficos de Monte Carlo em {STATIC.relative_to(FOUNDATIONS_DIR)}/")
 
 
 if __name__ == "__main__":

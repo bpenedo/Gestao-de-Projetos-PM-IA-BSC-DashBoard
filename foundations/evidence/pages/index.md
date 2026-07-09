@@ -413,9 +413,8 @@ order by a.project_name
 ## 🎲 Simulação de Monte Carlo — risco do fluxo de caixa
 
 > Cada fluxo de caixa periódico é tratado como **variável aleatória Triangular** (±30% em torno do valor base) e o
-> portfólio é simulado com **10.000 iterações** por projeto (semente fixa ⇒ resultado reprodutível). O método e os
-> gráficos replicam o **SimulAr v2.5** (Machain, Universidad Nacional de Rosario). Assim a escolha final deixa de
-> olhar apenas o valor esperado e passa a **precificar o risco**.
+> portfólio é simulado com **10.000 iterações** por projeto (semente fixa ⇒ resultado reprodutível). Assim a escolha
+> final deixa de olhar apenas o valor esperado e passa a **precificar o risco**.
 
 <BigValue data={consenso_top} value=project_name title="Vencedor (consenso de 5 métodos)"/>
 <BigValue data={mc_vpl} value=prob_menor_zero title="P(VPL<0) média do portfólio %" agg=mean fmt=num2/>
@@ -498,7 +497,7 @@ sensível à escola de decisão adotada.
 > **Onde está o sinal.** O VPL é *linear* nos fluxos de caixa: simular só os fluxos devolve um tornado com os
 > próprios fatores de desconto `1/(1+i)ᵗ` — informação nenhuma. O motor estocástico de verdade está **a montante**,
 > no **consumo de tokens**, que tem cauda pesada. Por isso ajustamos 11 distribuições candidatas à série real de
-> `logs_langfuse` (*"Fit distributions to data"* do SimulAr) e usamos a vencedora — a de **menor AIC** — como
+> `logs_langfuse` (*ajuste de distribuições a dados*) e usamos a vencedora — a de **menor AIC** — como
 > variável de entrada do Monte Carlo.
 
 <DataTable data={ajustes} rows=all rowShading=true>

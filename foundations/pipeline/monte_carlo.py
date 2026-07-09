@@ -1,27 +1,26 @@
 """
-Simulador de Monte Carlo dos fluxos de caixa do portfólio — compatível com o
-SimulAr v2.5 (Luciano Machain, Universidad Nacional de Rosario, Argentina).
+Simulador de Monte Carlo dos fluxos de caixa do portfólio.
 
-Replica a especificação do manual do usuário (foundations/mc/simularusermanual.pdf):
+Implementa a especificação clássica de simulação de risco em planilha:
 
-  • 20 distribuições de entrada (tela "Select Input Variable Probability Distribution").
+  • 20 distribuições de entrada.
   • Matriz de correlação entre variáveis de entrada + validação de consistência
     (a matriz precisa ser positiva definida). Correlação imposta por Iman-Conover,
     que preserva EXATAMENTE as distribuições marginais.
-  • Estatísticas descritivas na ordem e definição do manual (p. 59-60):
+  • Estatísticas descritivas:
     mínimo, média, máximo, mediana, variância, desvio-padrão, amplitude,
     curtose, assimetria, coeficiente de variação e percentis de 1% a 99% (passo 1%).
-    Curtose e assimetria usam as fórmulas do Excel (KURT/SKEW), que é o que o
-    SimulAr — um add-in de Excel — reporta.
-  • Histograma de frequência com 100 classes e coluna "Cumul. %" (p. 60-62).
-  • "Probability less than" — P(X < v) (p. 62).
-  • Tornado de sensibilidade (p. 63-64), nas duas formas do manual:
+    Curtose e assimetria usam as fórmulas do Excel (KURT/SKEW), o padrão de fato
+    em análise financeira de planilha.
+  • Histograma de frequência com 100 classes e coluna de percentual acumulado.
+  • Probabilidade acumulada — P(X < v).
+  • Tornado de sensibilidade, nas duas formas usuais:
       1) Regressão: coeficientes beta da regressão múltipla das entradas contra a
          saída, ordenados pelo valor absoluto.
       2) Correlação: coeficiente de correlação de Pearson entrada × saída.
 
-O default de 10.000 iterações e 100 classes reproduz o exemplo do manual (uma
-frequência de 1 aparece como 0,01% e as classes vão do mínimo ao máximo).
+O default de 10.000 iterações e 100 classes é a convenção da área (uma frequência
+de 1 aparece como 0,01% e as classes vão do mínimo ao máximo).
 
 Saídas simuladas por projeto: VPL, TIR, TIRM, VUL e ILL. As métricas de risco
 (P(VPL<0), VaR 5% e CVaR 5%) alimentam a decisão multicritério em mcdm.py.
@@ -39,7 +38,7 @@ SAIDAS = ("VPL", "TIR", "TIRM", "VUL", "ILL", "CUSTO_TOKENS")
 
 
 # ---------------------------------------------------------------------------
-# 1) As 20 distribuições de entrada do SimulAr.
+# 1) As 20 distribuições de entrada.
 #    Cada função recebe (rng, n, **params) e devolve um vetor de n amostras.
 # ---------------------------------------------------------------------------
 DISTRIBUICOES = {
@@ -81,7 +80,7 @@ def amostrar(nome, n, rng, **params):
 # 2) Matriz de correlação: validação de consistência + imposição por Iman-Conover.
 # ---------------------------------------------------------------------------
 def validar_matriz(R):
-    """'Validate Matrix Consistency' do SimulAr: simétrica, diagonal 1, positiva definida.
+    """Consistência da matriz: simétrica, diagonal 1, positiva definida.
 
     Retorna (ok, mensagem).
     """
@@ -155,10 +154,10 @@ def _norm_ppf(p):
 
 
 # ---------------------------------------------------------------------------
-# 3) Estatísticas descritivas — definições do Excel (o SimulAr é um add-in dele).
+# 3) Estatísticas descritivas — definições do Excel (padrão de fato em finanças).
 # ---------------------------------------------------------------------------
 def estatisticas(x):
-    """Devolve as 10 estatísticas do manual (p.59-60) + VaR/CVaR de 5%."""
+    """Devolve as 10 estatísticas descritivas clássicas + VaR/CVaR de 5%."""
     x = np.asarray(x, float)
     n = x.size
     media = float(x.mean())
@@ -199,7 +198,7 @@ def percentis(x):
 
 
 def prob_menor_que(x, valor):
-    """'Probability less than' do SimulAr, em porcentagem."""
+    """Probabilidade acumulada P(X < v), em porcentagem."""
     return float((np.asarray(x, float) < valor).mean() * 100.0)
 
 
@@ -328,8 +327,8 @@ def simular_projeto(fluxos_base, taxa, n_iter=MC_ITERACOES, rng=None, pct=MC_VAR
     """Cada fluxo de caixa periódico vira uma variável de entrada Triangular.
 
     Triangular(min, moda, max) com moda = fluxo determinístico e caudas a ±`pct`.
-    É a escolha default do exemplo de projeto do manual do SimulAr; para um fluxo
-    negativo (investimento) as caudas se invertem, mantendo min < moda < max.
+    É a escolha default para fluxos sem histórico; para um fluxo negativo
+    (investimento) as caudas se invertem, mantendo min < moda < max.
 
     `correlacao`: matriz (n_periodos × n_periodos) opcional entre os fluxos.
     `custo_tokens`: matriz (n_iter × n_periodos) de custo de tokens a SUBTRAIR do

@@ -141,7 +141,7 @@ where project_name = '${params.projeto}' order by posicao
 ## 🎲 Simulação de Monte Carlo do VPL (10.000 iterações)
 
 > Cada fluxo periódico deste projeto vira uma **variável aleatória Triangular** (±30% em torno do valor base).
-> Método e gráficos replicam o **SimulAr v2.5**. A semente é fixa: rodar de novo dá o mesmo resultado.
+> A semente é fixa: rodar de novo dá exatamente o mesmo resultado.
 
 <BigValue data={mc_proj} value=media title="VPL médio (R$)" fmt='$#,##0'/>
 <BigValue data={mc_proj} value=desvio_padrao title="Desvio-padrão (R$)" fmt='$#,##0'/>
@@ -207,7 +207,7 @@ daquele período sobre o VPL; a **correlação** mede o quanto a incerteza daque
 ## 🔎 Distribuição ajustada aos tokens REAIS deste projeto
 
 > Em vez de **arbitrar** a distribuição do consumo de tokens, nós a **inferimos** da série histórica
-> (`logs_langfuse`) — é o *"Fit distributions to data"* do SimulAr. Onze candidatas são ajustadas por máxima
+> (`logs_langfuse`) — é o *ajuste de distribuições a dados*. Onze candidatas são ajustadas por máxima
 > verossimilhança; vence a de **menor AIC**, e o teste de **Kolmogorov-Smirnov** mede a aderência.
 >
 > **Por que isto importa:** o VPL é *linear* nos fluxos de caixa, então simular só os fluxos com uma Triangular

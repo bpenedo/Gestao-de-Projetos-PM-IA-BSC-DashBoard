@@ -36,7 +36,7 @@ python3 seed_planos.py || echo "  (planos pulado)"
 echo "▶️  Ajustando distribuições aos tokens reais (Fit distributions to data)..."
 python3 ajuste_distribuicoes.py || echo "  (ajuste pulado)"
 
-echo "▶️  Simulação de Monte Carlo dos fluxos de caixa (10k iterações, estilo SimulAr)..."
+echo "▶️  Simulação de Monte Carlo dos fluxos de caixa (10k iterações)..."
 python3 monte_carlo.py || echo "  (Monte Carlo pulado)"
 
 echo "▶️  Decisão multicritério AHP-TOPSIS 2n (melhor projeto)..."
@@ -48,7 +48,7 @@ python3 mcdm.py || echo "  (MCDM pulado)"
 echo "▶️  Robustez do ranking (perturbação de Dirichlet nos pesos do DEMATEL)..."
 python3 robustez_ranking.py || echo "  (robustez pulada)"
 
-echo "▶️  Gerando gráficos de Monte Carlo (histograma + tornado, estilo SimulAr)..."
+echo "▶️  Gerando gráficos de Monte Carlo (histograma + tornado)..."
 python3 gerar_mc_graficos.py || echo "  (gráficos MC pulados)"
 python3 gerar_mcdm_graficos.py || echo "  (gráficos MCDM pulados)"
 python3 gerar_robustez_graficos.py || echo "  (gráficos de robustez pulados)"

@@ -1,8 +1,8 @@
 """
 Ajuste de distribuições aos dados reais de TOKENS ("Fit distributions to data").
 
-É o módulo do SimulAr v2.5 (manual, p. 67) que faltava: em vez de ARBITRAR a
-distribuição de uma variável de entrada, nós a INFERIMOS da série histórica.
+Em vez de ARBITRAR a distribuição de uma variável de entrada, nós a INFERIMOS da
+série histórica.
 A série aqui é o consumo de tokens por geração (`logs_langfuse`), que é o
 verdadeiro motor estocástico do custo de IA — e costuma ter CAUDA PESADA:
 alguns prompts consomem 10× o típico, e é essa cauda que estoura o orçamento.
@@ -48,7 +48,7 @@ CANDIDATAS = [
     ("Beta",        stats.beta,        {}),
 ]
 
-MIN_AMOSTRA = 10   # o manual do SimulAr exige ao menos 10 valores
+MIN_AMOSTRA = 10   # abaixo disso o ajuste por MLE não é confiável
 
 
 def _serie_tokens(conn, projeto):

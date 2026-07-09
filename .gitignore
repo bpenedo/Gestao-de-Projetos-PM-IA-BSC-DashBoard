@@ -37,8 +37,6 @@ foundations/pitchdeck/pitchdeck_*
 **/_private/
 
 # Material de referência de TERCEIROS (direitos autorais) — não publicar.
-# foundations/mc/   -> manual do SimulAr v2.5 (Luciano Machain, UNR)
-# foundations/mcda/ -> artigo de John, J. (2025) sobre integração de DEMATEL
 foundations/mc/
 foundations/mcda/
 *:Zone.Identifier

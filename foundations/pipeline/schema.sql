@@ -189,7 +189,7 @@ CREATE TABLE IF NOT EXISTS decisao_consenso (
 );
 
 -- ===========================================================================
--- 9. Monte Carlo (compatível com SimulAr v2.5): estatísticas, percentis,
+-- 9. Monte Carlo: estatísticas, percentis,
 --    histograma (100 bins) e tornado de sensibilidade (beta + correlação).
 -- ===========================================================================
 CREATE TABLE IF NOT EXISTS mc_estatisticas (
@@ -206,7 +206,7 @@ CREATE TABLE IF NOT EXISTS mc_estatisticas (
     curtose         REAL,
     assimetria      REAL,
     coef_variacao   REAL,
-    prob_menor_zero REAL,    -- P(X < 0) em %  (o "Probability less than" do SimulAr)
+    prob_menor_zero REAL,    -- P(X < 0) em %  (probabilidade acumulada em zero)
     var_5           REAL,    -- Value at Risk: percentil 5%
     cvar_5          REAL,    -- Conditional VaR: média da cauda abaixo do percentil 5%
     PRIMARY KEY (project_name, variavel)
@@ -215,7 +215,7 @@ CREATE TABLE IF NOT EXISTS mc_estatisticas (
 CREATE TABLE IF NOT EXISTS mc_percentis (
     project_name TEXT,
     variavel     TEXT,
-    percentil    INTEGER,   -- 1..99, incrementos de 1% (igual ao SimulAr)
+    percentil    INTEGER,   -- 1..99, incrementos de 1%
     valor        REAL,
     PRIMARY KEY (project_name, variavel, percentil)
 );
@@ -242,7 +242,7 @@ CREATE TABLE IF NOT EXISTS mc_tornado (
 );
 
 -- ===========================================================================
--- 10. "Fit distributions to data" (SimulAr, manual p.67): distribuições
+-- 10. Ajuste de distribuições aos dados (fit distributions to data): distribuições
 --     candidatas ajustadas por MLE à série real de tokens, ordenadas por AIC.
 --     A vencedora (escolhida=1) vira a variável de entrada do Monte Carlo.
 -- ===========================================================================

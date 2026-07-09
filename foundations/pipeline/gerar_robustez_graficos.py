@@ -1,7 +1,7 @@
 """
 Gráficos das duas simulações a montante:
 
-  1. AJUSTE DE DISTRIBUIÇÕES aos tokens reais ("Fit distributions to data", SimulAr p.67):
+  1. AJUSTE DE DISTRIBUIÇÕES aos tokens reais (fit distributions to data):
      histograma dos tokens observados com a densidade da distribuição vencedora
      sobreposta, mais o ranking das candidatas por AIC.
 
