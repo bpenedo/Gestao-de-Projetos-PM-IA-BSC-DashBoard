@@ -98,10 +98,33 @@ monikriteerimallilla (**AHP-TOPSIS 2n**). Läpinäkymätön kuukausilasku muuttu
 saat numeroin selville, missä skaalata, missä leikata, missä tilaus maksaa itsensä takaisin **viikoissa** — ja missä
 se vuotaa ilman katetta.
 
-Olemme uuden alueen **edelläkävijöitä** — **tekoälyn ja arvon kirjanpidon välisen rajan**. Kuten tutkimusmatkailijat,
+Olemme uuden alueen **edelläkävijöitä** — **tekoälyn ja korkean arvon taloudellisen älyn välisen rajan**. Kuten tutkimusmatkailijat,
 jotka kartoittavat vielä kartoittamatonta maata, tämä kehys on **kompassi** (🧭), joka muuttaa tilausten sumun
 **selkeiksi tuottoreiteiksi**: jokainen token maili; jokainen projekti retkikunta kohti voittoa. Missä oli sokea
 kustannus, syntyy **mitattava mahdollisuus**; missä oli kuollut taulukko, kukkii **elävä investointiteesi**.
+
+### 🚀 Micro-SaaS-, SaaS-, startup- ja solopreneur-yrittäjille
+
+Tätä kukaan ei kertonut, kun upotit tekoälyn tuotteeseesi: **siirsit juuri tekoälyn markkinointibudjetista
+myytyjen tuotteiden kustannuksiin (COGS).** Ja COGS, joka kasvaa käytön mukana, ei ole kulu — se on **kiinnitys
+bruttokatteeseesi**. Jokainen uusi käyttäjä maksaa nyt tokeneita. Jokainen hallusinaation aiheuttama uusintayritys
+polttaa katteen kahdesti. Ja lasku ilmestyy vasta kuun lopussa, kun mitään ei enää voi perua.
+
+| Olet… | Kipu, jota kukaan ei mittaa | Mitä kehys antaa takaisin |
+|---|---|---|
+| **Solopreneur** | sinä *olet* tiimi; tuntisi on kallein olemassa oleva omaisuuserä | **tornado** osoittaa muuttujan, joka liikuttaa tulosta — eli **mihin sijoitat seuraavan tuntisi** |
+| **Micro-SaaS** | tokenkustannus kasvaa käytön mukana ja syö katteen hiljaa | jakauma, joka on **sovitettu oikeisiin tokeneihisi**, + **CVaR**: huonolla kuukaudella on hinta *ennen* sen saapumista |
+| **Skaalautuva SaaS** | jokainen tekoälyominaisuus on projekti, joka taistelee samasta tiekartasta | **viisi menetelmää** valitsee, mikä julkaistaan — ja **robustius** kertoo, kestääkö ykkössija 2 prosenttiyksikön virheen painossa |
+| **Rahoitusta hakeva startup** | sijoittaja ei osta *"me käytämme tekoälyä"* | hän ostaa **NPV:n, IRR:n, takaisinmaksuajan ja `P(NPV<0)`:n** — ja **pitch deck tulee valmiina**, LaTeXilla |
+
+**Mikä oikeasti muuttuu.** Bruttokatteesi lakkaa olemasta arvio ja muuttuu **jakaumaksi, jonka häntä on
+hinnoiteltu**. Runwaysi lakkaa olemasta yksinkertainen jakolasku ja saa **VaR**:n: *"19:ssä skenaariossa 20:stä
+kassani riittää vähintään N kuukautta."* Ja kun board deck tai due diligence koittaa, et avaa taulukkoa, jota
+kukaan ei voi toistaa — avaat luvun, jolla on **kiinteä siemen** ja jonka kuka tahansa perustajakumppani,
+sijoittaja tai tilintarkastaja ajaa uudelleen ja saa **täsmälleen saman**.
+
+> **Raaka uudelleenasemointi:** solopreneur alkaa päättää kuin talousjohtaja. Ja talousjohtaja alkaa päättää
+> solopreneurin nopeudella.
 
 > **Lupaus:** muuttaa se, joka *maksaa tekoälystä*, siksi, joka *ansaitsee tekoälyllä* — ja se, joka *käyttää
 > tekoälyä*, siksi, joka **edelläkävijänä hallitsee, mittaa ja moninkertaistaa sitä**. Numeroin, ei uskolla.

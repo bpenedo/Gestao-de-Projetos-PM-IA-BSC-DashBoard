@@ -98,10 +98,33 @@ flerkriteriemodell (**AHP-TOPSIS 2n**). Den ogenomskinliga månadsräkningen bli
 investeringstes**: du får veta, med siffror, var du ska skala, var du ska skära, var prenumerationen betalar sig
 själv på **veckor** — och var den blöder utan täckning.
 
-Vi är **pionjärer** i ett nytt territorium — **gränsen mellan artificiell intelligens och värderedovisning**. Som
+Vi är **pionjärer** i ett nytt territorium — **gränsen mellan artificiell intelligens och högvärdig finansiell intelligens**. Som
 upptäcktsresande som kartlägger okartlagd mark är detta ramverk **kompassen** (🧭) som förvandlar prenumerationernas
 dimma till **tydliga avkastningsrutter**: varje token en mil; varje projekt en expedition mot vinst. Där det fanns
 blind kostnad föds **mätbar möjlighet**; där det fanns ett dött kalkylark blomstrar en **levande investeringstes**.
+
+### 🚀 För Micro-SaaS, SaaS, startups och solopreneurer
+
+Här är vad ingen berättade när du byggde in AI i din produkt: **du flyttade just AI från marknadsföringsbudgeten
+till din COGS.** Och COGS som växer med användningen är ingen kostnad — det är en **inteckning i din
+bruttomarginal**. Varje ny användare kostar nu tokens. Varje omkörning orsakad av hallucination bränner
+marginalen två gånger. Och räkningen dyker upp först vid månadsskiftet, när det är för sent att ångra.
+
+| Du är… | Smärtan ingen mäter | Vad ramverket ger tillbaka |
+|---|---|---|
+| **Solopreneur** | du *är* teamet; din timme är den dyraste tillgång som finns | **tornadon** pekar ut variabeln som rör resultatet — alltså **var du ska investera din nästa timme** |
+| **Micro-SaaS** | tokenkostnaden växer med användningen och äter marginalen i tysthet | en fördelning **anpassad till dina verkliga tokens** + **CVaR**: den dåliga månaden har ett pris *innan* den kommer |
+| **SaaS i skala** | varje AI-funktion är ett projekt som slåss om samma färdplan | **fem metoder** väljer vilken som går live — och **robustheten** säger om förstaplatsen överlever ett fel på 2 punkter i en vikt |
+| **Startup som reser kapital** | investeraren köper inte *"vi använder AI"* | de köper **NPV, IRR, återbetalningstid och `P(NPV<0)`** — och **pitch-decket kommer färdigt**, i LaTeX |
+
+**Vad som faktiskt ändras.** Din bruttomarginal slutar vara en uppskattning och blir en **fördelning med
+prissatt svans**. Din runway slutar vara enkel division och får en **VaR**: *"i 19 av 20 scenarier räcker min
+kassa minst N månader."* Och när board-decket eller due diligencen kommer öppnar du inte ett kalkylark ingen kan
+reproducera — du öppnar en siffra med **fast frö**, som vilken medgrundare, investerare eller revisor som helst
+kör om och får **exakt densamma**.
+
+> **En brutal ompositionering:** solopreneuren börjar besluta som en CFO. Och CFO:n börjar besluta i en
+> solopreneurs tempo.
 
 > **Löftet:** att förvandla den som *betalar för AI* till den som *tjänar på AI* — och den som *använder AI* till
 > den som **pionjärt behärskar, mäter och mångfaldigar den**. Med siffror, inte med tro.

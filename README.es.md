@@ -98,11 +98,33 @@ multicriterio (**AHP-TOPSIS 2n**). La factura mensual opaca se vuelve una **tesi
 descubres, con números, dónde escalar, dónde recortar, dónde la suscripción se paga en **semanas** — y dónde se
 desangra sin cobertura.
 
-Somos **pioneros** de un territorio nuevo — la **frontera entre la inteligencia artificial y la contabilidad del
-valor**. Como exploradores que cartografían tierras aún sin mapa, este framework es la **brújula** (🧭) que
+Somos **pioneros** de un territorio nuevo — la **frontera entre la inteligencia artificial y la inteligencia financiera de alto valor**. Como exploradores que cartografían tierras aún sin mapa, este framework es la **brújula** (🧭) que
 convierte la niebla de las suscripciones en **rutas claras de retorno**: cada token, una milla; cada proyecto,
 una expedición hacia el lucro. Donde había costo ciego, nace **oportunidad medible**; donde había una planilla
 muerta, florece una **tesis de inversión viva**.
+
+### 🚀 Para Micro-SaaS, SaaS, Startups y Solopreneurs
+
+Hay algo que nadie te contó cuando incrustaste IA en tu producto: **acabas de mover la IA de tu presupuesto de
+marketing a tu COGS.** Y un COGS que crece con el uso no es un gasto — es una **hipoteca sobre tu margen
+bruto**. Cada usuario nuevo ahora cuesta tokens. Cada reintento por alucinación quema margen dos veces. Y la
+cuenta solo aparece a fin de mes, cuando ya no se puede deshacer.
+
+| Eres… | El dolor que nadie mide | Lo que este framework te devuelve |
+|---|---|---|
+| **Solopreneur** | tú *eres* el equipo; tu hora es el activo más caro que existe | el **tornado** señala la variable que mueve el resultado — o sea, **dónde invertir tu próxima hora** |
+| **Micro-SaaS** | el costo de token crece con el uso y se come el margen en silencio | distribución **ajustada a tus tokens reales** + **CVaR**: el mal mes tiene precio *antes* de llegar |
+| **SaaS a escala** | cada feature de IA es un proyecto peleando por el mismo roadmap | **cinco métodos** eligen cuál entra — y la **robustez** dice si el 1º puesto sobrevive a un error de 2 puntos en un peso |
+| **Startup levantando** | el inversor no compra *"usamos IA"* | compra **VAN, TIR, payback y `P(VAN<0)`** — y el **pitch deck sale listo**, en LaTeX |
+
+**Lo que cambia de verdad.** Tu margen bruto deja de ser una estimación y se vuelve una **distribución con cola
+valorada**. Tu runway deja de ser una división simple y gana un **VaR**: *"en 19 de cada 20 escenarios, mi caja
+dura al menos N meses."* Y cuando llega el board deck o la due diligence, no abres una planilla que nadie puede
+reproducir — abres un número con **semilla fija**, que cualquier socio, inversor o auditor reejecuta y obtiene
+**exactamente igual**.
+
+> **Reposicionamiento brutal:** el solopreneur empieza a decidir como un CFO. Y el CFO empieza a decidir a la
+> velocidad de un solopreneur.
 
 > **La promesa:** transformar a quien *paga por IA* en quien *lucra con IA* — y a quien *usa IA* en quien
 > **pioneramente la domina, la mide y la multiplica**. Con números, no con fe.

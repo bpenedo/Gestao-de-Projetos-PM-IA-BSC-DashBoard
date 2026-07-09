@@ -101,11 +101,33 @@ portefeuille** par un modèle multicritère (**AHP-TOPSIS 2n**). La facture mens
 d'investissement auditable** : vous découvrez, avec des chiffres, où déployer, où couper, où l'abonnement se
 rembourse en **semaines** — et où il saigne sans couverture.
 
-Nous sommes les **pionniers** d'un territoire nouveau — la **frontière entre l'intelligence artificielle et la
-comptabilité de la valeur**. Tels des explorateurs cartographiant des terres encore vierges, ce framework est la
+Nous sommes les **pionniers** d'un territoire nouveau — la **frontière entre l'intelligence artificielle et l'intelligence financière à haute valeur**. Tels des explorateurs cartographiant des terres encore vierges, ce framework est la
 **boussole** (🧭) qui transforme le brouillard des abonnements en **routes claires de retour** : chaque token, un
 mille ; chaque projet, une expédition vers le profit. Là où il y avait un coût aveugle naît une **opportunité
 mesurable** ; là où il y avait un tableur mort fleurit une **thèse d'investissement vivante**.
+
+### 🚀 Pour les Micro-SaaS, SaaS, startups et solopreneurs
+
+Voici ce que personne ne vous a dit quand vous avez intégré l'IA à votre produit : **vous venez de déplacer l'IA
+de votre budget marketing vers votre COGS.** Et un COGS qui croît avec l'usage n'est pas une dépense — c'est une
+**hypothèque sur votre marge brute**. Chaque nouvel utilisateur coûte désormais des tokens. Chaque relance due à
+une hallucination brûle la marge deux fois. Et la facture n'arrive qu'en fin de mois, trop tard pour défaire.
+
+| Vous êtes… | La douleur que personne ne mesure | Ce que ce framework vous rend |
+|---|---|---|
+| **Solopreneur** | vous *êtes* l'équipe ; votre heure est l'actif le plus cher qui soit | le **tornado** désigne la variable qui meut le résultat — donc **où investir votre prochaine heure** |
+| **Micro-SaaS** | le coût des tokens croît avec l'usage et ronge la marge en silence | une distribution **ajustée à vos tokens réels** + **CVaR** : le mauvais mois a un prix *avant* d'arriver |
+| **SaaS à l'échelle** | chaque fonctionnalité d'IA est un projet qui se bat pour la même feuille de route | **cinq méthodes** élisent laquelle sort — et la **robustesse** dit si la 1re place survit à une erreur de 2 points sur un poids |
+| **Startup en levée** | l'investisseur n'achète pas *« on utilise l'IA »* | il achète **VAN, TRI, délai de récupération et `P(VAN<0)`** — et le **pitch deck sort prêt**, en LaTeX |
+
+**Ce qui change vraiment.** Votre marge brute cesse d'être une estimation et devient une **distribution à queue
+valorisée**. Votre runway cesse d'être une simple division et gagne une **VaR** : *« dans 19 scénarios sur 20,
+ma trésorerie tient au moins N mois. »* Et à l'heure du board deck ou de la due diligence, vous n'ouvrez pas un
+tableur irreproductible — vous ouvrez un chiffre à **graine fixe**, que n'importe quel associé, investisseur ou
+auditeur relance et obtient **exactement identique**.
+
+> **Repositionnement brutal :** le solopreneur se met à décider comme un directeur financier. Et le directeur
+> financier se met à décider à la vitesse d'un solopreneur.
 
 > **La promesse :** transformer celui qui *paie pour l'IA* en celui qui *profite de l'IA* — et celui qui *utilise
 > l'IA* en celui qui la **maîtrise, la mesure et la multiplie en pionnier**. Avec des chiffres, pas avec la foi.

@@ -98,11 +98,33 @@ multi-criteria model (**AHP-TOPSIS 2n**). The opaque monthly bill becomes an **a
 you find out, with numbers, where to scale, where to cut, where the subscription pays for itself in **weeks** —
 and where it is bleeding without coverage.
 
-We are **pioneers** of a new territory — the **frontier between artificial intelligence and the accounting of
-value**. Like explorers charting unmapped lands, this framework is the **compass** (🧭) that turns the fog of
+We are **pioneers** of a new territory — the **frontier between artificial intelligence and high-value financial intelligence**. Like explorers charting unmapped lands, this framework is the **compass** (🧭) that turns the fog of
 subscriptions into **clear routes of return**: each token a mile; each project an expedition toward profit.
 Where there was blind cost, **measurable opportunity** is born; where there was a dead spreadsheet, a **living
 investment thesis** blossoms.
+
+### 🚀 For Micro-SaaS, SaaS, Startups and Solopreneurs
+
+Here's what nobody told you when you embedded AI into your product: **you just moved AI from your marketing
+budget into your COGS.** And COGS that grows with usage isn't an expense — it's a **mortgage on your gross
+margin**. Every new user now costs tokens. Every retry caused by hallucination burns margin twice. And the bill
+only shows up at month's end, when it's too late to undo.
+
+| You are… | The pain nobody measures | What this framework hands back |
+|---|---|---|
+| **Solopreneur** | you *are* the team; your hour is the most expensive asset there is | the **tornado** points to the variable that moves the result — hence **where to invest your next hour** |
+| **Micro-SaaS** | token cost grows with usage and eats the margin in silence | a distribution **fitted to your real tokens** + **CVaR**: the bad month has a price *before* it arrives |
+| **SaaS at scale** | every AI feature is a project fighting for the same roadmap | **five methods** elect which one ships — and **robustness** says whether 1st place survives a 2-point error in a weight |
+| **Startup raising** | the investor doesn't buy *"we use AI"* | they buy **NPV, IRR, payback and `P(NPV<0)`** — and the **pitch deck comes out ready**, in LaTeX |
+
+**What actually changes.** Your gross margin stops being an estimate and becomes a **distribution with a priced
+tail**. Your runway stops being simple division and gains a **VaR**: *"in 19 out of 20 scenarios, my cash lasts
+at least N months."* And when the board deck or the due diligence comes, you don't open a spreadsheet nobody can
+reproduce — you open a number with a **fixed seed**, that any co-founder, investor or auditor reruns and gets
+**exactly the same**.
+
+> **A brutal repositioning:** the solopreneur starts deciding like a CFO. And the CFO starts deciding at the
+> speed of a solopreneur.
 
 > **The promise:** turn whoever *pays for AI* into whoever *profits from AI* — and whoever *uses AI* into whoever
 > **pioneeringly masters, measures and multiplies it**. With numbers, not with faith.

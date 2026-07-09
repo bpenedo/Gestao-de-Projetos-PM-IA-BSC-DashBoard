@@ -101,11 +101,33 @@ multikriteriellem Modell (**AHP-TOPSIS 2n**). Die undurchsichtige Monatsrechnung
 Investitionsthese**: Sie erfahren mit Zahlen, wo skalieren, wo kürzen, wo sich das Abo in **Wochen** amortisiert —
 und wo es ungedeckt ausblutet.
 
-Wir sind **Pioniere** eines neuen Territoriums — der **Grenze zwischen künstlicher Intelligenz und der
-Wertrechnung**. Wie Entdecker, die noch unkartiertes Land vermessen, ist dieses Framework der **Kompass** (🧭),
+Wir sind **Pioniere** eines neuen Territoriums — der **Grenze zwischen künstlicher Intelligenz und hochwertiger finanzieller Intelligenz**. Wie Entdecker, die noch unkartiertes Land vermessen, ist dieses Framework der **Kompass** (🧭),
 der den Nebel der Abonnements in **klare Routen der Rendite** verwandelt: jeder Token eine Meile; jedes Projekt
 eine Expedition zum Gewinn. Wo blinde Kosten waren, entsteht **messbare Chance**; wo eine tote Tabelle war, blüht
 eine **lebendige Investitionsthese**.
+
+### 🚀 Für Micro-SaaS, SaaS, Start-ups und Solopreneure
+
+Das hat Ihnen niemand gesagt, als Sie KI in Ihr Produkt eingebaut haben: **Sie haben die KI gerade aus dem
+Marketingbudget in Ihre COGS verschoben.** Und COGS, die mit der Nutzung wachsen, sind keine Ausgabe — sie sind
+eine **Hypothek auf Ihre Bruttomarge**. Jeder neue Nutzer kostet nun Tokens. Jeder Retry wegen Halluzination
+verbrennt Marge doppelt. Und die Rechnung kommt erst am Monatsende, wenn nichts mehr rückgängig zu machen ist.
+
+| Sie sind… | Der Schmerz, den niemand misst | Was dieses Framework zurückgibt |
+|---|---|---|
+| **Solopreneur** | Sie *sind* das Team; Ihre Stunde ist der teuerste Vermögenswert überhaupt | der **Tornado** zeigt die Variable, die das Ergebnis bewegt — also **wo Sie Ihre nächste Stunde investieren** |
+| **Micro-SaaS** | Tokenkosten wachsen mit der Nutzung und fressen die Marge lautlos | eine **an Ihre echten Tokens angepasste** Verteilung + **CVaR**: Der schlechte Monat hat einen Preis, *bevor* er eintrifft |
+| **SaaS in Skalierung** | jedes KI-Feature ist ein Projekt im Kampf um dieselbe Roadmap | **fünf Methoden** wählen, welches kommt — und die **Robustheit** sagt, ob Platz 1 einen 2-Punkte-Fehler im Gewicht übersteht |
+| **Start-up in der Finanzierung** | der Investor kauft kein *„wir nutzen KI"* | er kauft **Kapitalwert, IZF, Amortisation und `P(Kapitalwert<0)`** — und das **Pitch-Deck kommt fertig heraus**, in LaTeX |
+
+**Was sich wirklich ändert.** Ihre Bruttomarge ist keine Schätzung mehr, sondern eine **Verteilung mit
+bepreistem Rand**. Ihr Runway ist keine simple Division mehr, sondern hat einen **VaR**: *„In 19 von 20
+Szenarien reicht meine Liquidität mindestens N Monate."* Und wenn Board-Deck oder Due Diligence anstehen, öffnen
+Sie keine unreproduzierbare Tabelle — Sie öffnen eine Zahl mit **festem Startwert**, die jeder Mitgründer,
+Investor oder Prüfer erneut ausführt und **exakt dieselbe** erhält.
+
+> **Brutale Neupositionierung:** Der Solopreneur beginnt zu entscheiden wie ein CFO. Und der CFO beginnt zu
+> entscheiden mit der Geschwindigkeit eines Solopreneurs.
 
 > **Das Versprechen:** aus dem, der *für KI zahlt*, den machen, der *mit KI Gewinn erzielt* — und aus dem, der *KI
 > nutzt*, den, der sie **pionierhaft beherrscht, misst und vervielfacht**. Mit Zahlen, nicht mit Glauben.
