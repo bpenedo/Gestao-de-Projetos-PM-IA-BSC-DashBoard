@@ -93,6 +93,20 @@ jobs:
           printf '\ndeployment:\n  basePath: /%s\n' "${GITHUB_REPOSITORY#*/}" >> evidence.config.yaml
           tail -n 3 evidence.config.yaml
 
+      # `gekko_photo.png` é um still de filme (terceiros/copyright), git-ignored de
+      # propósito: fica só no dashboard local e NÃO é redistribuído. No site público
+      # usamos a ilustração livre `gekko.svg`, que já é versionada.
+      - name: Trocar o still de filme pela ilustração livre (só no CI)
+        working-directory: foundations/evidence
+        run: |
+          set -euo pipefail
+          test -f static/gekko.svg
+          ! test -f static/gekko_photo.png   # confirma que o still não veio no clone
+          grep -rl '/gekko_photo.png' pages/ | xargs -r sed -i \
+            -e 's|/gekko_photo\.png|/gekko.svg|g' \
+            -e 's|alt="Gordon Gekko fumando charuto (terno azul)"|alt="ilustração de investidor"|g'
+          echo "referências remanescentes: $(grep -rc '/gekko_photo.png' pages/ | grep -v ':0' | wc -l)"
+
       - name: Compilar fontes de dados
         working-directory: foundations/evidence
         run: npm run sources
