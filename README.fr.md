@@ -1,73 +1,383 @@
-# 🧭 Framework VPL — Gestion de Projets (PM) IA avec Panneau BSC et Dashboard
+# 🧭 Gestão de Projetos PM IA BSC DashBoard (Build and Analyze Your Own AI Portfolio Projects)
 
 🌐 [Português](README.md) · [English](README.en.md) · [Español](README.es.md) · **Français** · [Deutsch](README.de.md) · [中文](README.zh.md) · [한국어](README.ko.md) · [हिन्दी](README.hi.md) · [עברית](README.he.md) · [Svenska](README.sv.md) · [Русский](README.ru.md) · [Suomi](README.fi.md)
 
 ![Method](https://img.shields.io/badge/method-Balanced%20Scorecard-1F3A5F)
 ![AI](https://img.shields.io/badge/AI-LLM%20observability-45a1bf)
-![Finance](https://img.shields.io/badge/finance-VAN%20·%20TRI%20·%20IP-46a485)
+![Finance](https://img.shields.io/badge/finance-VAN%20·%20TRI%20·%20TRIM%20·%20IP-46a485)
+![Decision](https://img.shields.io/badge/decision-AHP--TOPSIS%202n-8E44AD)
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
 ![Rust](https://img.shields.io/badge/Rust-PyO3-orange?logo=rust&logoColor=white)
 ![Dashboard](https://img.shields.io/badge/dashboard-Evidence-236aa4)
 ![PDF](https://img.shields.io/badge/pitch%20deck-LaTeX-008080)
+![i18n](https://img.shields.io/badge/i18n-12%20langues-0E7C86)
 ![status](https://img.shields.io/badge/status-v1-success)
 
-> Un framework pour **mesurer tout projet d'IA de bout en bout** — de la consommation de tokens au
-> retour financier — selon les 4 perspectives du **Balanced Scorecard** (Kaplan & Norton).
->
-> *« Ce qui n'est pas mesuré ne peut être ni géré ni amélioré. »*
+### 💸 Vous payez pour l'IA chaque mois. Mais l'IA vous paie-t-elle **en retour** ?
 
-> *Lorsque tu pries et étudies, ne laisse pas [mes paroles] te quitter. À chaque mot et expression qui sort de tes lèvres, aie à l'esprit d'opérer une Unification.* — Aryeh Kaplan
+Chaque fois que la carte est débitée par **ChatGPT, Claude, Copilot, Gemini, Perplexity, DeepSeek, Kimi, Qwen…**,
+une question à **des millions** reste sans réponse : **où est le retour ?** Combien d'heures-homme ont réellement
+été économisées ? Combien de votre argent s'est **évaporé** en hallucination, reprise et attente ? Quel projet
+d'IA **mérite d'être déployé aujourd'hui** — et lequel **saigne la trésorerie** pendant que vous applaudissez
+l'« innovation » ?
+
+Vous n'avez pas un coût d'IA. Vous avez une **fuite silencieuse** — et vous avez les yeux bandés. Car *« ce qui
+n'est pas mesuré ne peut être ni géré ni amélioré »* — et le marché le mesure pour vous, et vous en présente la
+facture.
+
+**Ce framework allume la lumière.** Il transforme la **dépense invisible** de vos abonnements d'IA en **retour
+mesurable, comparable et auditable** — avec la rigueur du **Balanced Scorecard** (Kaplan & Norton), de l'**analyse
+d'investissement de niveau Wall Street** et de la **décision multicritère**. C'est la différence entre *espérer* et
+*savoir*. Entre payer pour l'IA et en **tirer profit**.
+
+> *« Ce qui n'est pas mesuré ne peut être ni géré ni amélioré. »* — Kaplan & Norton
+
+> *« Qui mesure avec précision, bâtit avec excellence. »* — Pierre Vernier
+
+> *Lorsque tu pries et étudies, ne laisse pas [mes paroles] te quitter. Avec chaque mot et chaque expression qui sort de tes lèvres, garde à l'esprit d'accomplir une Unification.* — Aryeh Kaplan
 
 > *La métaphysique pure, se situant par essence au-dessus et au-delà de toutes les formes et de toutes les contingences, n'est ni orientale ni occidentale : elle est universelle.* — René Guénon
 
-> *Se connaître soi-même, c'est connaître sa propre lignée et son propre pouvoir.* — Harvey Spencer Lewis
+> *Se connaître soi-même, c'est connaître sa propre lignée et sa propre puissance.* — Harvey Spencer Lewis
 
 > *Scientia es Lux Lucis* ∞ Sapere Aude S∴A∴☬ ☿
 
+> 🐺 **Arrêtez de PAYER pour l'IA à l'aveugle.** Pendant que le marché s'abonne à l'IA par foi — et devient la
+> statistique de **Gartner** (≥30 % des projets de GenAI abandonnés après le pilote) —, **vous** allez mesurer
+> chaque token, élire le projet gagnant et convertir la dépense invisible en **retour auditable** : VAN · TRI ·
+> TRIM · AÉ · 70+ KPI · décision multicritère · tableau de bord C-Level en **12 langues**. **L'IA est déjà à
+> vous. Rendez-la maintenant RENTABLE** — gratuitement, sur votre machine, en **5 minutes** :
+> `./run_all.sh --mock && npm run dev` 🔥
+
 > 📖 **Documentation principale :** **[`foundations/README.md`](foundations/README.md)** ·
-> ⚙️ **Configuration (apportez vos clés) :** [`foundations/pipeline/SETUP.md`](foundations/pipeline/SETUP.md) ·
+> ⚙️ **Setup (apportez vos clés) :** [`foundations/pipeline/SETUP.md`](foundations/pipeline/SETUP.md) ·
 > 📊 **KPI :** [`foundations/KPIs.md`](foundations/KPIs.md) / [`foundations/KPIs_README.md`](foundations/KPIs_README.md)
 
 ---
 
-## ✨ Ce que le framework fournit
+## 📑 Sommaire
 
-- **KPI (4 perspectives BSC) :** maturité, capital humain, financier + économie d'API
-  (`IEET`, `IOLI`, `ITR`, `IITA`, `PEUC`, `ICCA`, `IDLS`, `IBMT`) et **EVM** (CPI/SPI/EAC).
-- **Concepts de pointe :** **VRT/kTR** (unité de récupération de coût tokenisable — « le m² de Gitman »)
-  et **PSR** (Project Score 0–5 ⭐).
-- **Diagnostic opérationnel :** **VRT en 5 blocs**, **HCI** (heure critique d'interruption),
-  **gaspillages Lean Six Sigma** et **RCA d'hallucination par taxonomie de prompt** (goulot par projet + intersection).
-- **Financier :** **VAN, TRI, IP (indice de profitabilité), Payback** simple/actualisé, **dollarisation** et comparaison avec le **SELIC** et le **taux d'intérêt américain**.
-- **Visuel :** **carte 5D** du portefeuille, **dashboard Evidence** (BI as Code) et **pitch decks** en LaTeX des projets éligibles.
-- **Pipeline :** **Langfuse → SQLite → Evidence**, avec synchronisation **asynchrone concurrente** et classification accélérée en **Rust (PyO3)**.
+- [🌅 Pourquoi cela change la donne](#-pourquoi-cela-change-la-donne)
+- [📈 Les preuves (Gartner · IDC · PwC · McKinsey · MIT)](#-les-preuves-gartner--idc--pwc--mckinsey--mit)
+- [💥 Le coût de l'inaction](#-le-coût-de-linaction-faites-le-calcul-que-personne-ne-fait)
+- [✨ Fonctionnalités](#-fonctionnalités)
+- [📸 Captures (tableau de bord anonyme)](#-captures-tableau-de-bord-anonyme)
+- [🚀 Démarrage rapide](#-démarrage-rapide-démo-sans-langfuse)
+- [🏗️ Architecture](#️-architecture)
+- [📊 Catalogue de KPI](#-catalogue-de-kpi-70)
+- [💰 Analyse financière d'investissement](#-analyse-financière-dinvestissement)
+- [🏆 Décision multicritère + Dossier](#-décision-multicritère-ahp-topsis-2n--dossier-du-joyau-de-la-couronne)
+- [🌐 12 langues](#-12-langues)
+- [🙋 Objections (les questions que vous vous posez maintenant)](#-objections-les-questions-que-vous-vous-posez-maintenant)
+- [🧩 Skills incluses](#-skills-incluses-build--analyze-your-own)
+- [📚 Ressources & références](#-ressources--références-awesome)
+- [🗺️ Feuille de route](#️-feuille-de-route)
+- [🤝 Contribuer](#-contribuer)
+- [📄 Licence & paternité](#-licence--paternité)
+
+---
+
+## 🌅 Pourquoi cela change la donne
+
+**Il existe deux types de personnes à l'ère de l'IA.** Les premières s'abonnent à tout, dépensent gros et
+**prient** pour que ça marche — et grossissent la cruelle statistique des projets qui meurent au pilote. Les
+secondes font ce que Wall Street fait avec tout actif sérieux : elles **mesurent, comparent, priorisent et
+réallouent** — et transforment chaque dollar d'abonnement en **retour composé**. La seule différence entre elles
+**n'est ni le talent ni le budget. C'est l'instrumentation.**
+
+L'IA générative a créé une nouvelle classe de dépense récurrente — **abonnements et tokens** — et, avec elle, le
+gaspillage le plus coûteux de la décennie : **l'invisible.** Ce que vous ne voyez pas, vous ne le corrigez pas.
+Ce que vous ne mesurez pas, vous ne le déployez pas. Et ce que vous ne prouvez pas, le conseil ne l'approuve pas.
+
+**Ce projet vous fait passer de la première tribu à la seconde.** Il instrumente chaque projet d'IA comme un
+**actif financier** et le mesure sous le **Balanced Scorecard**, l'**analyse d'investissement (VAN, TRI, TRIM,
+AÉ, IP, délai de récupération)** et le **Lean Six Sigma** — et il **élit même le meilleur projet de votre
+portefeuille** par un modèle multicritère (**AHP-TOPSIS 2n**). La facture mensuelle opaque devient une **thèse
+d'investissement auditable** : vous découvrez, avec des chiffres, où déployer, où couper, où l'abonnement se
+rembourse en **semaines** — et où il saigne sans couverture.
+
+Nous sommes les **pionniers** d'un territoire nouveau — la **frontière entre l'intelligence artificielle et la
+comptabilité de la valeur**. Tels des explorateurs cartographiant des terres encore vierges, ce framework est la
+**boussole** (🧭) qui transforme le brouillard des abonnements en **routes claires de retour** : chaque token, un
+mille ; chaque projet, une expédition vers le profit. Là où il y avait un coût aveugle naît une **opportunité
+mesurable** ; là où il y avait un tableur mort fleurit une **thèse d'investissement vivante**.
+
+> **La promesse :** transformer celui qui *paie pour l'IA* en celui qui *profite de l'IA* — et celui qui *utilise
+> l'IA* en celui qui la **maîtrise, la mesure et la multiplie en pionnier**. Avec des chiffres, pas avec la foi.
+
+---
+
+## 📈 Les preuves (Gartner · IDC · PwC · McKinsey · MIT)
+
+Ne me croyez pas sur parole. **Croyez les instituts qui étudient cela depuis des décennies** — et dont le verdict
+est unanime : **l'IA crée une valeur immense, mais ne la livre qu'à ceux qui mesurent et gouvernent.** Ceux qui
+« utilisent l'IA sans la maîtriser » deviennent une statistique d'abandon ; ceux qui instrumentent le retour
+**gardent le prix**.
+
+- 🧭 **Gartner** — a prévu que **≥ 30 % des projets d'IA générative seraient abandonnés après la preuve de concept
+  d'ici fin 2025**, avec la **valeur métier peu claire** comme cause centrale (outre des données médiocres, des
+  coûts croissants et des contrôles fragiles). *→ sans mesure, le projet meurt au pilote.*
+- 🔬 **MIT** (rapport *« The GenAI Divide / State of AI in Business 2025 »*, initiative NANDA) — largement rapporté
+  que la **grande majorité des pilotes GenAI en entreprise ne génère aucun impact mesurable sur le P&L** ; la
+  minorité qui livre de la valeur combine l'IA avec **processus et mesure**. *→ la différence, c'est mesurer, pas
+  adopter.*
+- 💵 **IDC** (étude *« The Business Opportunity of AI »*, sponsorisée par Microsoft) — les organisations qui
+  **mesurent et optimisent** ont déclaré un retour de l'ordre de **plusieurs dollars pour chaque 1 US$** investi
+  en IA, avec une forte dispersion entre leaders et retardataires. *→ le ROI existe — et favorise ceux qui
+  instrumentent.*
+- 🌍 **PwC** (*« Sizing the Prize »*) — estime que l'IA pourrait ajouter jusqu'à **~15,7 billions US$** à l'économie
+  mondiale d'ici 2030 ; mais le prix va à ceux qui **capturent** la valeur, pas à ceux qui la consomment seulement.
+  *→ le gâteau est gigantesque ; la part revient à ceux qui mesurent.*
+- 🏆 **McKinsey** (*« The State of AI »*) et **BCG × MIT Sloan** — un groupe minoritaire d'**« AI high performers »**
+  capture un retour disproportionné ; le tournant survient lorsque l'IA est couplée à **des métriques, une
+  gouvernance et un réinvestissement** là où le retour est prouvé. *→ les gagnants mesurent, priorisent et
+  réallouent.*
+
+> **C'est exactement ce fossé que ce framework franchit :** il vous fait quitter le côté qui *abandonne au pilote*
+> pour rejoindre le côté qui a des **résultats concrets et prouvés** — avec BSC, analyse d'investissement et
+> décision multicritère.
+
+> ⚠️ **Note d'honnêteté (à lire) :** les chiffres ci-dessus reflètent de vrais titres de ces instituts, mais **les
+> rapports et pourcentages sont mis à jour** — vérifiez les valeurs exactes et l'année dans les **sources
+> primaires** (Gartner Newsroom ; IDC/Microsoft *Business Opportunity of AI* ; PwC *Sizing the Prize* ; McKinsey
+> *State of AI* ; MIT *State of AI in Business*) avant de les citer dans un document officiel. Ils servent ici de
+> **fondement directionnel**, non de garantie chiffrée.
+
+---
+
+## 💥 Le coût de l'inaction (faites le calcul que personne ne fait)
+
+Un abonnement **PRO d'IA** coûte entre **20 et 200 US$ par mois, par siège**. Multipliez par le nombre de
+personnes de votre équipe. Multipliez par 12 mois. Appliquez maintenant ce que les instituts ont **déjà prouvé** :
+**Gartner** projette **≥ 30 % d'abandon** et le **MIT** montre que la **majorité des pilotes ne rapporte pas**.
+Une part énorme de ce total n'est pas un investissement — c'est une **hémorragie pure**.
+
+> **Exemple direct (remplacez par vos chiffres) :** 10 sièges × 30 US$/mois × 12 = **3 600 US$/an**. Si ~30 %
+> devient du gaspillage invisible, ce sont **~1 080 US$/an qui s'évaporent** — pour UNE petite équipe, en UN an.
+> Avec votre chiffre réel, le choc est plus grand.
+
+Et voici ce qui fait mal : **ce coût est composé et n'attend pas.** Chaque mois sans mesure est un mois de fuite
+qui **ne revient pas** — pendant que le concurrent qui a instrumenté **réalloue déjà son capital vers ce qui
+rapporte**. L'avantage du pionnier se construit tôt : **qui mesure le premier, déploie le premier.**
+
+Le moment le moins coûteux pour commencer était hier. Le deuxième meilleur, c'est **maintenant** — et cela coûte
+**0 US$** et **5 minutes**. La question n'est pas *« puis-je me permettre de mesurer ? »*. C'est ***« combien de
+temps encore puis-je me permettre de NE PAS mesurer ? »***
+
+---
+
+## ✨ Fonctionnalités
+
+- **📊 KPI (4 perspectives BSC) + économie d'API :** maturité, capital humain, financier et efficacité des tokens
+  — `IEET`, `IOLI`, `ITR`, `IITA`, `PEUC`, `ICCA`, `IDLS`, `IBMT` — plus **EVM** (CPI/SPI/EAC).
+- **🪙 Concepts de frontière :** **VRT/kTR** (unité de récupération de coût tokenisable — *« le m² de Gitman »*) et
+  **PSR** (Project Score 0–5 ⭐) pour classer la santé de chaque projet.
+- **🔬 Diagnostic opérationnel :** **VRT en 5 blocs**, **HCI** (heure critique d'interruption), **gaspillages Lean
+  Six Sigma** (tokens pondérés) et **RCA d'hallucination par taxonomie de prompt** (goulot par projet +
+  intersection).
+- **💰 Suite financière complète :** **VAN, TRI, TRIM (TRI modifié), AÉ (annuité équivalente), IP (indice de
+  profitabilité), délai de récupération** simple et actualisé, **dollarisation** et comparaison avec le **SELIC**
+  et les **taux américains**.
+- **🏆 Décision multicritère :** **AHP-TOPSIS 2n** (double normalisation) élit le **meilleur projet** du
+  portefeuille avec **test de robustesse** — et génère un **dossier administratif** (SWOT, PESTELC, 5W4H, Pareto,
+  GUT, Radar).
+- **🗺️ Visuel C-Level :** **carte 5D interactive**, donuts avec profondeur, quadrant de durabilité, tendances et
+  **pitch decks** LaTeX des projets éligibles.
+- **⚙️ Pipeline réel :** **Langfuse → SQLite → Evidence**, avec sync **asynchrone concurrent** et classification
+  accélérée en **Rust (PyO3)**.
+- **💳 FinOps de l'IA :** catalogue de **plans d'abonnement** (OpenAI, Anthropic, Google, Perplexity, xAI, Mistral,
+  DeepSeek, Kimi, Qwen…) avec **change + IOF** et base de répartition (burn rate).
+- **🌐 12 langues** dans le tableau de bord **et dans les images des graphiques** (dont Devanagari, Hébreu et CJK).
+
+---
+
+## 📸 Captures (tableau de bord anonyme)
+
+> Démo 100 % anonyme (projets affichés comme *Project A…J*). Les données/noms réels n'accompagnent jamais le paquet.
+
+**🌐 Carte 5D du portefeuille** — 5 dimensions par projet : **X**=tokens · **Y**=PEUC (qualité) · **Z**=PSR (santé)
+· **taille**=Burn Rate · **couleur**=ICCA (durabilité). *Où déployer ? Droite/fond, haut et vert. Où couper ?
+Grand et rouge.*
+
+![Carte 5D du portefeuille de projets d'IA](docs/screenshots/5d-portfolio-map.png)
+
+**🏆 Dossier du « Joyau de la Couronne »** (projet élu par AHP-TOPSIS) — généré par un pipeline Python concurrent :
+
+| SWOT | Radar concurrentiel |
+|---|---|
+| ![SWOT](docs/screenshots/swot.png) | ![Radar concurrentiel](docs/screenshots/radar.png) |
+
+| PESTELC (macro-environnement) | Matrice GUT (priorisation) |
+|---|---|
+| ![PESTELC](docs/screenshots/pestel.png) | ![GUT](docs/screenshots/gut.png) |
+
+| 5W4H (plan d'action) | Pareto des défaillances (80/20) |
+|---|---|
+| ![5W4H](docs/screenshots/5w4h.png) | ![Pareto](docs/screenshots/pareto.png) |
+
+---
 
 ## 🚀 Démarrage rapide (démo, sans Langfuse)
+
+**Zéro risque. Zéro coût. 5 minutes.** Lancez-le sur votre machine et voyez le tableau de bord complet avec des
+données anonymes :
+
 ```bash
 cd foundations/pipeline
 pip install -r requirements.txt
 cd ../evidence && npm install && cd ../pipeline
-./run_all.sh --mock          # données anonymes (Project A..J) -> KPI -> VAN -> 5D -> pitch decks -> dashboard
+./run_all.sh --mock          # données anonymes (Project A..J) -> KPI -> VAN/TRIM/AÉ -> 5D -> pitch decks -> tableau de bord
 cd ../evidence && npm run dev # http://localhost:3000
 ```
-Pour des données réelles : renseignez `foundations/pipeline/.env` avec **vos propres** clés Langfuse
-(voir [`SETUP.md`](foundations/pipeline/SETUP.md)) et lancez `./run_all.sh`.
 
-## 🗂️ Structure
+Pour des **données réelles**, remplissez `foundations/pipeline/.env` avec **vos propres** clés Langfuse (voir
+[`SETUP.md`](foundations/pipeline/SETUP.md)) et lancez `./run_all.sh`. Chaque utilisateur utilise son **propre
+compte** — aucune clé de l'auteur n'accompagne le paquet.
+
+---
+
+## 🏗️ Architecture
+
 ```
-foundations/
-├── README.md            ← documentation principale
-├── KPIs.md · KPIs_README.md · BSC_Dashboard.md · solucoes_relatorios.md
-├── pipeline/            ← ETL, requêtes, seeds, Rust, générateurs (5D, pitch deck), SETUP.md
-├── evidence/            ← dashboard Evidence (BI as Code)
-└── pitchdeck/           ← modèle standard + pitch decks générés
+   Vos applis d'IA              Observabilité          Analytics-as-Code           Vous
+ (ChatGPT, Claude, API…)   ┌──────────────┐   ┌──────────────────┐   ┌──────────────────────┐
+        │ traces           │   Langfuse   │   │  SQLite (schéma  │   │  Evidence (BI as     │
+        └─────────────────▶│  (SDK v4)    │──▶│  + requêtes KPI) │──▶│  Code) · 12 langues  │
+                           └──────────────┘   └──────────────────┘   └──────────┬───────────┘
+   sync asynchrone concurrent          classification en Rust (PyO3)           │
+                                                                    ┌───────────┴───────────┐
+                                                                    │ AHP-TOPSIS · Dossier  │
+                                                                    │ 5D · Pitch decks (TeX)│
+                                                                    └───────────────────────┘
 ```
+
+**Stack :** Python 3.13 · SQLite/DuckDB · Evidence.dev (SvelteKit) · Rust + PyO3 + maturin · matplotlib ·
+tectonic (LaTeX) · polices Noto/WenQuanYi pour l'i18n des images.
+
+---
+
+## 📊 Catalogue de KPI (70+)
+
+Échantillon (catalogue complet dans [`foundations/KPIs_Lean6s_BSC.md`](foundations/KPIs_Lean6s_BSC.md)) :
+
+| Sigle | Nom | Ce à quoi il répond |
+|---|---|---|
+| **PSR** | Project Score Rating (0–5) | Santé globale du projet d'IA |
+| **PEUC** | % de Livraison Utile par Consommation | Quelle part de la dépense est devenue livraison utile |
+| **IITA** | Indice d'Incidence de Tokens Hallucinés | % d'hallucination/reprise |
+| **IDLS** | Indice de Gaspillage Lean | Muda (tokens pondérés par gravité) |
+| **VRT/kTR** | Valeur de Récupération Tokenisable | « m² de Gitman » — coût pour 1k tokens |
+| **ICCA** | Indice de Couverture de Coût par Abonnement | Couvre-t-il le coût ? (>3× sain) |
+| **CPP** | Coût par Point de Progression | Indicateur maître (plus c'est bas, mieux c'est) |
+
+---
+
+## 💰 Analyse financière d'investissement
+
+Chaque projet devient une **thèse d'investissement** : à partir de votre flux de trésorerie (CSV), le framework
+calcule **VAN**, **TRI**, **TRIM (réinvestit au coût du projet)**, **AÉ (annuité équivalente de la VAN)**, **IP
+(indice de profitabilité)** et le **délai de récupération** simple/actualisé — en **dollarisant** le flux et en le
+comparant au **SELIC** et aux **taux américains**. Il génère un **pitch deck** LaTeX pour tout projet avec **VAN >
+0 et IP > 1** en BRL **et** USD. L'objectif est brutalement pratique : **savoir si votre abonnement d'IA se
+rembourse — et en combien de temps.**
+
+---
+
+## 🏆 Décision multicritère (AHP-TOPSIS 2n) + Dossier du Joyau de la Couronne
+
+Avec plusieurs projets, lequel déployer d'abord ? Le modèle **AHP-TOPSIS 2n** pondère les indicateurs comme
+critères (poids par **AHP** avec ratio de cohérence **CR ≤ 0,10**) et classe par **TOPSIS** sur **deux
+normalisations** (vectorielle + min-max), en rapportant la **robustesse** (concordance entre normalisations). Le
+gagnant — le **« Joyau de la Couronne »** — reçoit un **dossier administratif** complet (SWOT · PESTELC · 5W4H ·
+Pareto · GUT · Radar) généré de zéro par le code, avec un **Bottom-Line** exécutif et des **insights C-Level**
+honnêtes. **Vous ne présentez pas un tableur. Vous présentez un verdict.**
+
+---
+
+## 🌐 12 langues
+
+Le tableau de bord, les pages par projet **et le texte à l'intérieur des images** des graphiques sont localisés en
+**12 langues** : Português · English · Español · Français · Deutsch · 中文 · 한국어 · हिन्दी · עברית · Svenska · Русский · Suomi.
+La traduction est pilotée par une **Translation Memory** (style SDL Trados) qui standardise et accélère les nouvelles langues.
+
+---
+
+## 🙋 Objections (les questions que vous vous posez maintenant)
+
+- **« Je n'ai pas le temps. »** → Cinq minutes avec `./run_all.sh --mock` et le tableau de bord tourne sur votre
+  écran. Mesurer vous **rend** les heures que vous perdez déjà en reprises et hallucinations.
+- **« C'est trop complexe. »** → Une ligne. Le framework fait l'ETL, les calculs, le classement et les images ;
+  **vous lisez juste le verdict.**
+- **« Mon opération d'IA est petite. »** → Justement, chaque dollar pèse davantage. Petit aujourd'hui, portefeuille
+  demain — **mesurez avant de déployer le gaspillage.**
+- **« Je n'utilise pas Langfuse. »** → La démo tourne **100 % sans Langfuse**. Pour des données réelles, vous
+  branchez **votre** compte (jamais le mien).
+- **« Ce n'est qu'un tableau de bord de plus. »** → Non. C'est **Balanced Scorecard + analyse d'investissement
+  (VAN/TRI/TRIM/AÉ) + décision multicritère (AHP-TOPSIS)** — des instruments de conseil, pas de la décoration.
+- **« Et la confidentialité de mes données ? »** → La démo est **100 % anonyme** (Project A…J) ; données/noms réels
+  et clés restent **hors du paquet**. Vous exécutez **en local**, avec **votre** compte.
+- **« Combien ça coûte ? »** → **Rien.** Open source, sur votre machine. Le seul prix, c'est de continuer à **ne
+  pas mesurer** — et celui-là, vous le payez déjà.
+
+---
+
+## 🧩 Skills incluses (*build & analyze your own*)
+
+Ce dépôt embarque des **Skills** réutilisables (Claude Code) :
+
+- **`measuring-ai-projects`** — définir/mesurer/rapporter les KPI de projets d'IA (le cœur de ce framework).
+- **`github-benchmark-analyzer`** — analyser et benchmarker **n'importe quel** dépôt/profil GitHub (étoiles, forks,
+  abonnés, hashtags, style de README, mots-clés, langages) et extraire ce que les leaders ont en commun.
+  **Construisez et analysez votre propre portefeuille** — même face au marché.
+
+---
+
+## 📚 Ressources & références (Awesome)
+
+Les épaules de géants sur lesquelles ce framework s'appuie :
+
+- **Stratégie & mesure :** Kaplan & Norton — *The Balanced Scorecard* · Peter Drucker (management par objectifs).
+- **Lean Six Sigma :** taxonomie des 8 gaspillages (Muda), PDCA/Kaizen, Ishikawa/RCA.
+- **Finance d'entreprise :** Lawrence Gitman — *Principes de gestion financière* (VAN, TRI, TRIM, IP).
+- **Décision multicritère :** Thomas Saaty (**AHP**) · Hwang & Yoon (**TOPSIS**).
+- **Stack technique :** [Langfuse](https://langfuse.com) (LLM observability) · [Evidence](https://evidence.dev)
+  (BI as Code) · [Rust/PyO3](https://pyo3.rs) · [Tectonic](https://tectonic-typesetting.github.io) (LaTeX).
+
+---
+
+## 🗺️ Feuille de route
+
+- [x] Pipeline Langfuse → SQLite → Evidence + Rust
+- [x] 70+ KPI (BSC + économie d'API + Lean) · EVM
+- [x] Financier (VAN, TRI, TRIM, AÉ, IP, délai de récupération, dollarisation)
+- [x] AHP-TOPSIS 2n + Dossier administratif (6 outils)
+- [x] Tableau de bord et images en **12 langues**
+- [ ] Connecteurs d'observabilité supplémentaires (OpenTelemetry, Helicone)
+- [ ] Mode SaaS multi-tenant + planification native
+- [ ] Publication du tableau de bord statique (GitHub Pages)
+
+---
+
+## 🤝 Contribuer
+
+Les contributions sont **très bienvenues** ! Ouvrez une *issue* décrivant votre proposition (nouveau KPI,
+connecteur, langue, correction) et envoyez une *pull request*. Standards : code lisible et cohérent avec son
+environnement, aucune donnée personnelle dans le paquet (la démo est anonyme). Nouvelles langues : ajoutez les
+cibles à la Translation Memory et lancez le générateur.
+
+## 📄 Licence & paternité
+
+© **Bruno Penedo** — 2026. Usage, étude et contribution encouragés ; pour un usage commercial/redistribution,
+consultez l'auteur. *(Une licence OSS formelle peut être ajoutée — ouvrez une issue avec votre préférence.)*
 
 ## 🏷️ Topics
-`project-management` · `kanban` · `task-management` · `dashboard` · `executive-dashboard` ·
-`business-intelligence` · `analytics` · `data-visualization` · `kpi` · `metrics` ·
-`balanced-scorecard` · `llm` · `ai` · `llm-observability` · `llmops` · `langfuse` · `roi` ·
-`agile` · `scrum` · `python`
+`awesome-list` · `education` · `resources` · `computer-science` · `python` · `business-intelligence` ·
+`llmops` · `finops` · `aiops` · `programming` · `development` · `lists` · `free` · `unicorns` · `dashboard` ·
+`balanced-scorecard` · `langfuse` · `llm-observability` · `kpi` · `project-management`
+
+---
+
+⭐ **Si ce framework éclaire votre dépense en IA, laissez une étoile — et commencez à tirer profit de ce que vous payez déjà.**
 
 ---
 
