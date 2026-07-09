@@ -33,8 +33,18 @@ echo "▶️  Calculando VPL/Payback (fluxo_caixa.csv se existir, senão demo)..
 python3 carregar_fluxo.py || echo "  (VPL pulado)"
 python3 seed_planos.py || echo "  (planos pulado)"
 
+echo "▶️  Simulação de Monte Carlo dos fluxos de caixa (10k iterações, estilo SimulAr)..."
+python3 monte_carlo.py || echo "  (Monte Carlo pulado)"
+
 echo "▶️  Decisão multicritério AHP-TOPSIS 2n (melhor projeto)..."
 python3 ahp_topsis.py || echo "  (MCDA pulado)"
+
+echo "▶️  Decisão multicritério integrada DEMATEL → ELECTRE · PROMETHEE · MAUT · MCDA-C..."
+python3 mcdm.py || echo "  (MCDM pulado)"
+
+echo "▶️  Gerando gráficos de Monte Carlo (histograma + tornado, estilo SimulAr)..."
+python3 gerar_mc_graficos.py || echo "  (gráficos MC pulados)"
+python3 gerar_mcdm_graficos.py || echo "  (gráficos MCDM pulados)"
 
 echo "▶️  Gerando Dossiê Administrativo da Jóia da Coroa (concorrente: SWOT/PESTEL/5W4H/Pareto/GUT/Radar)..."
 python3 gerar_admtools.py || echo "  (admtools pulado)"

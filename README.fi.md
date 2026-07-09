@@ -5,7 +5,8 @@
 ![Method](https://img.shields.io/badge/method-Balanced%20Scorecard-1F3A5F)
 ![AI](https://img.shields.io/badge/AI-LLM%20observability-45a1bf)
 ![Finance](https://img.shields.io/badge/finance-NPV%20·%20IRR%20·%20MIRR%20·%20PI-46a485)
-![Decision](https://img.shields.io/badge/decision-AHP--TOPSIS%202n-8E44AD)
+![Decision](https://img.shields.io/badge/MCDM-DEMATEL%20·%20ELECTRE%20·%20PROMETHEE%20·%20MAUT%20·%20MCDA--C-8E44AD)
+![Risk](https://img.shields.io/badge/risk-Monte%20Carlo%2010k%20·%20VaR%20·%20CVaR-DC143C)
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
 ![Rust](https://img.shields.io/badge/Rust-PyO3-orange?logo=rust&logoColor=white)
 ![Dashboard](https://img.shields.io/badge/dashboard-Evidence-236aa4)
@@ -64,6 +65,8 @@ Tekoälystä maksamisen ja sillä **ansaitsemisen** välillä.
 - [📊 KPI-luettelo](#-kpi-luettelo-70)
 - [💰 Investointitason talousanalyysi](#-investointitason-talousanalyysi)
 - [🏆 Monikriteeripäätös + Dossier](#-monikriteeripäätös-ahp-topsis-2n--kruununjalokivi-dossier)
+- [🎲 Monte Carlo — riski, jonka keskiarvo kätkee](#-monte-carlo--riski-jonka-keskiarvo-kätkee)
+- [🧮 Viisi päätöksenteon koulukuntaa. Yksi tuomio.](#-viisi-päätöksenteon-koulukuntaa-yksi-tuomio)
 - [🌐 12 kieltä](#-12-kieltä)
 - [🙋 Vastaväitteet (kysymykset, joita kysyt itseltäsi juuri nyt)](#-vastaväitteet-kysymykset-joita-kysyt-itseltäsi-juuri-nyt)
 - [🧩 Mukana tulevat Skillit](#-mukana-tulevat-skillit-build--analyze-your-own)
@@ -277,6 +280,79 @@ Kun projekteja on useita, minkä skaalata ensin? **AHP-TOPSIS 2n** -malli painot
 + min-max), raportoiden **robustisuuden** (normalisointien välinen yhtäpitävyys). Voittaja — **"Kruununjalokivi"** —
 saa täyden **hallinnollisen dossierin** (SWOT · PESTELC · 5W4H · Pareto · GUT · Radar), joka luodaan tyhjästä koodilla,
 johtotason **Bottom-Linen** ja rehellisten **johtotason oivallusten** kera. **Et esitä taulukkoa. Esität tuomion.**
+
+---
+
+## 🎲 Monte Carlo — riski, jonka keskiarvo kätkee
+
+**Keskimäärin** positiivinen NPV ei suojaa ketään. Keskiarvo on rahoituksen mukavin valhe: se kuvaa skenaariota, jota
+ei ehkä koskaan tule. Kohtalosi ratkaisee **häntä** — se huono päivä.
+
+Tämä kehys simuloi **10 000 tulevaisuutta** jokaiselle projektille (moottori yhteensopiva **SimulAr v2.5**:n kanssa,
+Luciano Machain, UNR/Argentiina): jokainen kassavirta muuttuu **satunnaismuuttujaksi** ja koko salkku lasketaan uudelleen
+iteraatio kerrallaan. Lopussa sinulla ei ole lukua — sinulla on **rahojesi koko jakauma**:
+
+- **`P(NPV < 0)`** — todellinen tappion todennäköisyys. Se luku, jota kukaan ei näytä sinulle.
+- **VaR 5 %** — pahin uskottava skenaario: *"19:ssä tulevaisuudessa 20:stä ansaitsen vähintään tämän."*
+- **CVaR 5 %** — kun katastrofi todella iskee, paljonko se keskimäärin maksaa.
+- **Herkkyystornado** — monimuuttujaregressio ja Pearsonin korrelaatio: mikä muuttuja todella liikuttaa NPV:täsi.
+- **20 syötejakaumaa**, validoitu **korrelaatiomatriisi** (Iman-Conover, joka säilyttää reunajakaumat täsmälleen) ja
+  **prosenttipisteet 1 %:sta 99 %:iin**, sekä 100 luokan histogrammi, identtinen SimulArin käsikirjan kanssa.
+
+Kiinteä siemen: aja uudelleen ja saat **täsmälleen** saman tuloksen. Auditoitavaa — ei "taikuutta".
+
+> **Käännekohta:** lakkaat valitsemasta korkeimman NPV:n projektia ja alat valita **sitä, joka selviää huonosta
+> skenaariosta**. Se on riskienhallintaa — se erottaa sijoittajan pelurista.
+
+![Histograma de Monte Carlo do VPL — 10.000 iterações, 100 classes](docs/screenshots/mc-histograma.png)
+
+| NPV:n kertymäjakauma | Herkkyystornado |
+|---|---|
+| ![NPV:n kertymäjakauma](docs/screenshots/mc-acumulado.png) | ![Herkkyystornado](docs/screenshots/mc-tornado.png) |
+
+---
+
+## 🧮 Viisi päätöksenteon koulukuntaa. Yksi tuomio.
+
+Yksi menetelmä voi erehtyä. Viisi samaa mieltä olevaa menetelmää ei.
+
+Seuraten **Johnin (2025)** arkkitehtuuria — *Integration of DEMATEL with Other MCDM Methods* — **DEMATEL** kartoittaa
+kriteerien välisen syy-rakenteen ja erottaa **syyt** (vivut, joihin tarttua) **seurauksista** (jo tehdyn lämpömittarit).
+Näistä vaikutussilmukoista syntyvät **painot**: ei mielivaltaisesti asetettuja, vaan **ongelman rakenteesta johdettuja**.
+Ne ruokkivat neljää kilpailevaa koulukuntaa:
+
+| Menetelmä | Koulukunta | Mitä se kysyy |
+|---|---|---|
+| **ELECTRE I** | Ylivertaisuus | "Kuka ylittää kenet — ja kuka selviää hallitsemattomana?" |
+| **PROMETHEE II** | Ylivertaisuus | "Mikä on kunkin projektin nettopreferenssivirta?" |
+| **MAUT** | Hyöty | "Mikä maksimoi riskiä karttavan päättäjän hyödyn?" |
+| **MCDA-C** | Konstruktivistinen | "Kuka on *Hyvä*-tason yläpuolella — ja kuka *Neutraalin* alapuolella?" |
+| **AHP-TOPSIS 2n** | Etäisyys ideaaliin | "Kuka on lähinnä ideaaliratkaisua molemmissa normalisoinneissa?" |
+
+Voittaja nousee viiden **Borda-konsensuksesta**, jo Monte Carlolla **riskikorjattuna**. Ja kun menetelmät ovat **eri
+mieltä**, dashboard näyttää erimielisyyden — sillä sekin on informaatiota: valinta on herkkä päätöskoulukunnalle ja
+ansaitsee päättäjän silmän.
+
+| DEMATEL — syyt × seuraukset | Sijoitus menetelmittäin |
+|---|---|
+| ![DEMATEL — syyt × seuraukset](docs/screenshots/dematel.png) | ![Sijoitus menetelmittäin](docs/screenshots/mcdm-metodos.png) |
+
+### 💼 Mikä muuttuu arjessasi — freelancerista konserniin
+
+Sillä ei ole väliä, maksatko **20 US$ PRO-tilauksesta** vai **200 000 US$ yrityssopimuksista**: hukan matematiikka on
+sama — vain nollien määrä muuttuu.
+
+| | **Pk-yritys / freelancer** | **Suuryritys** |
+|---|---|---|
+| **Todellinen kipu** | 3 tilausta, nolla näkyvyyttä, tiukka kassa | 40 tekoälypilottia, yhtäkään ei ole kohdennettu tulokseen |
+| **Monte Carlo antaa** | *"tällä projektilla on 12 % todennäköisyys tappiolle, ja huono kuukausi maksaa 3 400 US$"* | VaR/CVaR liiketoimintayksiköittäin: koottu, auditoitava riski — ei anekdootti |
+| **MCDM antaa** | minkä kolmesta projektista skaalaat **ensin** olemassa olevalla rahalla | mikä 40 pilotista muuttuu tuotteeksi — puolustettavissa komiteassa, menetelmä näkyvissä |
+| **Hyöty jo huomenna** | irtisano tilaus, joka ei maksa itseään takaisin — jo tällä viikolla | kohdenna budjetti **näytön** perusteella, ei sisäpolitiikan |
+
+**Käytännössä:** **tornado** osoittaa muuttujan, joka liikuttaa tulosta — eli **mihin sijoitat seuraavan työtuntisi**.
+**DEMATEL** paljastaa, että hallusinaation vähentäminen (IITA) on **syy**, ei oire: toimi siellä, niin NPV, IRR ja riski
+paranevat *yhdessä*. Näin tekoälyn hallinnasta lakkaa olemasta mielipide ja tulee **insinööritaitoa**.
+
 
 ---
 

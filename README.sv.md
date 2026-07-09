@@ -5,7 +5,8 @@
 ![Method](https://img.shields.io/badge/method-Balanced%20Scorecard-1F3A5F)
 ![AI](https://img.shields.io/badge/AI-LLM%20observability-45a1bf)
 ![Finance](https://img.shields.io/badge/finance-NPV%20·%20IRR%20·%20MIRR%20·%20PI-46a485)
-![Decision](https://img.shields.io/badge/decision-AHP--TOPSIS%202n-8E44AD)
+![Decision](https://img.shields.io/badge/MCDM-DEMATEL%20·%20ELECTRE%20·%20PROMETHEE%20·%20MAUT%20·%20MCDA--C-8E44AD)
+![Risk](https://img.shields.io/badge/risk-Monte%20Carlo%2010k%20·%20VaR%20·%20CVaR-DC143C)
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
 ![Rust](https://img.shields.io/badge/Rust-PyO3-orange?logo=rust&logoColor=white)
 ![Dashboard](https://img.shields.io/badge/dashboard-Evidence-236aa4)
@@ -64,6 +65,8 @@ Norton), **investeringsanalys på Wall Street-nivå** och **flerkriteriebeslut**
 - [📊 KPI-katalog](#-kpi-katalog-70)
 - [💰 Finansiell investeringsanalys](#-finansiell-investeringsanalys)
 - [🏆 Flerkriteriebeslut + Dossier](#-flerkriteriebeslut-ahp-topsis-2n--kronjuvelsdossier)
+- [🎲 Monte Carlo — risken som medelvärdet döljer](#-monte-carlo--risken-som-medelvärdet-döljer)
+- [🧮 Fem beslutsskolor. En dom.](#-fem-beslutsskolor-en-dom)
 - [🌐 12 språk](#-12-språk)
 - [🙋 Invändningar (frågorna du ställer dig just nu)](#-invändningar-frågorna-du-ställer-dig-just-nu)
 - [🧩 Medföljande Skills](#-medföljande-skills-build--analyze-your-own)
@@ -275,6 +278,79 @@ min-max), och rapporterar **robusthet** (överensstämmelse mellan normalisering
 får ett fullständigt **administrativt dossier** (SWOT · PESTELC · 5W4H · Pareto · GUT · Radar) genererat från grunden
 av kod, med en verkställande **Bottom-Line** och ärliga **C-nivå-insikter**. **Du presenterar inte ett kalkylark. Du
 presenterar en dom.**
+
+---
+
+## 🎲 Monte Carlo — risken som medelvärdet döljer
+
+Ett **i genomsnitt** positivt NPV skyddar ingen. Medelvärdet är finansvärldens bekvämaste lögn: det beskriver ett
+scenario som kanske aldrig inträffar. Det som avgör ditt öde är **svansen** — den dåliga dagen.
+
+Detta ramverk simulerar **10 000 framtider** för varje projekt (motor kompatibel med **SimulAr v2.5**, av Luciano
+Machain, UNR/Argentina): varje kassaflöde blir en **slumpvariabel** och hela portföljen räknas om iteration för
+iteration. Till slut har du inte ett tal — du har **hela fördelningen av dina pengar**:
+
+- **`P(NPV < 0)`** — den verkliga sannolikheten för förlust. Talet ingen visar dig.
+- **VaR 5 %** — det värsta rimliga scenariot: *"i 19 av 20 framtider tjänar jag minst detta."*
+- **CVaR 5 %** — när katastrofen väl inträffar, vad den kostar i genomsnitt.
+- **Känslighetstornado** — multipel regression och Pearsonkorrelation: vilken variabel som verkligen rör ditt NPV.
+- **20 indatafördelningar**, en validerad **korrelationsmatris** (Iman-Conover, som bevarar marginalfördelningarna
+  exakt) och **percentiler från 1 % till 99 %**, med ett histogram på 100 klasser identiskt med SimulAr-manualens.
+
+Fast frö: kör igen och du får **exakt** samma resultat. Granskningsbart — inte "magi".
+
+> **Vändningen:** du slutar välja projektet med högst NPV och börjar välja **det som överlever det dåliga scenariot**.
+> Det är riskhantering — det som skiljer investeraren från spelaren.
+
+![Histograma de Monte Carlo do VPL — 10.000 iterações, 100 classes](docs/screenshots/mc-histograma.png)
+
+| Kumulativ fördelning av NPV | Känslighetstornado |
+|---|---|
+| ![Kumulativ fördelning av NPV](docs/screenshots/mc-acumulado.png) | ![Känslighetstornado](docs/screenshots/mc-tornado.png) |
+
+---
+
+## 🧮 Fem beslutsskolor. En dom.
+
+En metod kan ha fel. Fem metoder som är eniga kan det inte.
+
+Enligt arkitekturen hos **John (2025)** — *Integration of DEMATEL with Other MCDM Methods* — kartlägger **DEMATEL** den
+kausala strukturen mellan kriterierna och skiljer **orsaker** (spakar att agera på) från **verkningar** (termometrar för
+det som redan gjorts). Ur dessa inflytandeslingor föds **vikterna**: inte godtyckliga, utan **härledda ur problemets
+struktur**. De matar fyra rivaliserande skolor:
+
+| Metod | Skola | Vad den frågar |
+|---|---|---|
+| **ELECTRE I** | Överklassning | "Vem överklassar vem — och vem överlever odominerad?" |
+| **PROMETHEE II** | Överklassning | "Vad är varje projekts nettopreferensflöde?" |
+| **MAUT** | Nytta | "Vilket maximerar nyttan för en riskavert beslutsfattare?" |
+| **MCDA-C** | Konstruktivistisk | "Vem ligger över nivån *Bra* — och vem under *Neutral*?" |
+| **AHP-TOPSIS 2n** | Avstånd till idealet | "Vem är närmast ideallösningen i båda normaliseringarna?" |
+
+Vinnaren kommer ur **Borda-konsensus** mellan de fem, redan **riskjusterad** av Monte Carlo. Och när metoderna är
+**oense** visar dashboarden oenigheten — för det är information: valet är känsligt för beslutsskolan och förtjänar
+beslutsfattarens öga.
+
+| DEMATEL — orsaker × verkningar | Placering per metod |
+|---|---|
+| ![DEMATEL — orsaker × verkningar](docs/screenshots/dematel.png) | ![Placering per metod](docs/screenshots/mcdm-metodos.png) |
+
+### 💼 Vad som ändras i din vardag — från frilansare till koncern
+
+Det spelar ingen roll om du betalar **20 US$ på ett PRO-abonnemang** eller **200 000 US$ i företagsavtal**: matematiken
+för slöseri är densamma — bara antalet nollor ändras.
+
+| | **SMB / frilansare** | **Storföretag** |
+|---|---|---|
+| **Den verkliga smärtan** | 3 abonnemang, noll överblick, tight kassa | 40 AI-piloter, ingen med tillskrivet resultat |
+| **Monte Carlo levererar** | *"detta projekt har 12 % risk att gå med förlust, och den dåliga månaden kostar 3 400 US$"* | VaR/CVaR per affärsenhet: aggregerad, granskningsbar risk — inte anekdot |
+| **MCDM levererar** | vilket av de 3 projekten som ska skalas **först**, med pengarna som finns | vilken av de 40 piloterna som blir produkt — försvarbart i kommittén, metoden explicit |
+| **Vinsten redan imorgon** | säg upp abonnemanget som inte betalar sig, redan denna vecka | omfördela budget på **evidens**, inte på internpolitik |
+
+**I praktiken:** **tornadon** pekar ut variabeln som rör resultatet — alltså **var du ska investera din nästa
+arbetstimme**. **DEMATEL** avslöjar att minska hallucination (IITA) är en **orsak**, inte ett symptom: agera där, så
+förbättras NPV, IRR och risk *tillsammans*. Det är AI-styrning som slutar vara åsikt och blir **ingenjörskonst**.
+
 
 ---
 

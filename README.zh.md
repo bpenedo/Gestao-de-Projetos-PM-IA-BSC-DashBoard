@@ -5,7 +5,8 @@
 ![Method](https://img.shields.io/badge/method-Balanced%20Scorecard-1F3A5F)
 ![AI](https://img.shields.io/badge/AI-LLM%20observability-45a1bf)
 ![Finance](https://img.shields.io/badge/finance-NPV%20·%20IRR%20·%20MIRR%20·%20PI-46a485)
-![Decision](https://img.shields.io/badge/decision-AHP--TOPSIS%202n-8E44AD)
+![Decision](https://img.shields.io/badge/MCDM-DEMATEL%20·%20ELECTRE%20·%20PROMETHEE%20·%20MAUT%20·%20MCDA--C-8E44AD)
+![Risk](https://img.shields.io/badge/risk-Monte%20Carlo%2010k%20·%20VaR%20·%20CVaR-DC143C)
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
 ![Rust](https://img.shields.io/badge/Rust-PyO3-orange?logo=rust&logoColor=white)
 ![Dashboard](https://img.shields.io/badge/dashboard-Evidence-236aa4)
@@ -60,6 +61,8 @@
 - [📊 KPI 目录](#-kpi-目录70)
 - [💰 投资级财务分析](#-投资级财务分析)
 - [🏆 多准则决策 + 档案](#-多准则决策ahp-topsis-2n-皇冠明珠档案)
+- [🎲 蒙特卡洛 — 平均值掩盖的风险](#-蒙特卡洛--平均值掩盖的风险)
+- [🧮 五种决策学派，一个裁决](#-五种决策学派一个裁决)
 - [🌐 12 种语言](#-12-种语言)
 - [🙋 异议（你此刻正在问自己的问题）](#-异议你此刻正在问自己的问题)
 - [🧩 内置 Skills](#-内置-skillsbuild--analyze-your-own)
@@ -244,6 +247,72 @@ tectonic (LaTeX) · 用于图片 i18n 的 Noto/WenQuanYi 字体。
 （向量 + 最小-最大）下用 **TOPSIS** 排名，报告**稳健性**（两种归一化之间的一致度）。获胜者——**「皇冠明珠」**——获得一份由代码从零
 生成的完整**管理档案**（SWOT · PESTELC · 5W4H · Pareto · GUT · Radar），附带高管级 **Bottom-Line** 与诚实的 **C 级洞察**。
 **你呈上的不是一张表格。你呈上的是一份裁决。**
+
+---
+
+## 🎲 蒙特卡洛 — 平均值掩盖的风险
+
+**平均**为正的 NPV 保护不了任何人。平均值是金融里最舒适的谎言：它描述的场景也许永远不会发生。决定你命运的是**尾部**——那个糟糕的日子。
+
+本框架为每个项目模拟 **10,000 个未来**（引擎兼容 Luciano Machain（阿根廷罗萨里奥国立大学）的 **SimulAr v2.5**）：每一笔现金流都成为
+**随机变量**，整个组合逐次迭代重算。最后你得到的不是一个数字，而是**你金钱的完整分布**：
+
+- **`P(NPV < 0)`** — 真实的亏损概率。没人给你看的那个数字。
+- **VaR 5%** — 最坏的合理情形：*「在 20 个未来中的 19 个里，我至少赚这么多。」*
+- **CVaR 5%** — 灾难真的发生时，平均要付出多少代价。
+- **敏感性龙卷风图** — 多元回归与皮尔逊相关：究竟哪个变量在真正牵动你的 NPV。
+- **20 种输入分布**、经校验的**相关矩阵**（Iman-Conover，精确保留边缘分布）以及 **1% 至 99% 的百分位**，
+  并附与 SimulAr 手册完全一致的 100 类直方图。
+
+固定随机种子：再跑一次得到**完全相同**的结果。可审计——而非「魔法」。
+
+> **转折点：** 你不再挑 NPV 最高的项目，而是挑**在坏情形下仍能存活的项目**。这就是风险管理——投资者与赌徒的分界线。
+
+![Histograma de Monte Carlo do VPL — 10.000 iterações, 100 classes](docs/screenshots/mc-histograma.png)
+
+| NPV 的累积分布 | 敏感性龙卷风图 |
+|---|---|
+| ![NPV 的累积分布](docs/screenshots/mc-acumulado.png) | ![敏感性龙卷风图](docs/screenshots/mc-tornado.png) |
+
+---
+
+## 🧮 五种决策学派，一个裁决
+
+一个方法可能出错。五个方法一致，则不会。
+
+依循 **John (2025)** 的架构 —— *Integration of DEMATEL with Other MCDM Methods* —— **DEMATEL** 绘制准则之间的因果结构，
+把**因**（可施力的杠杆）与**果**（既有作为的温度计）分开。由这些影响回路生成**权重**：不是拍脑袋定的，而是**由问题结构导出的**。
+它们供给四个相互竞争的学派：
+
+| 方法 | 学派 | 它在问什么 |
+|---|---|---|
+| **ELECTRE I** | 级别高于关系 | 「谁胜过谁——谁能不被支配地存活？」 |
+| **PROMETHEE II** | 级别高于关系 | 「每个项目的净偏好流是多少？」 |
+| **MAUT** | 效用 | 「哪个能最大化风险厌恶决策者的效用？」 |
+| **MCDA-C** | 建构主义 | 「谁高于「好」的水平——谁低于「中性」？」 |
+| **AHP-TOPSIS 2n** | 到理想解的距离 | 「在两种归一化下，谁离理想解最近？」 |
+
+最终赢家来自五者的 **Borda 共识**，并已由蒙特卡洛做过**风险调整**。当各方法**意见不一**时，仪表盘会把分歧显示出来——
+因为那正是信息：该选择对决策学派敏感，值得决策者亲自过目。
+
+| DEMATEL — 因 × 果 | 各方法下的排名 |
+|---|---|
+| ![DEMATEL — 因 × 果](docs/screenshots/dematel.png) | ![各方法下的排名](docs/screenshots/mcdm-metodos.png) |
+
+### 💼 这在你的日常中改变了什么 —— 从自由职业者到大型企业
+
+无论你付的是 **PRO 计划的每月 20 美元**，还是 **20 万美元的企业合同**：浪费的数学是同一套，变的只是零的个数。
+
+| | **中小企业 / 自由职业者** | **大型企业** |
+|---|---|---|
+| **真正的痛点** | 3 个订阅、零可见性、现金紧张 | 40 个 AI 试点，无一能归因到损益 |
+| **蒙特卡洛给出** | *「这个项目有 12% 的概率亏损，糟糕的那个月要花 3,400 美元」* | 按业务单元的 VaR/CVaR：可聚合、可审计的风险，而非轶事 |
+| **多准则决策给出** | 用现有的钱，先扩张 3 个项目中的哪一个 | 40 个试点中哪个变成产品 —— 方法公开，可在委员会上站得住脚 |
+| **第二天的收益** | 本周就砍掉那个回不了本的订阅 | 依**证据**重新分配预算，而非依内部政治 |
+
+**实操上：** **龙卷风图**指出真正牵动结果的变量 —— 也就是**你下一个小时该投在哪里**。**DEMATEL** 揭示：降低幻觉（IITA）是**因**，
+不是症状 —— 在那里发力，NPV、IRR 和风险会*一起*变好。这就是 AI 管理从「意见」变成「**工程**」。
+
 
 ---
 

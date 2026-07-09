@@ -5,7 +5,8 @@
 ![Method](https://img.shields.io/badge/method-Balanced%20Scorecard-1F3A5F)
 ![AI](https://img.shields.io/badge/AI-LLM%20observability-45a1bf)
 ![Finance](https://img.shields.io/badge/finance-NPV%20·%20IRR%20·%20MIRR%20·%20PI-46a485)
-![Decision](https://img.shields.io/badge/decision-AHP--TOPSIS%202n-8E44AD)
+![Decision](https://img.shields.io/badge/MCDM-DEMATEL%20·%20ELECTRE%20·%20PROMETHEE%20·%20MAUT%20·%20MCDA--C-8E44AD)
+![Risk](https://img.shields.io/badge/risk-Monte%20Carlo%2010k%20·%20VaR%20·%20CVaR-DC143C)
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
 ![Rust](https://img.shields.io/badge/Rust-PyO3-orange?logo=rust&logoColor=white)
 ![Dashboard](https://img.shields.io/badge/dashboard-Evidence-236aa4)
@@ -64,6 +65,8 @@ Entre pagar pela IA e **lucrar** com ela.
 - [📊 Catálogo de KPIs](#-catálogo-de-kpis-70)
 - [💰 Análise financeira de investimento](#-análise-financeira-de-investimento)
 - [🏆 Decisão multicritério + Dossiê](#-decisão-multicritério-ahp-topsis-2n--dossiê-da-jóia-da-coroa)
+- [🎲 Monte Carlo — o risco que a média esconde](#-monte-carlo--o-risco-que-a-média-esconde)
+- [🧮 Cinco escolas de decisão. Um único veredito.](#-cinco-escolas-de-decisão-um-único-veredito)
 - [🌐 12 idiomas](#-12-idiomas)
 - [🙋 Objeções (as perguntas que você está se fazendo agora)](#-objeções-as-perguntas-que-você-está-se-fazendo-agora)
 - [🧩 Skills incluídas](#-skills-incluídas-build--analyze-your-own)
@@ -167,8 +170,11 @@ minutos**. A pergunta não é *"posso pagar para medir?"*. É ***"quanto tempo m
   Six Sigma** (tokens ponderados) e **RCA de alucinação por taxonomia de prompt** (gargalo por projeto + interseção).
 - **💰 Financeiro completo:** **VPL/NPV, TIR/IRR, TIRM (TIR Modificada/MIRR), VUL (Valor Uniforme Líquido),
   ILL (PI), Payback** simples e descontado, **dolarização** e comparação com **SELIC** e os **juros dos EUA**.
-- **🏆 Decisão multicritério:** **AHP-TOPSIS 2n** (dupla normalização) elege o **melhor projeto** do portfólio
-  com **teste de robustez** — e gera um **dossiê administrativo** (SWOT, PESTELC, 5W4H, Pareto, GUT, Radar).
+- **🏆 Decisão multicritério (5 métodos):** **DEMATEL** (estrutura causal + pesos por influência) alimentando
+  **ELECTRE I · PROMETHEE II · MAUT · MCDA-C · AHP-TOPSIS 2n**, com **consenso de Borda** e **dossiê administrativo**
+  (SWOT, PESTELC, 5W4H, Pareto, GUT, Radar).
+- **🎲 Risco (Monte Carlo, estilo SimulAr v2.5):** **10.000 iterações** por projeto, **20 distribuições**, matriz de
+  correlação (Iman-Conover), **P(VPL<0)**, **VaR/CVaR 5%**, percentis 1–99% e **tornado** (regressão + correlação).
 - **🗺️ Visual C-Level:** **mapa 5D interativo**, donuts com profundidade, quadrante de sustentabilidade,
   tendências e **pitch decks** em LaTeX dos projetos elegíveis.
 - **⚙️ Pipeline real:** **Langfuse → SQLite → Evidence**, com sync **assíncrono concorrente** e classificação
@@ -278,6 +284,79 @@ normalizações** (vetorial + min-max), reportando a **robustez** (concordância
 — a **"Jóia da Coroa"** — recebe um **dossiê administrativo** completo (SWOT · PESTELC · 5W4H · Pareto · GUT ·
 Radar) gerado do zero por código, com um **Bottom-Line executivo** e **insights C-Level** honestos. **Você não
 apresenta uma planilha. Você apresenta um veredito.**
+
+---
+
+## 🎲 Monte Carlo — o risco que a média esconde
+
+Um VPL positivo **na média** não protege ninguém. A média é a mentira mais confortável das finanças: descreve
+um cenário que talvez nunca aconteça. Quem decide o seu destino é a **cauda** — o dia ruim.
+
+Este framework simula **10.000 futuros** para cada projeto (motor compatível com o **SimulAr v2.5**, de Luciano
+Machain, UNR/Argentina): cada fluxo de caixa vira uma **variável aleatória** e o portfólio é reprocessado iteração
+a iteração. No fim você não tem um número — você tem **a distribuição inteira do seu dinheiro**:
+
+- **`P(VPL < 0)`** — a probabilidade real de prejuízo. O número que ninguém te mostra.
+- **VaR 5%** — o pior cenário plausível: *"em 19 de cada 20 futuros, eu ganho pelo menos isto."*
+- **CVaR 5%** — quando o desastre acontece, quanto ele custa em média.
+- **Tornado de sensibilidade** — regressão múltipla e correlação de Pearson: qual variável realmente move o seu VPL.
+- **20 distribuições** de entrada, **matriz de correlação** validada (Iman-Conover, que preserva as marginais exatas)
+  e **percentis de 1% a 99%**, com histograma de 100 classes idêntico ao do manual do SimulAr.
+
+Semente fixa: rodar de novo dá **exatamente** o mesmo resultado. Auditável — não "mágico".
+
+> **A virada:** você para de escolher o projeto de maior VPL e passa a escolher **o que sobrevive ao cenário ruim**.
+> Isso é gestão de risco — é o que separa o investidor do apostador.
+
+![Histograma de Monte Carlo do VPL — 10.000 iterações, 100 classes](docs/screenshots/mc-histograma.png)
+
+| Distribuição acumulada do VPL | Tornado de sensibilidade |
+|---|---|
+| ![Distribuição acumulada do VPL](docs/screenshots/mc-acumulado.png) | ![Tornado de sensibilidade](docs/screenshots/mc-tornado.png) |
+
+---
+
+## 🧮 Cinco escolas de decisão. Um único veredito.
+
+Um método pode errar. Cinco métodos concordando, não.
+
+Seguindo a arquitetura de **John (2025)** — *Integration of DEMATEL with Other MCDM Methods* —, o **DEMATEL** mapeia
+a estrutura causal entre os critérios e separa **causas** (alavancas onde agir) de **efeitos** (termômetros do que já
+foi feito). Desses laços de influência nascem os **pesos**: não arbitrados, mas **derivados da estrutura do problema**.
+Eles alimentam quatro escolas rivais:
+
+| Método | Escola | O que pergunta |
+|---|---|---|
+| **ELECTRE I** | Sobreclassificação | "Quem domina quem — e quem sobrevive sem ser dominado?" |
+| **PROMETHEE II** | Sobreclassificação | "Qual o fluxo líquido de preferência de cada projeto?" |
+| **MAUT** | Utilidade | "Qual maximiza a utilidade de um decisor avesso a risco?" |
+| **MCDA-C** | Construtivista | "Quem está acima do nível *Bom* — e quem está abaixo do *Neutro*?" |
+| **AHP-TOPSIS 2n** | Distância ao ideal | "Quem está mais perto da solução ideal nas duas normalizações?" |
+
+O vencedor sai do **consenso de Borda** entre os cinco, já **ajustado ao risco** do Monte Carlo. E quando os métodos
+**discordam**, o dashboard mostra a discordância — porque isso é informação: a escolha é sensível à escola de decisão
+e merece o olho do decisor.
+
+| DEMATEL — causas × efeitos | Posição por método |
+|---|---|
+| ![DEMATEL — causas × efeitos](docs/screenshots/dematel.png) | ![Posição por método](docs/screenshots/mcdm-metodos.png) |
+
+### 💼 O que isso muda no seu dia — do autônomo à corporação
+
+Não importa se você paga **US$ 20 num plano PRO** ou **US$ 200 mil em contratos enterprise**: a matemática do
+desperdício é a mesma — só muda o número de zeros.
+
+| | **SMB / autônomo** | **Grande empresa** |
+|---|---|---|
+| **A dor real** | 3 assinaturas, zero visibilidade, caixa curto | 40 pilotos de IA, nenhum com P&L atribuído |
+| **O Monte Carlo entrega** | *"este projeto tem 12% de chance de dar prejuízo, e o mês ruim custa R$ 3,4 mil"* | VaR/CVaR por unidade de negócio: risco agregado e auditável, não anedota |
+| **O MCDM entrega** | qual dos 3 projetos escalar **primeiro**, com o dinheiro que existe | qual dos 40 pilotos vira produto — defensável em comitê, com o método explícito |
+| **O ganho no dia seguinte** | cancela a assinatura que não se paga, ainda nesta semana | realoca orçamento por **evidência**, não por política interna |
+
+**Na prática:** o **tornado** aponta a variável que move o resultado — ou seja, **onde investir a sua próxima hora de
+trabalho**. O **DEMATEL** revela que reduzir alucinação (IITA) é **causa**, não sintoma: você mexe ali e VPL, TIR e
+risco melhoram *juntos*. É a gestão de IA deixando de ser opinião e virando **engenharia**.
+
 
 ---
 

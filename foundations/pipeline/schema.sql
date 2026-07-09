@@ -144,3 +144,99 @@ CREATE TABLE IF NOT EXISTS reuniao_weekly (
     acoes_corretivas_lean TEXT,
     PRIMARY KEY (data_reuniao, project_name)
 );
+
+-- ===========================================================================
+-- 7. DEMATEL — matriz de relação total, proeminência (R+C), relação (R-C).
+--    Arquitetura de integração conforme John, J. (2025), "Integration of
+--    DEMATEL with Other MCDM Methods for Comprehensive Techno-Economic
+--    Analysis": DEMATEL deriva pesos por influência que alimentam os
+--    métodos de ranqueamento (ELECTRE, PROMETHEE, MAUT, MCDA-C, TOPSIS).
+-- ===========================================================================
+CREATE TABLE IF NOT EXISTS dematel_criterio (
+    criterio     TEXT PRIMARY KEY,
+    rotulo       TEXT,
+    r            REAL,     -- soma da linha da matriz total T (influência exercida)
+    c            REAL,     -- soma da coluna da matriz total T (influência recebida)
+    prominencia  REAL,     -- R + C  (importância no sistema)
+    relacao      REAL,     -- R - C  (> 0 = causa; < 0 = efeito)
+    papel        TEXT,     -- 'causa' | 'efeito'
+    peso         REAL      -- peso normalizado derivado de sqrt((R+C)^2 + (R-C)^2)
+);
+
+CREATE TABLE IF NOT EXISTS dematel_relacao (
+    origem        TEXT,
+    destino       TEXT,
+    intensidade   REAL,     -- t_ij da matriz de relação total
+    acima_limiar  INTEGER,  -- 1 se t_ij > limiar alpha (aresta do diagrama de influência)
+    PRIMARY KEY (origem, destino)
+);
+
+-- 8. Ranking por método MCDM (formato longo) + consenso entre métodos.
+CREATE TABLE IF NOT EXISTS decisao_mcdm (
+    project_name TEXT,
+    metodo       TEXT,     -- 'ELECTRE I' | 'PROMETHEE II' | 'MAUT' | 'MCDA-C' | 'AHP-TOPSIS 2n'
+    score        REAL,
+    rank_        INTEGER,
+    PRIMARY KEY (project_name, metodo)
+);
+
+CREATE TABLE IF NOT EXISTS decisao_consenso (
+    project_name  TEXT PRIMARY KEY,
+    rank_medio    REAL,     -- média das posições entre os métodos
+    borda         INTEGER,  -- pontos de Borda (n - posição), somados
+    rank_final    INTEGER,
+    unanime       INTEGER   -- 1 se todos os métodos deram a mesma posição
+);
+
+-- ===========================================================================
+-- 9. Monte Carlo (compatível com SimulAr v2.5): estatísticas, percentis,
+--    histograma (100 bins) e tornado de sensibilidade (beta + correlação).
+-- ===========================================================================
+CREATE TABLE IF NOT EXISTS mc_estatisticas (
+    project_name    TEXT,
+    variavel        TEXT,    -- 'VPL' | 'TIR' | 'TIRM' | 'VUL' | 'ILL'
+    iteracoes       INTEGER,
+    minimo          REAL,
+    media           REAL,
+    maximo          REAL,
+    mediana         REAL,
+    variancia       REAL,
+    desvio_padrao   REAL,
+    amplitude       REAL,
+    curtose         REAL,
+    assimetria      REAL,
+    coef_variacao   REAL,
+    prob_menor_zero REAL,    -- P(X < 0) em %  (o "Probability less than" do SimulAr)
+    var_5           REAL,    -- Value at Risk: percentil 5%
+    cvar_5          REAL,    -- Conditional VaR: média da cauda abaixo do percentil 5%
+    PRIMARY KEY (project_name, variavel)
+);
+
+CREATE TABLE IF NOT EXISTS mc_percentis (
+    project_name TEXT,
+    variavel     TEXT,
+    percentil    INTEGER,   -- 1..99, incrementos de 1% (igual ao SimulAr)
+    valor        REAL,
+    PRIMARY KEY (project_name, variavel, percentil)
+);
+
+CREATE TABLE IF NOT EXISTS mc_histograma (
+    project_name  TEXT,
+    variavel      TEXT,
+    bin_idx       INTEGER,
+    bin_inferior  REAL,
+    bin_superior  REAL,
+    frequencia    INTEGER,
+    cumul_pct     REAL,
+    PRIMARY KEY (project_name, variavel, bin_idx)
+);
+
+CREATE TABLE IF NOT EXISTS mc_tornado (
+    project_name      TEXT,
+    variavel_saida    TEXT,
+    variavel_entrada  TEXT,
+    beta_regressao    REAL,   -- coeficiente da regressão múltipla (não padronizado)
+    coef_correlacao   REAL,   -- correlação de Pearson entrada x saída
+    ordem             INTEGER,
+    PRIMARY KEY (project_name, variavel_saida, variavel_entrada)
+);

@@ -70,6 +70,33 @@ select * from bsc.decisao_mcda order by rank_final
 ```sql mcda_top
 select * from bsc.decisao_mcda where rank_final = 1
 ```
+```sql mc_vpl
+select project_name, iteracoes, media, desvio_padrao, minimo, maximo,
+       assimetria, curtose, coef_variacao, prob_menor_zero, var_5, cvar_5
+from bsc.mc_estatisticas where variavel = 'VPL' order by var_5 desc
+```
+```sql mc_percentis_vpl
+select project_name, percentil, valor from bsc.mc_percentis
+where variavel = 'VPL' and percentil % 5 = 0 order by percentil
+```
+```sql dematel
+select rotulo, r, c, prominencia, relacao, papel, peso
+from bsc.dematel_criterio order by prominencia desc
+```
+```sql mcdm_rank
+select project_name, metodo, score, rank_ from bsc.decisao_mcdm order by metodo, rank_
+```
+```sql consenso
+select c.project_name, c.rank_medio, c.borda, c.rank_final, c.unanime,
+       m.prob_menor_zero, m.var_5
+from bsc.decisao_consenso c
+left join bsc.mc_estatisticas m
+  on m.project_name = c.project_name and m.variavel = 'VPL'
+order by c.rank_final
+```
+```sql consenso_top
+select * from bsc.decisao_consenso where rank_final = 1
+```
 
 ## 📈 Sumário Executivo do Portfólio
 
@@ -361,6 +388,88 @@ select * from bsc.decisao_mcda where rank_final = 1
 <LineChart data={vpl_fluxo} x=periodo y=cum_desc series=project_name title="Fluxo de caixa acumulado descontado por período" yAxisTitle="Acumulado descontado (R$)" markers=true>
   <ReferenceLine y=0 color=negative label="break-even"/>
 </LineChart>
+
+## 🎲 Simulação de Monte Carlo — risco do fluxo de caixa
+
+> Cada fluxo de caixa periódico é tratado como **variável aleatória Triangular** (±30% em torno do valor base) e o
+> portfólio é simulado com **10.000 iterações** por projeto (semente fixa ⇒ resultado reprodutível). O método e os
+> gráficos replicam o **SimulAr v2.5** (Machain, Universidad Nacional de Rosario). Assim a escolha final deixa de
+> olhar apenas o valor esperado e passa a **precificar o risco**.
+
+<BigValue data={consenso_top} value=project_name title="Vencedor (consenso de 5 métodos)"/>
+<BigValue data={mc_vpl} value=prob_menor_zero title="P(VPL<0) média do portfólio %" agg=mean fmt=num2/>
+<BigValue data={mc_vpl} value=var_5 title="VaR 5% médio (R$)" agg=mean fmt='$#,##0'/>
+<BigValue data={mc_vpl} value=iteracoes title="Iterações por projeto" agg=max fmt=num0/>
+
+**Risco por projeto** — `VaR 5%` é o pior VPL plausível (percentil 5%); `CVaR 5%` é a média da cauda abaixo dele.
+Prefira quem tem **VaR alto** e `P(VPL<0)` **baixa**: entrega retorno mesmo no cenário ruim.
+
+<DataTable data={mc_vpl} rows=all rowShading=true>
+  <Column id=project_name title="Projeto"/>
+  <Column id=media title="VPL médio (R$)" fmt='$#,##0'/>
+  <Column id=desvio_padrao title="Desvio-padrão" fmt='$#,##0'/>
+  <Column id=minimo title="Mínimo" fmt='$#,##0'/>
+  <Column id=maximo title="Máximo" fmt='$#,##0'/>
+  <Column id=coef_variacao title="Coef. variação" fmt=num3/>
+  <Column id=assimetria title="Assimetria" fmt=num3/>
+  <Column id=curtose title="Curtose" fmt=num3/>
+  <Column id=prob_menor_zero title="P(VPL<0) %" fmt=num2 contentType=colorscale/>
+  <Column id=var_5 title="VaR 5% (R$)" fmt='$#,##0' contentType=colorscale/>
+  <Column id=cvar_5 title="CVaR 5% (R$)" fmt='$#,##0'/>
+</DataTable>
+
+**Pior cenário plausível por projeto** (quanto mais alto o VaR 5%, mais resiliente o projeto)
+
+<BarChart data={mc_vpl} x=project_name y=var_5 title="VaR 5% do VPL por projeto (percentil 5% de 10.000 simulações)" yAxisTitle="VaR 5% (R$)" sort=true>
+  <ReferenceLine y=0 color=negative label="prejuízo"/>
+</BarChart>
+
+**Curvas de percentis do VPL** — a inclinação revela a dispersão: curva achatada = projeto previsível; curva íngreme = projeto volátil.
+
+<LineChart data={mc_percentis_vpl} x=percentil y=valor series=project_name title="Distribuição acumulada do VPL simulado (percentis 5% a 95%)" yAxisTitle="VPL (R$)" xAxisTitle="Percentil (%)">
+  <ReferenceLine y=0 color=negative label="break-even"/>
+</LineChart>
+
+## 🧮 Decisão Multicritério — DEMATEL · ELECTRE · PROMETHEE · MAUT · MCDA-C
+
+> A arquitetura segue **John (2025)**, *"Integration of DEMATEL with Other MCDM Methods"*: o **DEMATEL** revela a
+> estrutura causal entre os critérios e deriva os **pesos por influência**, que alimentam os quatro métodos de
+> ranqueamento. Cada método é uma escola distinta — **sobreclassificação** (ELECTRE, PROMETHEE), **utilidade**
+> (MAUT) e **construtivista** (MCDA-C) —, e o vencedor final sai do **consenso de Borda** entre os cinco.
+
+**DEMATEL — quem é causa e quem é efeito.** Proeminência `R+C` = importância no sistema; Relação `R−C > 0` = **causa**
+(alavanca: mexa aqui) e `R−C < 0` = **efeito** (termômetro: resultado do que se fez antes).
+
+<DataTable data={dematel} rows=all rowShading=true>
+  <Column id=rotulo title="Critério"/>
+  <Column id=r title="R (influência exercida)" fmt=num3/>
+  <Column id=c title="C (influência recebida)" fmt=num3/>
+  <Column id=prominencia title="Proeminência (R+C)" fmt=num3 contentType=colorscale/>
+  <Column id=relacao title="Relação (R−C)" fmt=num3 contentType=colorscale/>
+  <Column id=papel title="Papel"/>
+  <Column id=peso title="Peso derivado" fmt=pct2/>
+</DataTable>
+
+<BarChart data={dematel} x=rotulo y=relacao title="Diagrama causa–efeito do DEMATEL (R−C): acima de zero = causa" yAxisTitle="R − C" sort=false>
+  <ReferenceLine y=0 color=info label="fronteira causa / efeito"/>
+</BarChart>
+
+**Ranking de cada método** — divergências entre métodos são informação, não ruído: elas mostram que o projeto é
+sensível à escola de decisão adotada.
+
+<BarChart data={mcdm_rank} x=project_name y=rank_ series=metodo type=grouped title="Posição de cada projeto por método MCDM (1º = melhor)" yAxisTitle="Posição" swapXY=true/>
+
+**Consenso final (Borda)** — soma dos pontos de todos os métodos, cruzada com o risco do Monte Carlo.
+
+<DataTable data={consenso} rows=all rowShading=true>
+  <Column id=project_name title="Projeto"/>
+  <Column id=rank_final title="Posição final" contentType=colorscale/>
+  <Column id=borda title="Pontos de Borda" fmt=num0/>
+  <Column id=rank_medio title="Posição média" fmt=num2/>
+  <Column id=unanime title="Unânime?" fmt=boolean/>
+  <Column id=prob_menor_zero title="P(VPL<0) %" fmt=num2/>
+  <Column id=var_5 title="VaR 5% (R$)" fmt='$#,##0'/>
+</DataTable>
 
 ## 💳 Planos de Assinatura de IA — Custo Total com IOF
 > Câmbio **R$ 5,40/US$** · **IOF 3,5%** sobre operação internacional (cartão). `Total = US$ × câmbio × (1 + IOF)`.

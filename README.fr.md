@@ -5,7 +5,8 @@
 ![Method](https://img.shields.io/badge/method-Balanced%20Scorecard-1F3A5F)
 ![AI](https://img.shields.io/badge/AI-LLM%20observability-45a1bf)
 ![Finance](https://img.shields.io/badge/finance-VAN%20·%20TRI%20·%20TRIM%20·%20IP-46a485)
-![Decision](https://img.shields.io/badge/decision-AHP--TOPSIS%202n-8E44AD)
+![Decision](https://img.shields.io/badge/MCDM-DEMATEL%20·%20ELECTRE%20·%20PROMETHEE%20·%20MAUT%20·%20MCDA--C-8E44AD)
+![Risk](https://img.shields.io/badge/risk-Monte%20Carlo%2010k%20·%20VaR%20·%20CVaR-DC143C)
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
 ![Rust](https://img.shields.io/badge/Rust-PyO3-orange?logo=rust&logoColor=white)
 ![Dashboard](https://img.shields.io/badge/dashboard-Evidence-236aa4)
@@ -67,6 +68,8 @@ d'investissement de niveau Wall Street** et de la **décision multicritère**. C
 - [📊 Catalogue de KPI](#-catalogue-de-kpi-70)
 - [💰 Analyse financière d'investissement](#-analyse-financière-dinvestissement)
 - [🏆 Décision multicritère + Dossier](#-décision-multicritère-ahp-topsis-2n--dossier-du-joyau-de-la-couronne)
+- [🎲 Monte-Carlo — le risque que la moyenne cache](#-monte-carlo--le-risque-que-la-moyenne-cache)
+- [🧮 Cinq écoles de décision. Un seul verdict.](#-cinq-écoles-de-décision-un-seul-verdict)
 - [🌐 12 langues](#-12-langues)
 - [🙋 Objections (les questions que vous vous posez maintenant)](#-objections-les-questions-que-vous-vous-posez-maintenant)
 - [🧩 Skills incluses](#-skills-incluses-build--analyze-your-own)
@@ -291,6 +294,80 @@ normalisations** (vectorielle + min-max), en rapportant la **robustesse** (conco
 gagnant — le **« Joyau de la Couronne »** — reçoit un **dossier administratif** complet (SWOT · PESTELC · 5W4H ·
 Pareto · GUT · Radar) généré de zéro par le code, avec un **Bottom-Line** exécutif et des **insights C-Level**
 honnêtes. **Vous ne présentez pas un tableur. Vous présentez un verdict.**
+
+---
+
+## 🎲 Monte-Carlo — le risque que la moyenne cache
+
+Une VAN positive **en moyenne** ne protège personne. La moyenne est le mensonge le plus confortable de la finance :
+elle décrit un scénario qui n'arrivera peut-être jamais. Ce qui décide de votre sort, c'est la **queue** — le mauvais jour.
+
+Ce framework simule **10 000 futurs** pour chaque projet (moteur compatible **SimulAr v2.5**, de Luciano Machain,
+UNR/Argentine) : chaque flux de trésorerie devient une **variable aléatoire** et tout le portefeuille est recalculé
+itération après itération. À la fin, vous n'avez pas un nombre — vous avez **toute la distribution de votre argent** :
+
+- **`P(VAN < 0)`** — la probabilité réelle de perte. Le nombre que personne ne vous montre.
+- **VaR 5 %** — le pire scénario plausible : *« dans 19 futurs sur 20, je gagne au moins cela. »*
+- **CVaR 5 %** — quand le désastre survient, combien il coûte en moyenne.
+- **Tornado de sensibilité** — régression multiple et corrélation de Pearson : quelle variable meut vraiment votre VAN.
+- **20 distributions** d'entrée, **matrice de corrélation** validée (Iman-Conover, qui préserve exactement les
+  marginales) et **percentiles de 1 % à 99 %**, avec un histogramme à 100 classes identique à celui du manuel SimulAr.
+
+Graine fixe : relancez et vous obtenez **exactement** le même résultat. Auditable — pas « magique ».
+
+> **Le basculement :** vous cessez de choisir le projet à la plus forte VAN pour choisir **celui qui survit au mauvais
+> scénario**. C'est la gestion du risque — ce qui sépare l'investisseur du parieur.
+
+![Histograma de Monte Carlo do VPL — 10.000 iterações, 100 classes](docs/screenshots/mc-histograma.png)
+
+| Distribution cumulée de la VAN | Tornado de sensibilité |
+|---|---|
+| ![Distribution cumulée de la VAN](docs/screenshots/mc-acumulado.png) | ![Tornado de sensibilité](docs/screenshots/mc-tornado.png) |
+
+---
+
+## 🧮 Cinq écoles de décision. Un seul verdict.
+
+Une méthode peut se tromper. Cinq méthodes d'accord, non.
+
+Suivant l'architecture de **John (2025)** — *Integration of DEMATEL with Other MCDM Methods* —, **DEMATEL** cartographie
+la structure causale entre les critères et sépare les **causes** (leviers où agir) des **effets** (thermomètres de ce qui
+a déjà été fait). De ces boucles d'influence naissent les **poids** : non arbitrés, mais **dérivés de la structure du
+problème**. Ils alimentent quatre écoles rivales :
+
+| Méthode | École | Ce qu'elle demande |
+|---|---|---|
+| **ELECTRE I** | Surclassement | « Qui surclasse qui — et qui survit sans être dominé ? » |
+| **PROMETHEE II** | Surclassement | « Quel est le flux net de préférence de chaque projet ? » |
+| **MAUT** | Utilité | « Lequel maximise l'utilité d'un décideur averse au risque ? » |
+| **MCDA-C** | Constructiviste | « Qui est au-dessus du niveau *Bon* — et qui sous le *Neutre* ? » |
+| **AHP-TOPSIS 2n** | Distance à l'idéal | « Qui est le plus proche de la solution idéale dans les deux normalisations ? » |
+
+Le gagnant sort du **consensus de Borda** des cinq, déjà **ajusté au risque** par Monte-Carlo. Et quand les méthodes
+**divergent**, le tableau de bord montre la divergence — car c'est une information : le choix est sensible à l'école de
+décision et mérite l'œil du décideur.
+
+| DEMATEL — causes × effets | Rang par méthode |
+|---|---|
+| ![DEMATEL — causes × effets](docs/screenshots/dematel.png) | ![Rang par méthode](docs/screenshots/mcdm-metodos.png) |
+
+### 💼 Ce que cela change au quotidien — de l'indépendant à la corporation
+
+Peu importe que vous payiez **20 US$ sur un plan PRO** ou **200 000 US$ en contrats entreprise** : les mathématiques du
+gaspillage sont les mêmes — seul le nombre de zéros change.
+
+| | **PME / indépendant** | **Grande entreprise** |
+|---|---|---|
+| **La vraie douleur** | 3 abonnements, zéro visibilité, trésorerie tendue | 40 pilotes d'IA, aucun avec un P&L attribué |
+| **Monte-Carlo livre** | *« ce projet a 12 % de risque de perdre de l'argent, et le mauvais mois coûte 3 400 US$ »* | VaR/CVaR par unité d'affaires : risque agrégé et auditable, pas une anecdote |
+| **Le MCDM livre** | lequel des 3 projets déployer **en premier**, avec l'argent qui existe | lequel des 40 pilotes devient un produit — défendable en comité, méthode explicite |
+| **Le gain dès demain** | résilier l'abonnement qui ne se rembourse pas, dès cette semaine | réallouer le budget sur **preuve**, non sur politique interne |
+
+**En pratique :** le **tornado** désigne la variable qui meut le résultat — donc **où investir votre prochaine heure de
+travail**. Le **DEMATEL** révèle que réduire l'hallucination (IITA) est une **cause**, pas un symptôme : agissez là et
+VAN, TRI et risque s'améliorent *ensemble*. C'est la gestion de l'IA qui cesse d'être une opinion pour devenir de
+l'**ingénierie**.
+
 
 ---
 

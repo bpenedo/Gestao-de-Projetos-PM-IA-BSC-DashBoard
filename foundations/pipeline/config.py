@@ -33,6 +33,12 @@ SELIC_ANUAL = float(os.environ.get("SELIC_ANUAL", "0.105"))    # taxa SELIC a.a.
 US_RATE_ANUAL = float(os.environ.get("US_RATE_ANUAL", "0.045"))  # Fed funds a.a. (EUA) — ex.: 4,5%
 USD_BRL = float(os.environ.get("USD_BRL", "5.40"))             # câmbio BRL por USD (dolarização)
 IOF_PCT = float(os.environ.get("IOF_PCT", "3.5"))              # IOF % sobre compras internacionais (cartão)
+# Monte Carlo (compatível com SimulAr v2.5 — ver foundations/mc/simularusermanual.pdf).
+MC_ITERACOES = int(os.environ.get("MC_ITERACOES", "10000"))  # o manual usa 10.000 (freq 1 = 0,01%)
+MC_BINS = int(os.environ.get("MC_BINS", "100"))              # 100 classes, do mínimo ao máximo
+MC_SEED = int(os.environ.get("MC_SEED", "42"))               # semente -> simulação reprodutível
+MC_VAR_PCT = float(os.environ.get("MC_VAR_PCT", "0.30"))     # caudas da Triangular: ±30% do fluxo base
+
 PESO_RATE_LIMIT = 1.5   # penalidade de cota
 PESO_ALUCINACAO = 2.0   # penalidade de código/alucinação
 LIMITE_LATENCIA_S = 3.0  # latência aceitável (Lean); excedente = waste

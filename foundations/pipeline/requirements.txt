@@ -2,3 +2,5 @@
 # (sqlite3 já vem na biblioteca padrão do Python)
 langfuse>=4.0.0      # SDK oficial Langfuse v4 (ETL via api.observations.get_many)
 python-dotenv>=1.0.0 # leitura do arquivo .env (opcional, recomendado)
+numpy>=1.24          # Monte Carlo (monte_carlo.py) e álgebra dos métodos MCDM (mcdm.py)
+matplotlib>=3.7      # gráficos do dossiê, mapa 5D e Monte Carlo (estilo SimulAr)

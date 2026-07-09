@@ -5,7 +5,8 @@
 ![Method](https://img.shields.io/badge/method-Balanced%20Scorecard-1F3A5F)
 ![AI](https://img.shields.io/badge/AI-LLM%20observability-45a1bf)
 ![Finance](https://img.shields.io/badge/finance-NPV%20·%20IRR%20·%20MIRR%20·%20PI-46a485)
-![Decision](https://img.shields.io/badge/decision-AHP--TOPSIS%202n-8E44AD)
+![Decision](https://img.shields.io/badge/MCDM-DEMATEL%20·%20ELECTRE%20·%20PROMETHEE%20·%20MAUT%20·%20MCDA--C-8E44AD)
+![Risk](https://img.shields.io/badge/risk-Monte%20Carlo%2010k%20·%20VaR%20·%20CVaR-DC143C)
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
 ![Rust](https://img.shields.io/badge/Rust-PyO3-orange?logo=rust&logoColor=white)
 ![Dashboard](https://img.shields.io/badge/dashboard-Evidence-236aa4)
@@ -64,6 +65,8 @@ Norton), **Wall-Street-grade investment analysis** and **multi-criteria decision
 - [📊 KPI catalog](#-kpi-catalog-70)
 - [💰 Investment-grade financial analysis](#-investment-grade-financial-analysis)
 - [🏆 Multi-criteria decision + Dossier](#-multi-criteria-decision-ahp-topsis-2n--crown-jewel-dossier)
+- [🎲 Monte Carlo — the risk the average hides](#-monte-carlo--the-risk-the-average-hides)
+- [🧮 Five schools of decision. One verdict.](#-five-schools-of-decision-one-verdict)
 - [🌐 12 languages](#-12-languages)
 - [🙋 Objections (the questions you're asking right now)](#-objections-the-questions-youre-asking-right-now)
 - [🧩 Bundled skills](#-bundled-skills-build--analyze-your-own)
@@ -168,8 +171,11 @@ minutes**. The question isn't *"can I afford to measure?"*. It's ***"how much lo
   wastes** (weighted tokens) and **hallucination RCA by prompt taxonomy** (bottleneck per project + intersection).
 - **💰 Full financial suite:** **NPV, IRR, MIRR, EAA (Net Uniform Value), PI, Payback** (simple & discounted),
   **dollarization** and comparison with **SELIC** and the **US interest rate**.
-- **🏆 Multi-criteria decision:** **AHP-TOPSIS 2n** (dual normalization) elects the **best project** in the
-  portfolio with a **robustness test** — and generates an **administrative dossier** (SWOT, PESTELC, 5W4H, Pareto, GUT, Radar).
+- **🏆 Multi-criteria decision (5 methods):** **DEMATEL** (causal structure + influence-derived weights) feeding
+  **ELECTRE I · PROMETHEE II · MAUT · MCDA-C · AHP-TOPSIS 2n**, with **Borda consensus** and an **administrative
+  dossier** (SWOT, PESTELC, 5W4H, Pareto, GUT, Radar).
+- **🎲 Risk (Monte Carlo, SimulAr v2.5 style):** **10,000 iterations** per project, **20 distributions**, correlation
+  matrix (Iman-Conover), **P(NPV<0)**, **VaR/CVaR 5%**, percentiles 1–99% and a **tornado** (regression + correlation).
 - **🗺️ C-Level visuals:** **interactive 5D map**, depth donuts, sustainability quadrant, trends and LaTeX **pitch decks** for eligible projects.
 - **⚙️ Real pipeline:** **Langfuse → SQLite → Evidence**, with **asynchronous concurrent** sync and classification accelerated in **Rust (PyO3)**.
 - **💳 AI FinOps:** **subscription plan** catalog (OpenAI, Anthropic, Google, Perplexity, xAI, Mistral, DeepSeek,
@@ -276,6 +282,79 @@ With several projects, which to scale first? The **AHP-TOPSIS 2n** model weights
 Jewel"** — receives a full **administrative dossier** (SWOT · PESTELC · 5W4H · Pareto · GUT · Radar) generated
 from scratch by code, with an executive **Bottom-Line** and honest **C-Level insights**. **You don't present a
 spreadsheet. You present a verdict.**
+
+---
+
+## 🎲 Monte Carlo — the risk the average hides
+
+A positive NPV **on average** protects no one. The average is the most comfortable lie in finance: it describes a
+scenario that may never happen. What decides your fate is the **tail** — the bad day.
+
+This framework simulates **10,000 futures** for each project (engine compatible with **SimulAr v2.5**, by Luciano
+Machain, UNR/Argentina): every cash flow becomes a **random variable** and the whole portfolio is recomputed iteration
+by iteration. In the end you don't have a number — you have **the entire distribution of your money**:
+
+- **`P(NPV < 0)`** — the real probability of loss. The number nobody shows you.
+- **VaR 5%** — the worst plausible scenario: *"in 19 out of 20 futures, I make at least this much."*
+- **CVaR 5%** — when disaster strikes, how much it costs on average.
+- **Sensitivity tornado** — multiple regression and Pearson correlation: which variable actually moves your NPV.
+- **20 input distributions**, a validated **correlation matrix** (Iman-Conover, which preserves the exact marginals)
+  and **percentiles from 1% to 99%**, with a 100-bin histogram identical to the SimulAr manual's.
+
+Fixed seed: run it again and you get **exactly** the same result. Auditable — not "magic".
+
+> **The turn:** you stop picking the project with the highest NPV and start picking **the one that survives the bad
+> scenario**. That is risk management — what separates the investor from the gambler.
+
+![Histograma de Monte Carlo do VPL — 10.000 iterações, 100 classes](docs/screenshots/mc-histograma.png)
+
+| Cumulative distribution of NPV | Sensitivity tornado |
+|---|---|
+| ![Cumulative distribution of NPV](docs/screenshots/mc-acumulado.png) | ![Sensitivity tornado](docs/screenshots/mc-tornado.png) |
+
+---
+
+## 🧮 Five schools of decision. One verdict.
+
+One method can be wrong. Five methods agreeing cannot.
+
+Following the architecture of **John (2025)** — *Integration of DEMATEL with Other MCDM Methods* — **DEMATEL** maps the
+causal structure among criteria and separates **causes** (levers to act on) from **effects** (thermometers of what was
+already done). From those influence loops the **weights** are born: not arbitrated, but **derived from the structure of
+the problem**. They feed four rival schools:
+
+| Method | School | What it asks |
+|---|---|---|
+| **ELECTRE I** | Outranking | "Who outranks whom — and who survives undominated?" |
+| **PROMETHEE II** | Outranking | "What is each project's net preference flow?" |
+| **MAUT** | Utility | "Which maximizes the utility of a risk-averse decision-maker?" |
+| **MCDA-C** | Constructivist | "Who is above the *Good* level — and who is below *Neutral*?" |
+| **AHP-TOPSIS 2n** | Distance to ideal | "Who is closest to the ideal solution under both normalizations?" |
+
+The winner comes from the **Borda consensus** of the five, already **risk-adjusted** by Monte Carlo. And when the
+methods **disagree**, the dashboard shows the disagreement — because that is information: the choice is sensitive to the
+decision school and deserves the decision-maker's eye.
+
+| DEMATEL — causes × effects | Rank by method |
+|---|---|
+| ![DEMATEL — causes × effects](docs/screenshots/dematel.png) | ![Rank by method](docs/screenshots/mcdm-metodos.png) |
+
+### 💼 What changes in your day — from freelancer to corporation
+
+It doesn't matter whether you pay **US$ 20 on a PRO plan** or **US$ 200k in enterprise contracts**: the math of waste
+is the same — only the number of zeros changes.
+
+| | **SMB / freelancer** | **Large enterprise** |
+|---|---|---|
+| **The real pain** | 3 subscriptions, zero visibility, tight cash | 40 AI pilots, none with attributed P&L |
+| **Monte Carlo delivers** | *"this project has a 12% chance of losing money, and the bad month costs US$ 3.4k"* | VaR/CVaR per business unit: aggregate, auditable risk — not anecdote |
+| **MCDM delivers** | which of the 3 projects to scale **first**, with the money you actually have | which of the 40 pilots becomes a product — defensible in committee, method explicit |
+| **The next-day gain** | cancel the subscription that doesn't pay for itself, this week | reallocate budget on **evidence**, not on internal politics |
+
+**In practice:** the **tornado** points to the variable that moves the result — that is, **where to invest your next
+hour of work**. **DEMATEL** reveals that cutting hallucination (IITA) is a **cause**, not a symptom: act there and NPV,
+IRR and risk improve *together*. This is AI management ceasing to be opinion and becoming **engineering**.
+
 
 ---
 

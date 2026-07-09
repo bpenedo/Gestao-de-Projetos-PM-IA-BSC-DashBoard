@@ -5,7 +5,8 @@
 ![Method](https://img.shields.io/badge/method-Balanced%20Scorecard-1F3A5F)
 ![AI](https://img.shields.io/badge/AI-LLM%20observability-45a1bf)
 ![Finance](https://img.shields.io/badge/finance-Kapitalwert%20·%20IZF%20·%20MIRR%20·%20PI-46a485)
-![Decision](https://img.shields.io/badge/decision-AHP--TOPSIS%202n-8E44AD)
+![Decision](https://img.shields.io/badge/MCDM-DEMATEL%20·%20ELECTRE%20·%20PROMETHEE%20·%20MAUT%20·%20MCDA--C-8E44AD)
+![Risk](https://img.shields.io/badge/risk-Monte%20Carlo%2010k%20·%20VaR%20·%20CVaR-DC143C)
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
 ![Rust](https://img.shields.io/badge/Rust-PyO3-orange?logo=rust&logoColor=white)
 ![Dashboard](https://img.shields.io/badge/dashboard-Evidence-236aa4)
@@ -67,6 +68,8 @@ Unterschied zwischen *hoffen* und *wissen*. Zwischen für KI zahlen und mit ihr 
 - [📊 KPI-Katalog](#-kpi-katalog-70)
 - [💰 Investitions-Finanzanalyse](#-investitions-finanzanalyse)
 - [🏆 Multikriterielle Entscheidung + Dossier](#-multikriterielle-entscheidung-ahp-topsis-2n--kronjuwel-dossier)
+- [🎲 Monte Carlo — das Risiko, das der Mittelwert verbirgt](#-monte-carlo--das-risiko-das-der-mittelwert-verbirgt)
+- [🧮 Fünf Entscheidungsschulen. Ein Urteil.](#-fünf-entscheidungsschulen-ein-urteil)
 - [🌐 12 Sprachen](#-12-sprachen)
 - [🙋 Einwände (die Fragen, die Sie sich gerade stellen)](#-einwände-die-fragen-die-sie-sich-gerade-stellen)
 - [🧩 Enthaltene Skills](#-enthaltene-skills-build--analyze-your-own)
@@ -289,6 +292,80 @@ Normalisierungen** (Vektor + Min-Max) und berichtet die **Robustheit** (Überein
 Sieger — das **„Kronjuwel"** — erhält ein vollständiges **Verwaltungs-Dossier** (SWOT · PESTELC · 5W4H · Pareto ·
 GUT · Radar), von Grund auf per Code erzeugt, mit einer **Bottom-Line** für die Führung und ehrlichen
 **C-Level-Insights**. **Sie präsentieren keine Tabelle. Sie präsentieren ein Urteil.**
+
+---
+
+## 🎲 Monte Carlo — das Risiko, das der Mittelwert verbirgt
+
+Ein **im Mittel** positiver Kapitalwert schützt niemanden. Der Mittelwert ist die bequemste Lüge der Finanzwelt: Er
+beschreibt ein Szenario, das vielleicht nie eintritt. Über Ihr Schicksal entscheidet der **Rand** — der schlechte Tag.
+
+Dieses Framework simuliert **10.000 Zukünfte** je Projekt (Engine kompatibel mit **SimulAr v2.5** von Luciano Machain,
+UNR/Argentinien): Jeder Cashflow wird zur **Zufallsvariablen**, und das gesamte Portfolio wird Iteration für Iteration
+neu berechnet. Am Ende haben Sie keine Zahl — Sie haben **die gesamte Verteilung Ihres Geldes**:
+
+- **`P(Kapitalwert < 0)`** — die reale Verlustwahrscheinlichkeit. Die Zahl, die Ihnen niemand zeigt.
+- **VaR 5 %** — das schlechteste plausible Szenario: *„In 19 von 20 Zukünften verdiene ich mindestens das."*
+- **CVaR 5 %** — wenn die Katastrophe eintritt, was sie im Mittel kostet.
+- **Sensitivitäts-Tornado** — multiple Regression und Pearson-Korrelation: Welche Variable bewegt den Kapitalwert wirklich.
+- **20 Eingangsverteilungen**, eine validierte **Korrelationsmatrix** (Iman-Conover, das die Randverteilungen exakt
+  erhält) und **Perzentile von 1 % bis 99 %**, mit einem 100-Klassen-Histogramm wie im SimulAr-Handbuch.
+
+Fester Startwert: erneut ausführen liefert **exakt** dasselbe Ergebnis. Prüfbar — nicht „magisch".
+
+> **Die Wende:** Sie wählen nicht mehr das Projekt mit dem höchsten Kapitalwert, sondern **das, welches das schlechte
+> Szenario überlebt**. Das ist Risikomanagement — es trennt den Investor vom Spieler.
+
+![Histograma de Monte Carlo do VPL — 10.000 iterações, 100 classes](docs/screenshots/mc-histograma.png)
+
+| Kumulierte Verteilung des Kapitalwerts | Sensitivitäts-Tornado |
+|---|---|
+| ![Kumulierte Verteilung des Kapitalwerts](docs/screenshots/mc-acumulado.png) | ![Sensitivitäts-Tornado](docs/screenshots/mc-tornado.png) |
+
+---
+
+## 🧮 Fünf Entscheidungsschulen. Ein Urteil.
+
+Eine Methode kann irren. Fünf übereinstimmende Methoden nicht.
+
+Der Architektur von **John (2025)** folgend — *Integration of DEMATEL with Other MCDM Methods* — kartiert **DEMATEL** die
+kausale Struktur zwischen den Kriterien und trennt **Ursachen** (Hebel zum Handeln) von **Wirkungen** (Thermometer des
+bereits Getanen). Aus diesen Einflussschleifen entstehen die **Gewichte**: nicht gesetzt, sondern **aus der Struktur des
+Problems abgeleitet**. Sie speisen vier rivalisierende Schulen:
+
+| Methode | Schule | Was sie fragt |
+|---|---|---|
+| **ELECTRE I** | Outranking | „Wer überklassiert wen — und wer überlebt unbesiegt?" |
+| **PROMETHEE II** | Outranking | „Wie hoch ist der Netto-Präferenzfluss jedes Projekts?" |
+| **MAUT** | Nutzen | „Welches maximiert den Nutzen eines risikoaversen Entscheiders?" |
+| **MCDA-C** | Konstruktivistisch | „Wer liegt über dem Niveau *Gut* — und wer unter *Neutral*?" |
+| **AHP-TOPSIS 2n** | Distanz zum Ideal | „Wer ist der Ideallösung in beiden Normalisierungen am nächsten?" |
+
+Der Sieger ergibt sich aus dem **Borda-Konsens** der fünf, bereits **risikoadjustiert** durch Monte Carlo. Und wenn die
+Methoden **uneins** sind, zeigt das Dashboard die Uneinigkeit — denn das ist Information: Die Wahl ist empfindlich
+gegenüber der Entscheidungsschule und verdient das Auge des Entscheiders.
+
+| DEMATEL — Ursachen × Wirkungen | Rang je Methode |
+|---|---|
+| ![DEMATEL — Ursachen × Wirkungen](docs/screenshots/dematel.png) | ![Rang je Methode](docs/screenshots/mcdm-metodos.png) |
+
+### 💼 Was sich im Alltag ändert — vom Freelancer bis zum Konzern
+
+Ob Sie **20 US$ im PRO-Tarif** oder **200.000 US$ in Enterprise-Verträgen** zahlen: Die Mathematik der Verschwendung
+ist dieselbe — nur die Zahl der Nullen ändert sich.
+
+| | **KMU / Freelancer** | **Großunternehmen** |
+|---|---|---|
+| **Der echte Schmerz** | 3 Abos, null Sichtbarkeit, knappe Kasse | 40 KI-Piloten, keiner mit zugeordnetem P&L |
+| **Monte Carlo liefert** | *„Dieses Projekt hat 12 % Verlustwahrscheinlichkeit, der schlechte Monat kostet 3.400 US$"* | VaR/CVaR je Geschäftseinheit: aggregiertes, prüfbares Risiko — keine Anekdote |
+| **MCDM liefert** | welches der 3 Projekte **zuerst** skaliert, mit dem vorhandenen Geld | welcher der 40 Piloten Produkt wird — im Gremium vertretbar, mit explizitem Verfahren |
+| **Der Gewinn schon morgen** | das Abo kündigen, das sich nicht rechnet — noch diese Woche | Budget nach **Evidenz** umschichten, nicht nach interner Politik |
+
+**In der Praxis:** Der **Tornado** zeigt die Variable, die das Ergebnis bewegt — also **wo Sie Ihre nächste
+Arbeitsstunde investieren**. **DEMATEL** enthüllt, dass Halluzination zu senken (IITA) eine **Ursache** ist, kein
+Symptom: Dort ansetzen, und Kapitalwert, IZF und Risiko verbessern sich *gemeinsam*. So hört KI-Management auf, Meinung
+zu sein, und wird **Ingenieurskunst**.
+
 
 ---
 
