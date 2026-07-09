@@ -1,0 +1,138 @@
+name: Deploy dashboard to GitHub Pages
+
+# Publica o dashboard Evidence (dados DEMO anônimos) em
+# https://bpenedo.github.io/Gestao-de-Projetos-PM-IA-BSC-DashBoard/
+#
+# Nenhum segredo é usado: a esteira roda em modo --mock, com Project A..J.
+# O basePath é injetado APENAS aqui, para não quebrar o `npm run dev` local.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'foundations/evidence/**'
+      - 'foundations/pipeline/**'
+      - '.github/workflows/deploy-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Uma publicação por vez; não cancela a que já está em voo.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: foundations/evidence/package-lock.json
+
+      # Fontes para o texto interno das imagens (CJK, Devanagari, Hebraico).
+      - name: Instalar fontes Noto
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            fonts-noto-core fonts-noto-cjk fonts-noto-unhinted
+          fc-cache -f
+
+      - name: Dependências Python
+        working-directory: foundations/pipeline
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Dependências do dashboard
+        working-directory: foundations/evidence
+        run: npm ci
+
+      # Esteira sem os pitch decks (LaTeX/tectonic) e sem o build final:
+      # o build é feito adiante, com o basePath do Pages.
+      - name: Esteira de dados (DEMO anônimo)
+        working-directory: foundations/pipeline
+        run: |
+          set -euo pipefail
+          python3 seed_demo.py
+          python3 compute_kpis.py | tail -n 3
+          python3 carregar_fluxo.py --demo
+          python3 seed_planos.py
+          python3 ajuste_distribuicoes.py
+          python3 monte_carlo.py
+          python3 ahp_topsis.py
+          python3 mcdm.py
+          python3 robustez_ranking.py
+          python3 gerar_mc_graficos.py
+          python3 gerar_mcdm_graficos.py
+          python3 gerar_robustez_graficos.py
+          python3 gerar_admtools.py
+          python3 gerar_5d_projetos.py
+          cp bsc_ia.db ../evidence/sources/bsc/bsc_ia.db
+
+      # O Evidence lê `deployment.basePath` do evidence.config.yaml e exige
+      # que comece com "/". Sob github.io o site vive em /<repo>/.
+      - name: Injetar basePath do Pages
+        working-directory: foundations/evidence
+        run: |
+          printf '\ndeployment:\n  basePath: /%s\n' "${GITHUB_REPOSITORY#*/}" >> evidence.config.yaml
+          tail -n 3 evidence.config.yaml
+
+      - name: Compilar fontes de dados
+        working-directory: foundations/evidence
+        run: npm run sources
+
+      # `build:strict` FALHA se alguma query não resolver. `build` não falha —
+      # foi assim que 11 tabelas ficaram vazias uma vez, com exit 0.
+      - name: Build estrito
+        working-directory: foundations/evidence
+        run: npm run build:strict
+
+      - name: Verificar que os dados chegaram (não só os títulos)
+        working-directory: foundations/evidence
+        run: |
+          set -euo pipefail
+          echo "páginas HTML: $(find build -name '*.html' | wc -l)"
+          echo "tabelas publicadas: $(ls build/data/bsc | wc -l)"
+          faltando=0
+          for t in mc_estatisticas mc_ajuste_distribuicao mc_tornado mc_histograma \
+                   mc_percentis dematel_criterio dematel_relacao decisao_mcdm \
+                   decisao_consenso mcdm_robustez mcdm_robustez_dist; do
+            if ! find "build/data/bsc/$t" -name '*.parquet' -print -quit | grep -q .; then
+              echo "❌ $t: sem parquet"; faltando=$((faltando+1))
+            fi
+          done
+          [ "$faltando" -eq 0 ] || { echo "faltando $faltando tabela(s)"; exit 1; }
+          echo "✅ todas as tabelas do dashboard têm parquet publicado"
+          touch build/.nojekyll
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: foundations/evidence/build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
