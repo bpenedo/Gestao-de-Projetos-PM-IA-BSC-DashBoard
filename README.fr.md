@@ -1,6 +1,8 @@
 # 🧭 Gestão de Projetos PM IA BSC DashBoard (Build and Analyze Your Own AI Portfolio Projects)
 
-![Gestion de Projets PM IA BSC DashBoard](docs/hero.jpg)
+<p align="center">
+  <img src="docs/hero.jpg" alt="Gestion de Projets PM IA BSC DashBoard" width="820">
+</p>
 
 🌐 [Português](README.md) · [English](README.en.md) · [Español](README.es.md) · **Français** · [Deutsch](README.de.md) · [中文](README.zh.md) · [한국어](README.ko.md) · [हिन्दी](README.hi.md) · [עברית](README.he.md) · [Svenska](README.sv.md) · [Русский](README.ru.md) · [Suomi](README.fi.md)
 
