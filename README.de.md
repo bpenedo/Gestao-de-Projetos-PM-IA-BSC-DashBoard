@@ -218,6 +218,12 @@ mir noch leisten, NICHT zu messen?"***
 - **💳 KI-FinOps:** Katalog von **Abo-Plänen** (OpenAI, Anthropic, Google, Perplexity, xAI, Mistral, DeepSeek,
   Kimi, Qwen…) mit **Devisen + IOF** und Umlagebasis (Burn Rate).
 - **🌐 12 Sprachen** im Dashboard **und im Text der Diagrammbilder** (inkl. Devanagari, Hebräisch und CJK).
+<!-- eixo-execucao -->
+- **📅 Monte-Carlo-Terminplan (PERT) + Gantt:** dieselbe Monte-Carlo-Engine, auf **Vorgangsdauern** gerichtet — Verteilung des Endtermins, **P80** (die vom PMI empfohlene Zusage), `P(termingerecht)` und **kritischer Pfad** mit **Kritikalitätsindex** (in wie viel % der 10.000 Simulationen jeder Vorgang kritisch ist — was das deterministische CPM verbirgt).
+- **📐 Earned Value Management + Earned Schedule:** **SPI · CPI · EAC · ETC · VAC · TCPI** und die **S-Kurve** (PV/EV/AC). Vereint **Kosten + Termine + Umfang** in einem Bild. **SPI(t)** behebt den bekannten Mangel des SPI, das am Projektende gegen 1 konvergiert, selbst bei Verzug.
+- **⚙️ KI-Betriebsgesundheit im Zeitverlauf:** Latenz **p50/p95/p99** gegen ein **SLO**, **Token-Budget-Burndown**, **Qualitätsregression** (SPC-artige Regel) und **Model Drift** per **Kolmogorow-Smirnow** — alles aus **echten** Langfuse-Logs.
+- **🚨 Risikoregister + Wahrscheinlichkeits-×-Auswirkungs-Matrix:** das *qualitative* Risiko, das jedes PMO verlangt, mit Verantwortlichem, Auslöser und Maßnahme. Wahrscheinlichkeiten sind **in echten Signalen verankert** (SLO-Verletzungen, CPI, Drift), nicht geraten.
+- **🌊 Flusskennzahlen (Kanban):** **CFD**, **Cycle Time P50/P85** (Prognose per Perzentil, nicht per Bauchgefühl), **Throughput** und **WIP**.
 
 ---
 
@@ -244,6 +250,32 @@ Wo kürzen? Groß und rot.*
 | 5W4H (Aktionsplan) | Fehler-Pareto (80/20) |
 |---|---|
 | ![5W4H](docs/screenshots/5w4h.png) | ![Pareto](docs/screenshots/pareto.png) |
+
+### 📅 Ausführungsachse — Termine, Earned Value, KI-Gesundheit, Risiko und Fluss
+
+**Gantt mit kritischem Pfad** — rote Balken sind der kritische Pfad; das **%** je Vorgang ist der *Kritikalitätsindex*: in wie viel Prozent der 10.000 Simulationen dieser Vorgang den Termin bestimmte.
+
+![Gantt mit kritischem Pfad — rote Balken sind der kritische Pfad; das %](docs/screenshots/cronograma-gantt.png)
+
+**Terminrisiko** — die Verteilung des Endtermins, mit Deadline, **P50** und **P80**. Sagen Sie P80 zu, nicht die deterministische Schätzung (optimistisch durch Merge-Bias).
+
+![Terminrisiko — die Verteilung des Endtermins, mit Deadline, P50 und P8](docs/screenshots/cronograma-risco-prazo.png)
+
+**EVM-S-Kurve** — PV (geplant) · EV (erarbeitet) · AC (Ist-Kosten). EV unter PV = Verzug; AC über EV = Budgetüberschreitung.
+
+![EVM-S-Kurve — PV (geplant) · EV (erarbeitet) · AC (Ist-Kosten). EV unt](docs/screenshots/evm-curva-s.png)
+
+**Latenz unter SLO** — p50/p95/p99 pro Tag, aus echten Logs. Linie überschritten = Service degradiert.
+
+![Latenz unter SLO — p50/p95/p99 pro Tag, aus echten Logs. Linie übersch](docs/screenshots/exec-latencia-slo.png)
+
+**Risikomatrix W × A** — Blase = Exposition (W×A). Wahrscheinlichkeit in den echten Signalen des Projekts verankert.
+
+![Risikomatrix W × A — Blase = Exposition (W×A). Wahrscheinlichkeit in d](docs/screenshots/risco-matriz-pi.png)
+
+**Cumulative Flow Diagram** — parallele Bänder = gesunder Fluss; ein dicker werdendes Band = Engpass / feststeckendes WIP.
+
+![Cumulative Flow Diagram — parallele Bänder = gesunder Fluss; ein dicke](docs/screenshots/fluxo-cfd.png)
 
 ---
 

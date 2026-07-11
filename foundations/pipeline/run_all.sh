@@ -48,10 +48,27 @@ python3 mcdm.py || echo "  (MCDM pulado)"
 echo "▶️  Robustez do ranking (perturbação de Dirichlet nos pesos do DEMATEL)..."
 python3 robustez_ranking.py || echo "  (robustez pulada)"
 
+echo "▶️  Cronograma Monte Carlo (Schedule Risk / PERT) + caminho crítico..."
+python3 cronograma_mc.py || echo "  (cronograma pulado)"
+
+echo "▶️  Earned Value Management + Earned Schedule (custo+prazo+escopo)..."
+python3 evm.py || echo "  (EVM pulado)"
+
+echo "▶️  Métricas de execução da IA no tempo (latência/tokens/qualidade/drift)..."
+python3 exec_metricas.py || echo "  (métricas de execução puladas)"
+
+echo "▶️  Registro de risco + matriz Probabilidade×Impacto + burndown..."
+python3 risco.py || echo "  (risco pulado)"
+
+echo "▶️  Métricas de fluxo (CFD/cycle time/throughput/WIP)..."
+python3 fluxo.py || echo "  (fluxo pulado)"
+
 echo "▶️  Gerando gráficos de Monte Carlo (histograma + tornado)..."
 python3 gerar_mc_graficos.py || echo "  (gráficos MC pulados)"
 python3 gerar_mcdm_graficos.py || echo "  (gráficos MCDM pulados)"
 python3 gerar_robustez_graficos.py || echo "  (gráficos de robustez pulados)"
+python3 gerar_gantt.py || echo "  (Gantt pulado)"
+python3 gerar_evm.py || echo "  (curva S EVM pulada)"
 
 echo "▶️  Gerando Dossiê Administrativo da Jóia da Coroa (concorrente: SWOT/PESTEL/5W4H/Pareto/GUT/Radar)..."
 python3 gerar_admtools.py || echo "  (admtools pulado)"

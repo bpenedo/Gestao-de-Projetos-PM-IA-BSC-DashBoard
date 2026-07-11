@@ -220,6 +220,12 @@ temps encore puis-je me permettre de NE PAS mesurer ? »***
 - **💳 FinOps de l'IA :** catalogue de **plans d'abonnement** (OpenAI, Anthropic, Google, Perplexity, xAI, Mistral,
   DeepSeek, Kimi, Qwen…) avec **change + IOF** et base de répartition (burn rate).
 - **🌐 12 langues** dans le tableau de bord **et dans les images des graphiques** (dont Devanagari, Hébreu et CJK).
+<!-- eixo-execucao -->
+- **📅 Planning Monte-Carlo (PERT) + Gantt :** le même moteur de Monte-Carlo appliqué aux **durées des tâches** — distribution de la date de fin, **P80** (l'engagement recommandé par le PMI), `P(dans les délais)` et **chemin critique** avec **indice de criticité** (dans quel % des 10 000 simulations chaque tâche est critique — ce que le CPM déterministe cache).
+- **📐 Earned Value Management + Earned Schedule :** **SPI · CPI · EAC · ETC · VAC · TCPI** et la **courbe en S** (PV/EV/AC). Unit **coût + délai + périmètre** dans un seul cadre. Le **SPI(t)** corrige le défaut connu du SPI, qui converge vers 1 à la fin même si le projet est en retard.
+- **⚙️ Santé d'exécution de l'IA dans le temps :** latence **p50/p95/p99** face à un **SLO**, **token budget burndown**, **régression de qualité** (règle type SPC) et **dérive du modèle** par **Kolmogorov-Smirnov** — le tout depuis les logs **réels** de Langfuse.
+- **🚨 Registre des risques + matrice Probabilité × Impact :** le risque *qualitatif* exigé par tout PMO, avec propriétaire, déclencheur et mitigation. Les probabilités sont **ancrées dans des signaux réels** (violations de SLO, CPI, dérive), pas devinées.
+- **🌊 Métriques de flux (Kanban) :** **CFD**, **cycle time P50/P85** (prévision par percentile, pas au doigt mouillé), **throughput** et **WIP**.
 
 ---
 
@@ -246,6 +252,32 @@ Grand et rouge.*
 | 5W4H (plan d'action) | Pareto des défaillances (80/20) |
 |---|---|
 | ![5W4H](docs/screenshots/5w4h.png) | ![Pareto](docs/screenshots/pareto.png) |
+
+### 📅 Axe d'exécution — planning, valeur acquise, santé de l'IA, risque et flux
+
+**Gantt avec chemin critique** — les barres rouges sont le chemin critique ; le **%** sur chaque tâche est l'*indice de criticité* : dans quel pourcentage des 10 000 simulations cette tâche a dicté le délai.
+
+![Gantt avec chemin critique — les barres rouges sont le chemin critique](docs/screenshots/cronograma-gantt.png)
+
+**Risque de délai** — la distribution de la date de fin, avec l'échéance, le **P50** et le **P80**. Engagez-vous sur le P80, pas sur l'estimation déterministe (optimiste à cause du biais de convergence).
+
+![Risque de délai — la distribution de la date de fin, avec l'échéance, ](docs/screenshots/cronograma-risco-prazo.png)
+
+**Courbe en S de l'EVM** — PV (planifié) · EV (acquis) · AC (coût réel). EV sous PV = retard ; AC au-dessus d'EV = dépassement.
+
+![Courbe en S de l'EVM — PV (planifié) · EV (acquis) · AC (coût réel). E](docs/screenshots/evm-curva-s.png)
+
+**Latence sous SLO** — p50/p95/p99 par jour, depuis les logs réels. Ligne franchie, service dégradé.
+
+![Latence sous SLO — p50/p95/p99 par jour, depuis les logs réels. Ligne ](docs/screenshots/exec-latencia-slo.png)
+
+**Matrice de risque P × I** — bulle = exposition (P×I). Probabilité ancrée dans les signaux réels du projet.
+
+![Matrice de risque P × I — bulle = exposition (P×I). Probabilité ancrée](docs/screenshots/risco-matriz-pi.png)
+
+**Cumulative Flow Diagram** — bandes parallèles = flux sain ; une bande qui grossit = goulot / WIP bloqué.
+
+![Cumulative Flow Diagram — bandes parallèles = flux sain ; une bande qu](docs/screenshots/fluxo-cfd.png)
 
 ---
 

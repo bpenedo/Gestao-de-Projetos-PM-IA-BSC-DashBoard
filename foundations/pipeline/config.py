@@ -43,6 +43,10 @@ MC_VAR_PCT = float(os.environ.get("MC_VAR_PCT", "0.30"))     # caudas da Triangu
 MC_ROBUSTEZ_ITER = int(os.environ.get("MC_ROBUSTEZ_ITER", "2000"))   # universos de preferência
 MC_ROBUSTEZ_KAPPA = float(os.environ.get("MC_ROBUSTEZ_KAPPA", "200"))  # concentração (maior = pesos mais fiéis)
 
+# --- Cronograma Monte Carlo (Schedule Risk Analysis / PERT) ---
+MC_CRONO_ITER = int(os.environ.get("MC_CRONO_ITER", "10000"))   # iterações da simulação de prazo
+MC_CRONO_CONF = float(os.environ.get("MC_CRONO_CONF", "80"))    # nível de confiança do compromisso (P80)
+
 PESO_RATE_LIMIT = 1.5   # penalidade de cota
 PESO_ALUCINACAO = 2.0   # penalidade de código/alucinação
 LIMITE_LATENCIA_S = 3.0  # latência aceitável (Lean); excedente = waste

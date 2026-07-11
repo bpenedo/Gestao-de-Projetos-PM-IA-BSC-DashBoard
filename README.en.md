@@ -210,6 +210,12 @@ minutes**. The question isn't *"can I afford to measure?"*. It's ***"how much lo
 - **💳 AI FinOps:** **subscription plan** catalog (OpenAI, Anthropic, Google, Perplexity, xAI, Mistral, DeepSeek,
   Kimi, Qwen…) with **FX + IOF** and an allocation base (burn rate).
 - **🌐 12 languages** in the dashboard **and inside the chart images** (incl. Devanagari, Hebrew and CJK).
+<!-- eixo-execucao -->
+- **📅 Monte Carlo schedule (PERT) + Gantt:** the same Monte Carlo engine aimed at **task durations** — distribution of the finish date, **P80** (the commitment the PMI recommends), `P(on time)` and the **critical path** with a **criticality index** (in what % of the 10,000 simulations each task is critical — what deterministic CPM hides).
+- **📐 Earned Value Management + Earned Schedule:** **SPI · CPI · EAC · ETC · VAC · TCPI** and the **S-curve** (PV/EV/AC). Unites **cost + schedule + scope** in one frame. **SPI(t)** fixes the known flaw of SPI, which converges to 1 at the end even when the project is late.
+- **⚙️ AI execution health over time:** latency **p50/p95/p99** against an **SLO**, **token budget burndown**, **quality regression** (SPC-style rule) and **model drift** via **Kolmogorov-Smirnov** — all from **real** Langfuse logs.
+- **🚨 Risk register + Probability × Impact matrix:** the *qualitative* risk every PMO asks for, with owner, trigger and mitigation. Probabilities are **anchored in real signals** (SLO breaches, CPI, drift), not guesswork.
+- **🌊 Flow metrics (Kanban):** **CFD**, **cycle time P50/P85** (percentile forecasting, not guessing), **throughput** and **WIP**.
 
 ---
 
@@ -236,6 +242,32 @@ Large and red.*
 | 5W4H (action plan) | Failure Pareto (80/20) |
 |---|---|
 | ![5W4H](docs/screenshots/5w4h.png) | ![Pareto](docs/screenshots/pareto.png) |
+
+### 📅 Execution axis — schedule, earned value, AI health, risk and flow
+
+**Gantt with critical path** — red bars are the critical path; the **%** on each task is the *criticality index*: in what percent of the 10,000 simulations that task drove the deadline.
+
+![Gantt with critical path — red bars are the critical path; the % on ea](docs/screenshots/cronograma-gantt.png)
+
+**Schedule risk** — the distribution of the finish date, with the deadline, **P50** and **P80** marked. Commit to P80, not to the deterministic estimate (optimistic because of merge bias).
+
+![Schedule risk — the distribution of the finish date, with the deadline](docs/screenshots/cronograma-risco-prazo.png)
+
+**EVM S-curve** — PV (planned) · EV (earned) · AC (actual cost). EV below PV means late; AC above EV means over budget.
+
+![EVM S-curve — PV (planned) · EV (earned) · AC (actual cost). EV below ](docs/screenshots/evm-curva-s.png)
+
+**Latency under SLO** — p50/p95/p99 per day, from real logs. Cross the line and the service degraded.
+
+![Latency under SLO — p50/p95/p99 per day, from real logs. Cross the lin](docs/screenshots/exec-latencia-slo.png)
+
+**Risk matrix P × I** — bubble = exposure (P×I). Probability anchored in the project's real signals.
+
+![Risk matrix P × I — bubble = exposure (P×I). Probability anchored in t](docs/screenshots/risco-matriz-pi.png)
+
+**Cumulative Flow Diagram** — parallel bands = healthy flow; a fattening band = bottleneck / stuck WIP.
+
+![Cumulative Flow Diagram — parallel bands = healthy flow; a fattening b](docs/screenshots/fluxo-cfd.png)
 
 ---
 

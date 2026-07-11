@@ -81,6 +81,73 @@ select posicao, frequencia, pct from bsc.mcdm_robustez_dist
 where project_name = '${params.projeto}' order by posicao
 ```
 
+```sql crono_proj
+select * from bsc.mc_cronograma where project_name = '${params.projeto}'
+```
+
+```sql crono_hist_proj
+select classe_inf, frequencia, cumulativo from bsc.mc_cronograma_hist
+where project_name = '${params.projeto}' order by classe_inf
+```
+
+```sql crono_crit_proj
+select tarefa_id, nome, inicio, fim, duracao, folga, indice_criticidade, eh_critico
+from bsc.cronograma_critico where project_name = '${params.projeto}' order by tarefa_id
+```
+
+```sql evm_proj
+select * from bsc.evm_indices where project_name = '${params.projeto}'
+```
+
+```sql evm_serie_proj
+select periodo, pv, ev, ac from bsc.evm_serie
+where project_name = '${params.projeto}' order by periodo
+```
+
+```sql lat_proj
+select dia, p50, p95, p99 from bsc.exec_latencia_tempo
+where project_name = '${params.projeto}' order by dia
+```
+
+```sql burn_proj
+select dia, tokens_acum, orcamento_acum from bsc.exec_tokens_burndown
+where project_name = '${params.projeto}' order by dia
+```
+
+```sql qual_proj
+select dia, taxa_erro, alerta_regressao from bsc.exec_qualidade_tempo
+where project_name = '${params.projeto}' order by dia
+```
+
+```sql drift_proj
+select dia, ks_stat, drift_alerta from bsc.exec_drift
+where project_name = '${params.projeto}' order by dia
+```
+
+```sql risco_proj
+select risco_id, categoria, descricao, dono, probabilidade, impacto, exposicao, nivel, status, mitigacao
+from bsc.risco_registro where project_name = '${params.projeto}' order by exposicao desc
+```
+
+```sql risco_burn_proj
+select dia, exposicao_total, exposicao_ideal from bsc.risco_burndown
+where project_name = '${params.projeto}' order by dia
+```
+
+```sql cfd_proj
+select dia, backlog, doing, review, done, wip from bsc.fluxo_cfd
+where project_name = '${params.projeto}' order by dia
+```
+
+```sql fluxo_itens_proj
+select dia_conclusao, cycle_time, lead_time from bsc.fluxo_itens
+where project_name = '${params.projeto}' order by dia_conclusao
+```
+
+```sql fluxo_resumo_proj
+select * from bsc.fluxo_resumo where project_name = '${params.projeto}'
+```
+
 # 🛠️ {params.projeto}
 
 <BigValue data={proj} value=kpi_psr title="PSR (0-5)" fmt=num2/>
@@ -189,6 +256,139 @@ daquele período sobre o VPL; a **correlação** mede o quanto a incerteza daque
   <Column id=var_5 title="VaR 5%" fmt=num4/>
   <Column id=cvar_5 title="CVaR 5%" fmt=num4/>
 </DataTable>
+
+## 📅 Cronograma Monte Carlo & Gantt (risco de prazo)
+
+> As durações das tarefas são **estimativas de 3 pontos (PERT)** — otimista, mais provável, pessimista —
+> simuladas 10.000 vezes pelo mesmo motor de Monte Carlo. A soma determinística do PERT é **otimista** por
+> causa do viés de convergência (o `max` de caminhos paralelos empurra o término para depois); por isso o
+> compromisso recomendável é o **P80**, não a estimativa determinística.
+
+<BigValue data={crono_proj} value=p50 title="P50 — mediana (dias)" fmt=num1/>
+<BigValue data={crono_proj} value=p80 title="P80 — commit (dias)" fmt=num1/>
+<BigValue data={crono_proj} value=prazo_alvo title="Deadline baseline (dias)" fmt=num1/>
+<BigValue data={crono_proj} value=prob_no_prazo title="P(no prazo) %" fmt=num1/>
+
+**Gráfico de Gantt** — barras **vermelhas** são o caminho crítico; **azuis** têm folga (extensão cinza).
+O **% em cada tarefa é o índice de criticidade**: em quantos por cento das 10.000 simulações aquela tarefa
+caiu no caminho crítico — o que o CPM determinístico esconde.
+
+<img src={'/mc/' + params.projeto.replaceAll(' ', '_') + '_gantt.png'} alt="Gráfico de Gantt com caminho crítico" style="width:100%;border-radius:8px;"/>
+
+**Distribuição da data de término** — a "curva de risco" do prazo. A deadline baseline, o P50 e o P80 estão marcados.
+
+<BarChart data={crono_hist_proj} x=classe_inf y=frequencia title="Distribuição da data de término (dias)" yAxisTitle="Frequência" xAxisTitle="Dias" colorPalette={['#FF0000']}/>
+
+<LineChart data={crono_hist_proj} x=classe_inf y=cumulativo title="Probabilidade acumulada de término (%)" yAxisTitle="Acumulado (%)" xAxisTitle="Dias"/>
+
+**Caminho crítico e criticidade por tarefa** — priorize quem tem alto índice de criticidade: é onde o atraso vira atraso do projeto.
+
+<DataTable data={crono_crit_proj} rows=all rowShading=true>
+  <Column id=tarefa_id title="#"/>
+  <Column id=nome title="Tarefa"/>
+  <Column id=inicio title="Início (dia)" fmt=num1/>
+  <Column id=fim title="Fim (dia)" fmt=num1/>
+  <Column id=folga title="Folga" fmt=num1/>
+  <Column id=indice_criticidade title="Criticidade %" fmt=num1 contentType=colorscale/>
+</DataTable>
+
+## 📐 Earned Value Management (custo + prazo + escopo num só quadro)
+
+> O padrão que une as três dimensões. **SPI** = adiantado/atrasado; **CPI** = dentro/fora do orçamento;
+> **EAC** = quanto o projeto vai custar no total ao ritmo atual; **SPI(t)** (Earned Schedule) corrige o
+> defeito conhecido do SPI, que converge para 1 no fim mesmo com o projeto atrasado.
+
+<BigValue data={evm_proj} value=spi title="SPI (prazo)" fmt=num2/>
+<BigValue data={evm_proj} value=cpi title="CPI (custo)" fmt=num2/>
+<BigValue data={evm_proj} value=eac title="EAC — estimativa no término (R$)" fmt='$#,##0'/>
+<BigValue data={evm_proj} value=spi_t title="SPI(t) — Earned Schedule" fmt=num2/>
+
+**Curva S** — PV (planejado) · EV (agregado) · AC (custo real). Se EV está abaixo de PV, o projeto atrasa;
+se AC está acima de EV, estoura o orçamento.
+
+<img src={'/mc/' + params.projeto.replaceAll(' ', '_') + '_evm.png'} alt="Curva S do Earned Value Management" style="width:100%;border-radius:8px;"/>
+
+<LineChart data={evm_serie_proj} x=periodo y={['pv','ev','ac']} title="PV · EV · AC por período (R$)" yAxisTitle="Acumulado (R$)" xAxisTitle="Período (semana)"/>
+
+<DataTable data={evm_proj} rows=all>
+  <Column id=sv title="SV (prazo, R$)" fmt='$#,##0' contentType=colorscale/>
+  <Column id=cv title="CV (custo, R$)" fmt='$#,##0' contentType=colorscale/>
+  <Column id=vac title="VAC (variação no término)" fmt='$#,##0' contentType=colorscale/>
+  <Column id=tcpi title="TCPI (eficiência necessária)" fmt=num2/>
+  <Column id=ieac_t title="Prazo estimado (períodos)" fmt=num1/>
+</DataTable>
+
+## ⚙️ Saúde de execução da IA no tempo (Langfuse real)
+
+> O que diferencia de um framework financeiro: **saúde operacional ao longo do tempo**, dos logs reais
+> do Langfuse. Latência sob SLO, orçamento de tokens, regressão de qualidade e *drift* do modelo.
+
+**Latência p50/p95/p99 por dia** — a linha vermelha é o **SLO** (p95 ≤ 5 s). Cruzou, o serviço degradou.
+
+<LineChart data={lat_proj} x=dia y={['p50','p95','p99']} title="Latência por dia (s)" yAxisTitle="segundos" xAxisTitle="dia">
+  <ReferenceLine y=5 color=negative label="SLO p95 = 5s"/>
+</LineChart>
+
+**Token budget burndown** — consumo acumulado vs orçamento. Acima da linha de orçamento = estouro.
+
+<LineChart data={burn_proj} x=dia y={['tokens_acum','orcamento_acum']} title="Tokens acumulados vs orçamento" yAxisTitle="tokens" xAxisTitle="dia"/>
+
+**Tendência de qualidade** — taxa de erro por dia; um pico dispara o alerta de regressão (regra tipo SPC).
+
+<LineChart data={qual_proj} x=dia y=taxa_erro title="Taxa de erro por dia (%)" yAxisTitle="% de erros" xAxisTitle="dia"/>
+
+**Drift do modelo** — distância de Kolmogorov-Smirnov entre a distribuição de tokens do dia e a do 1º dia.
+Passou do limiar, o comportamento do modelo mudou (não é intuição — é o mesmo KS do ajuste de distribuições).
+
+<LineChart data={drift_proj} x=dia y=ks_stat title="Drift da distribuição de tokens (D de KS)" yAxisTitle="D de KS" xAxisTitle="dia">
+  <ReferenceLine y=0.20 color=negative label="limiar de drift"/>
+</LineChart>
+
+## 🚨 Registro de risco & matriz Probabilidade × Impacto
+
+> Complementa o Monte Carlo (risco quantitativo) com o **risco qualitativo** que o PMO cobra. A
+> probabilidade de cada risco é **ancorada nos sinais reais** deste projeto: drift, violações de SLO,
+> CPI e regressões de qualidade — não é chute.
+
+**Matriz P × I** — cada bolha é um risco; quanto mais para o canto superior-direito, mais perigoso.
+
+<ScatterPlot data={risco_proj} x=probabilidade y=impacto size=exposicao series=nivel title="Probabilidade × Impacto (bolha = exposição)" xAxisTitle="Probabilidade (1–5)" yAxisTitle="Impacto (1–5)" xMin=0 xMax=6 yMin=0 yMax=6/>
+
+**Risk burndown** — a exposição ativa deve cair ao longo do tempo (linha ideal a zero). Se sobe, um risco reabriu.
+
+<LineChart data={risco_burn_proj} x=dia y={['exposicao_total','exposicao_ideal']} title="Exposição total ao risco por dia" yAxisTitle="exposição (Σ P×I)" xAxisTitle="dia"/>
+
+**Registro de risco** — ordenado por exposição; priorize os `crítico`/`alto` ainda `aberto`.
+
+<DataTable data={risco_proj} rows=all rowShading=true>
+  <Column id=categoria title="Categoria"/>
+  <Column id=descricao title="Risco"/>
+  <Column id=dono title="Dono"/>
+  <Column id=probabilidade title="P" align=center/>
+  <Column id=impacto title="I" align=center/>
+  <Column id=exposicao title="Exposição" fmt=num0 contentType=colorscale/>
+  <Column id=nivel title="Nível"/>
+  <Column id=status title="Status"/>
+  <Column id=mitigacao title="Mitigação"/>
+</DataTable>
+
+## 🌊 Fluxo de trabalho (Kanban): CFD, cycle time e throughput
+
+> Fecha o lado da entrega. O **CFD** mostra WIP e gargalos de relance; o **cycle time P85** dá previsão
+> por percentil (não por chute); o **throughput** é o ritmo real de conclusão.
+
+<BigValue data={fluxo_resumo_proj} value=throughput_dia title="Throughput (itens/dia)" fmt=num1/>
+<BigValue data={fluxo_resumo_proj} value=ct_p50 title="Cycle time P50 (dias)" fmt=num1/>
+<BigValue data={fluxo_resumo_proj} value=ct_p85 title="Cycle time P85 (dias)" fmt=num1/>
+<BigValue data={fluxo_resumo_proj} value=wip_medio title="WIP médio" fmt=num1/>
+
+**Cumulative Flow Diagram** — faixas paralelas = fluxo saudável; uma faixa que engorda = gargalo/WIP preso.
+
+<AreaChart data={cfd_proj} x=dia y={['backlog','doing','review','done']} title="CFD — itens por estado ao longo do tempo" yAxisTitle="itens" xAxisTitle="dia"/>
+
+**Cycle time por item concluído** — a dispersão; a maioria dos itens fica abaixo do P85 (a linha de previsão).
+
+<ScatterPlot data={fluxo_itens_proj} x=dia_conclusao y=cycle_time title="Cycle time dos itens concluídos (dias)" yAxisTitle="cycle time (dias)" xAxisTitle="conclusão"/>
 
 ## 🧮 Posição deste projeto em cada método multicritério
 

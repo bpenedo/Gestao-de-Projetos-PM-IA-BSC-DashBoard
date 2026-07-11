@@ -209,6 +209,12 @@ ole *"onko minulla varaa mitata?"*. Se on ***"kuinka kauan minulla vielä on var
 - **💳 Tekoäly-FinOps:** **tilaussuunnitelmien** luettelo (OpenAI, Anthropic, Google, Perplexity, xAI, Mistral,
   DeepSeek, Kimi, Qwen…) **valuuttakurssilla + IOF** ja jakoperusteella (burn rate).
 - **🌐 12 kieltä** dashboardissa **ja kaavioiden kuvien sisäisessä tekstissä** (ml. devanagari, heprea ja CJK).
+<!-- eixo-execucao -->
+- **📅 Monte Carlo -aikataulu (PERT) + Gantt:** sama Monte Carlo -moottori kohdistettuna **tehtävien kestoihin** — valmistumispäivän jakauma, **P80** (PMI:n suosittelema sitoumus), `P(ajallaan)` ja **kriittinen polku** sekä **kriittisyysindeksi** (kuinka monessa prosentissa 10 000 simulaatiosta tehtävä on kriittinen — sen minkä deterministinen CPM piilottaa).
+- **📐 Earned Value Management + Earned Schedule:** **SPI · CPI · EAC · ETC · VAC · TCPI** ja **S-käyrä** (PV/EV/AC). Yhdistää **kustannuksen + aikataulun + laajuuden** yhteen kuvaan. **SPI(t)** korjaa SPI:n tunnetun vian: se lähestyy ykköstä lopussa vaikka projekti myöhästyisi.
+- **⚙️ Tekoälyn suoritusterveys ajassa:** viive **p50/p95/p99** suhteessa **SLO**:hon, **token-budjetin burndown**, **laaturegressio** (SPC-tyyppinen sääntö) ja **mallin ajautuminen** **Kolmogorov-Smirnovilla** — kaikki **oikeista** Langfuse-lokeista.
+- **🚨 Riskirekisteri + Todennäköisyys × Vaikutus -matriisi:** se *laadullinen* riski, jota jokainen PMO vaatii — omistaja, laukaisin ja lievennys. Todennäköisyydet on **ankkuroitu oikeisiin signaaleihin** (SLO-rikkeet, CPI, ajautuminen), ei arvattu.
+- **🌊 Virtausmittarit (Kanban):** **CFD**, **läpimenoaika P50/P85** (ennuste persentiilillä, ei arvaamalla), **läpäisy** ja **WIP**.
 
 ---
 
@@ -235,6 +241,32 @@ leikata? Suuri ja punainen.*
 | 5W4H (toimintasuunnitelma) | Vika-Pareto (80/20) |
 |---|---|
 | ![5W4H](docs/screenshots/5w4h.png) | ![Pareto](docs/screenshots/pareto.png) |
+
+### 📅 Suoritusakseli — aikataulu, tuotettu arvo, tekoälyn terveys, riski ja virtaus
+
+**Gantt kriittisellä polulla** — punaiset palkit ovat kriittinen polku; **%** kussakin tehtävässä on *kriittisyysindeksi*: kuinka monessa prosentissa 10 000 simulaatiosta tehtävä määräsi määräajan.
+
+![Gantt kriittisellä polulla — punaiset palkit ovat kriittinen polku; % ](docs/screenshots/cronograma-gantt.png)
+
+**Aikatauluriski** — valmistumispäivän jakauma, määräaika, **P50** ja **P80** merkittyinä. Sitoudu P80:aan, älä deterministiseen arvioon (optimistinen yhtymäharhan takia).
+
+![Aikatauluriski — valmistumispäivän jakauma, määräaika, P50 ja P80 merk](docs/screenshots/cronograma-risco-prazo.png)
+
+**EVM:n S-käyrä** — PV (suunniteltu) · EV (tuotettu) · AC (todelliset kustannukset). EV alle PV:n = myöhässä; AC yli EV:n = yli budjetin.
+
+![EVM:n S-käyrä — PV (suunniteltu) · EV (tuotettu) · AC (todelliset kust](docs/screenshots/evm-curva-s.png)
+
+**Viive SLO:n alla** — p50/p95/p99 päivittäin, oikeista lokeista. Viivan ylitys = palvelu heikentyi.
+
+![Viive SLO:n alla — p50/p95/p99 päivittäin, oikeista lokeista. Viivan y](docs/screenshots/exec-latencia-slo.png)
+
+**Riskimatriisi T × V** — kupla = altistus (T×V). Todennäköisyys ankkuroitu projektin oikeisiin signaaleihin.
+
+![Riskimatriisi T × V — kupla = altistus (T×V). Todennäköisyys ankkuroit](docs/screenshots/risco-matriz-pi.png)
+
+**Kumulatiivinen virtauskaavio (CFD)** — rinnakkaiset kaistat = terve virtaus; paksuuntuva kaista = pullonkaula / jumittunut WIP.
+
+![Kumulatiivinen virtauskaavio (CFD) — rinnakkaiset kaistat = terve virt](docs/screenshots/fluxo-cfd.png)
 
 ---
 

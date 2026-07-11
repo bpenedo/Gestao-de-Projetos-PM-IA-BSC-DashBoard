@@ -211,6 +211,12 @@ minutos**. A pergunta não é *"posso pagar para medir?"*. É ***"quanto tempo m
 - **💳 FinOps de IA:** catálogo de **planos de assinatura** (OpenAI, Anthropic, Google, Perplexity, xAI,
   Mistral, DeepSeek, Kimi, Qwen…) com **câmbio + IOF** e base de **rateio** (burn rate).
 - **🌐 12 idiomas** no dashboard **e nas imagens dos gráficos** (incl. Devanagari, Hebraico e CJK).
+<!-- eixo-execucao -->
+- **📅 Cronograma Monte Carlo (PERT) + Gantt:** o mesmo motor de Monte Carlo apontado para **durações de tarefas** — distribuição da data de término, **P80** (o compromisso que o PMI recomenda), `P(no prazo)` e **caminho crítico** com **índice de criticidade** (em quantos % das 10.000 simulações cada tarefa é crítica — o que o CPM determinístico esconde).
+- **📐 Earned Value Management + Earned Schedule:** **SPI · CPI · EAC · ETC · VAC · TCPI** e a **curva S** (PV/EV/AC). Une **custo + prazo + escopo** num só quadro. O **SPI(t)** corrige o defeito conhecido do SPI, que converge para 1 no fim mesmo com o projeto atrasado.
+- **⚙️ Saúde de execução da IA no tempo:** latência **p50/p95/p99** com **SLO**, **token budget burndown**, **regressão de qualidade** (regra tipo SPC) e **drift do modelo** por **Kolmogorov-Smirnov** — tudo dos logs **reais** do Langfuse.
+- **🚨 Registro de risco + matriz Probabilidade × Impacto:** o risco *qualitativo* que o PMO cobra, com dono, gatilho e mitigação. As probabilidades são **ancoradas nos sinais reais** (violação de SLO, CPI, drift), não são chute.
+- **🌊 Fluxo de trabalho (Kanban):** **CFD**, **cycle time P50/P85** (previsão por percentil, não por chute), **throughput** e **WIP**.
 
 ---
 
@@ -237,6 +243,32 @@ cortar? Grande e vermelho.*
 | 5W4H (plano de ação) | Pareto de falhas (80/20) |
 |---|---|
 | ![5W4H](docs/screenshots/5w4h.png) | ![Pareto](docs/screenshots/pareto.png) |
+
+### 📅 Eixo de execução — cronograma, valor agregado, saúde da IA, risco e fluxo
+
+**Gantt com caminho crítico** — barras vermelhas são o caminho crítico; o **%** em cada tarefa é o *índice de criticidade*: em quantos por cento das 10.000 simulações aquela tarefa determinou o prazo.
+
+![Gantt com caminho crítico — barras vermelhas são o caminho crítico; o ](docs/screenshots/cronograma-gantt.png)
+
+**Risco de prazo** — a distribuição da data de término, com a *deadline*, o **P50** e o **P80** marcados. Comprometa-se com o P80, não com a estimativa determinística (que é otimista por causa do viés de convergência).
+
+![Risco de prazo — a distribuição da data de término, com a deadline, o ](docs/screenshots/cronograma-risco-prazo.png)
+
+**Curva S do EVM** — PV (planejado) · EV (agregado) · AC (custo real). Se o EV está abaixo do PV, atrasa; se o AC está acima do EV, estoura.
+
+![Curva S do EVM — PV (planejado) · EV (agregado) · AC (custo real). Se ](docs/screenshots/evm-curva-s.png)
+
+**Latência sob SLO** — p50/p95/p99 por dia, dos logs reais. Cruzou a linha, o serviço degradou.
+
+![Latência sob SLO — p50/p95/p99 por dia, dos logs reais. Cruzou a linha](docs/screenshots/exec-latencia-slo.png)
+
+**Matriz de risco P × I** — bolha = exposição (P×I). Probabilidade ancorada nos sinais reais do projeto.
+
+![Matriz de risco P × I — bolha = exposição (P×I). Probabilidade ancorad](docs/screenshots/risco-matriz-pi.png)
+
+**Cumulative Flow Diagram** — faixas paralelas = fluxo saudável; uma faixa que engorda = gargalo/WIP preso.
+
+![Cumulative Flow Diagram — faixas paralelas = fluxo saudável; uma faixa](docs/screenshots/fluxo-cfd.png)
 
 ---
 

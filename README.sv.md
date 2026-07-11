@@ -207,6 +207,12 @@ Frågan är inte *"har jag råd att mäta?"*. Den är ***"hur länge till har ja
 - **💳 AI-FinOps:** katalog över **prenumerationsplaner** (OpenAI, Anthropic, Google, Perplexity, xAI, Mistral,
   DeepSeek, Kimi, Qwen…) med **växelkurs + IOF** och fördelningsbas (burn rate).
 - **🌐 12 språk** i dashboarden **och i texten inuti diagrambilderna** (inkl. Devanagari, Hebreiska och CJK).
+<!-- eixo-execucao -->
+- **📅 Monte Carlo-tidplan (PERT) + Gantt:** samma Monte Carlo-motor riktad mot **aktivitetslängder** — fördelning av slutdatum, **P80** (åtagandet PMI rekommenderar), `P(i tid)` och **kritisk linje** med **kritikalitetsindex** (i hur många % av de 10 000 simuleringarna varje aktivitet är kritisk — det som deterministisk CPM döljer).
+- **📐 Earned Value Management + Earned Schedule:** **SPI · CPI · EAC · ETC · VAC · TCPI** och **S-kurvan** (PV/EV/AC). Förenar **kostnad + tid + omfattning** i en bild. **SPI(t)** rättar SPI:s kända brist: att konvergera mot 1 i slutet även när projektet är försenat.
+- **⚙️ AI:ns exekveringshälsa över tid:** latens **p50/p95/p99** mot ett **SLO**, **token budget burndown**, **kvalitetsregression** (SPC-liknande regel) och **modelldrift** via **Kolmogorov-Smirnov** — allt från **verkliga** Langfuse-loggar.
+- **🚨 Riskregister + Sannolikhets-×-Konsekvens-matris:** den *kvalitativa* risk varje PMO kräver, med ägare, trigger och åtgärd. Sannolikheterna är **förankrade i verkliga signaler** (SLO-brott, CPI, drift), inte gissningar.
+- **🌊 Flödesmått (Kanban):** **CFD**, **cykeltid P50/P85** (prognos per percentil, inte gissning), **throughput** och **WIP**.
 
 ---
 
@@ -233,6 +239,32 @@ Stort och rött.*
 | 5W4H (handlingsplan) | Fel-Pareto (80/20) |
 |---|---|
 | ![5W4H](docs/screenshots/5w4h.png) | ![Pareto](docs/screenshots/pareto.png) |
+
+### 📅 Exekveringsaxeln — tidplan, earned value, AI-hälsa, risk och flöde
+
+**Gantt med kritisk linje** — röda staplar är den kritiska linjen; **%** på varje aktivitet är *kritikalitetsindex*: i hur många procent av de 10 000 simuleringarna aktiviteten styrde slutdatumet.
+
+![Gantt med kritisk linje — röda staplar är den kritiska linjen; % på va](docs/screenshots/cronograma-gantt.png)
+
+**Tidsrisk** — fördelningen av slutdatum, med deadline, **P50** och **P80** utmarkerade. Åta dig P80, inte den deterministiska skattningen (optimistisk pga merge bias).
+
+![Tidsrisk — fördelningen av slutdatum, med deadline, P50 och P80 utmark](docs/screenshots/cronograma-risco-prazo.png)
+
+**EVM:s S-kurva** — PV (planerat) · EV (intjänat) · AC (verklig kostnad). EV under PV = försening; AC över EV = budgetöverskridande.
+
+![EVM:s S-kurva — PV (planerat) · EV (intjänat) · AC (verklig kostnad). ](docs/screenshots/evm-curva-s.png)
+
+**Latens under SLO** — p50/p95/p99 per dag, från verkliga loggar. Korsad linje = tjänsten försämrades.
+
+![Latens under SLO — p50/p95/p99 per dag, från verkliga loggar. Korsad l](docs/screenshots/exec-latencia-slo.png)
+
+**Riskmatris S × K** — bubbla = exponering (S×K). Sannolikheten förankrad i projektets verkliga signaler.
+
+![Riskmatris S × K — bubbla = exponering (S×K). Sannolikheten förankrad ](docs/screenshots/risco-matriz-pi.png)
+
+**Cumulative Flow Diagram** — parallella band = friskt flöde; ett band som sväller = flaskhals / fastnat WIP.
+
+![Cumulative Flow Diagram — parallella band = friskt flöde; ett band som](docs/screenshots/fluxo-cfd.png)
 
 ---
 
