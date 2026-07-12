@@ -105,6 +105,20 @@ jobs:
           printf '\ndeployment:\n  basePath: /%s\n' "${GITHUB_REPOSITORY#*/}" >> evidence.config.yaml
           tail -n 3 evidence.config.yaml
 
+      # Imagens com `src` DINÂMICO (Gantt/EVM por projeto) e basePath: o Evidence já
+      # prefixa o base — e o base TERMINA COM BARRA. Então:
+      #   local  (sem basePath): src precisa da barra -> '/mc/x.png'   ✅
+      #   Pages  (com basePath): base '/repo/' + '/mc/x.png' = '//mc/' ❌ (404)
+      #                          base '/repo/' + 'mc/x.png'  = '/repo/mc/x.png' ✅
+      # Não existe string única que sirva às duas condições, então tiramos a barra
+      # inicial APENAS aqui, como já se faz com o gekko abaixo.
+      - name: Ajustar src dinâmico das imagens ao basePath (só no CI)
+        working-directory: foundations/evidence
+        run: |
+          set -euo pipefail
+          sed -i "s|src={'/mc/|src={'mc/|g" "pages/projetos/[projeto].md"
+          grep -c "src={'mc/" "pages/projetos/[projeto].md"
+
       # `gekko_photo.png` é um still de filme (terceiros/copyright), git-ignored de
       # propósito: fica só no dashboard local e NÃO é redistribuído. No site público
       # usamos a ilustração livre `gekko.svg`, que já é versionada.
