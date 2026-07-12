@@ -84,7 +84,12 @@ cp "$DB" "$EVIDENCE_DIR/sources/bsc/bsc_ia.db"
 
 echo "▶️  Recompilando dashboard Evidence..."
 cd "$EVIDENCE_DIR"
+# build/ NÃO é limpo pelo Vite: parquets de rodadas antigas ficam para trás e o
+# dashboard passa a servir dado OBSOLETO (já aconteceu: 9 tabelas com 2 versões).
+rm -rf build
 npm run sources
-npm run build
+# `npm run build` retorna 0 mesmo com query que não resolve — foi assim que 11
+# tabelas ficaram vazias com exit 0. O estrito FALHA, que é o que queremos numa esteira.
+npm run build:strict
 
 echo "✅ Esteira concluída. Dashboard em: $EVIDENCE_DIR/build/index.html"
