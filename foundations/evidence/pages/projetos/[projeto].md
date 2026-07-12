@@ -273,7 +273,7 @@ daquele período sobre o VPL; a **correlação** mede o quanto a incerteza daque
 O **% em cada tarefa é o índice de criticidade**: em quantos por cento das 10.000 simulações aquela tarefa
 caiu no caminho crítico — o que o CPM determinístico esconde.
 
-<img src={'/mc/' + params.projeto.replaceAll(' ', '_') + '_gantt.png'} alt="Gráfico de Gantt com caminho crítico" style="width:100%;border-radius:8px;"/>
+<img src={'../../mc/' + params.projeto.replaceAll(' ', '_') + '_gantt.png'} alt="Gráfico de Gantt com caminho crítico" style="width:100%;border-radius:8px;"/>
 
 **Distribuição da data de término** — a "curva de risco" do prazo. A deadline baseline, o P50 e o P80 estão marcados.
 
@@ -306,7 +306,7 @@ caiu no caminho crítico — o que o CPM determinístico esconde.
 **Curva S** — PV (planejado) · EV (agregado) · AC (custo real). Se EV está abaixo de PV, o projeto atrasa;
 se AC está acima de EV, estoura o orçamento.
 
-<img src={'/mc/' + params.projeto.replaceAll(' ', '_') + '_evm.png'} alt="Curva S do Earned Value Management" style="width:100%;border-radius:8px;"/>
+<img src={'../../mc/' + params.projeto.replaceAll(' ', '_') + '_evm.png'} alt="Curva S do Earned Value Management" style="width:100%;border-radius:8px;"/>
 
 <LineChart data={evm_serie_proj} x=periodo y={['pv','ev','ac']} title="PV · EV · AC por período (R$)" yAxisTitle="Acumulado (R$)" xAxisTitle="Período (semana)"/>
 
