@@ -78,9 +78,21 @@ jobs:
           python3 ahp_topsis.py
           python3 mcdm.py
           python3 robustez_ranking.py
+          # --- eixo de EXECUÇÃO (cronograma, EVM, saúde de IA, risco, fluxo) ---
+          # Sem estes, as 15 tabelas novas não existem e o build:strict FALHA.
+          python3 cronograma_mc.py
+          python3 evm.py
+          python3 exec_metricas.py
+          python3 risco.py
+          python3 fluxo.py
           python3 gerar_mc_graficos.py
           python3 gerar_mcdm_graficos.py
           python3 gerar_robustez_graficos.py
+          # Gantt e curva S do EVM são embutidos como <img> nas páginas: sem os PNGs
+          # o prerender do SvelteKit quebra com 404.
+          python3 gerar_gantt.py
+          python3 gerar_evm.py
+          python3 gerar_telas_execucao.py
           python3 gerar_admtools.py
           python3 gerar_5d_projetos.py
           cp bsc_ia.db ../evidence/sources/bsc/bsc_ia.db
@@ -126,13 +138,23 @@ jobs:
           faltando=0
           for t in mc_estatisticas mc_ajuste_distribuicao mc_tornado mc_histograma \
                    mc_percentis dematel_criterio dematel_relacao decisao_mcdm \
-                   decisao_consenso mcdm_robustez mcdm_robustez_dist; do
+                   decisao_consenso mcdm_robustez mcdm_robustez_dist \
+                   mc_cronograma mc_cronograma_hist cronograma_critico cronograma_tarefas \
+                   evm_indices evm_serie \
+                   exec_latencia_tempo exec_tokens_burndown exec_qualidade_tempo exec_drift \
+                   risco_registro risco_burndown \
+                   fluxo_cfd fluxo_itens fluxo_resumo; do
             if ! find "build/data/bsc/$t" -name '*.parquet' -print -quit | grep -q .; then
               echo "❌ $t: sem parquet"; faltando=$((faltando+1))
             fi
           done
           [ "$faltando" -eq 0 ] || { echo "faltando $faltando tabela(s)"; exit 1; }
           echo "✅ todas as tabelas do dashboard têm parquet publicado"
+          # Os PNGs do Gantt/EVM são embutidos com <img>: sem eles o site 404.
+          for p in Project_C_gantt Project_C_prazo_risco Project_C_evm; do
+            test -f "static/mc/$p.png" || { echo "❌ falta static/mc/$p.png"; exit 1; }
+          done
+          echo "✅ PNGs do eixo de execução presentes"
           touch build/.nojekyll
 
       - uses: actions/configure-pages@v5
