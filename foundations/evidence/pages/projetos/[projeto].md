@@ -149,6 +149,53 @@ where project_name = '${params.projeto}' order by dia_conclusao
 select * from bsc.fluxo_resumo where project_name = '${params.projeto}'
 ```
 
+```sql cadeia_proj
+select * from bsc.cadeia_causal where project_name = '${params.projeto}'
+```
+
+```sql pm_proj
+select * from bsc.pm_agent_feedback
+where project_name = '${params.projeto}'
+order by ciclo desc limit 1
+```
+
+```sql pm_radar_proj
+select r.* from bsc.pm_agent_radar r
+where r.project_name = '${params.projeto}'
+  and r.ciclo = (select max(ciclo) from bsc.pm_agent_feedback
+                 where project_name = '${params.projeto}')
+order by r.prioridade desc
+```
+
+```sql pm_tol_proj
+select t.* from bsc.pm_agent_tolerancia t
+where t.project_name = '${params.projeto}'
+  and t.ciclo = (select max(ciclo) from bsc.pm_agent_feedback
+                 where project_name = '${params.projeto}')
+order by t.folga_pct asc
+```
+
+```sql fever_proj
+select * from bsc.buffer_fever where project_name = '${params.projeto}'
+```
+
+```sql reserva_proj
+select * from bsc.reserva_analise where project_name = '${params.projeto}'
+```
+
+```sql sprints_proj
+select * from bsc.sprints where project_name = '${params.projeto}' order by sprint
+```
+
+```sql sprints_feitas
+select * from bsc.sprints
+where project_name = '${params.projeto}' and entregue is not null order by sprint
+```
+
+```sql debate_proj
+select * from bsc.sprint_debate where project_name = '${params.projeto}' order by ordem
+```
+
 # 🛠️ {params.projeto}
 
 <BigValue data={proj} value=kpi_psr title="PSR (0-5)" fmt=num2/>
@@ -514,3 +561,199 @@ alucinação detectada e sua contramedida definitiva:
 4. **Act** — padronizar no system prompt/pipeline o que funcionou e repetir o ciclo.
 
 > **Norte:** **CPP decrescente** semana a semana. Cada waste e cada alucinação reduzidos derrubam o CPP.
+
+---
+
+## d) 🤖 Feedback do Project Manager Agent
+
+{#if pm_proj.length > 0}
+> **Ciclo {pm_proj[0].ciclo} · dimensão crítica: {pm_proj[0].dimensao} · confiança: {pm_proj[0].confianca}**
+>
+> Este é o fecho do projeto. O agente varre **todas as dimensões** — prazo, ROI, risco, tokens, custo,
+> deriva do modelo, confiabilidade, qualidade, fluxo e desperdício —, converte cada uma em **dias
+> equivalentes de projeto × o custo do atraso deste projeto**, e responde a única pergunta que
+> importa: **o que fazer agora, e quanto vale fazer.**
+
+### 🔗 A corrente que sustenta o veredito
+
+O agente não opina: ele puxa a corrente **do token que derivou até o real que se perdeu**. O Langfuse
+diz que o modelo derivou. O Jira diz que a tarefa atrasou. O ERP diz que o caixa caiu. **Nenhum deles
+liga as três coisas.** Aqui cada elo é auditável.
+
+<BigValue data={cadeia_proj} value=ks_max title="1️⃣ Drift do modelo (D de KS)" fmt=num2/>
+<BigValue data={cadeia_proj} value=risco_prob_nova title="2️⃣ Risco de qualidade (1–5)" fmt=num0/>
+<BigValue data={cadeia_proj} value=dias_perdidos title="3️⃣ Dias perdidos no P80" fmt=num1/>
+<BigValue data={cadeia_proj} value=custo_atraso title="4️⃣ Custo do atraso (R$)" fmt='$#,##0'/>
+
+<DataTable data={cadeia_proj} rows=all>
+  <Column id=dias_com_drift title="Dias com drift"/>
+  <Column id=tarefa_afetada title="Tarefa que o drift machuca"/>
+  <Column id=dur_pess_base title="Pior caso ANTES (d)" fmt=num1/>
+  <Column id=dur_pess_nova title="Pior caso DEPOIS (d)" fmt=num1/>
+  <Column id=p80_base title="P80 antes (d)" fmt=num1/>
+  <Column id=p80_novo title="P80 depois (d)" fmt=num1/>
+  <Column id=cod_dia title="Custo por dia parado (R$)" fmt='$#,##0'/>
+  <Column id=custo_atraso title="CUSTO TOTAL (R$)" fmt='$#,##0' contentType=colorscale/>
+</DataTable>
+
+Drift não deixa a tarefa mais lenta *na média* — deixa o **pior caso pior**. A cauda mais grossa
+empurra o **P80**, e cada dia perdido custa **MRR que não entra + time que continua custando + tokens
+que continuam queimando**. **Sem drift, o custo é exatamente R$ 0**: a corrente não inventa dano, ela
+o *rastreia*.
+
+### 🚦 Tolerâncias (PRINCE2 — management by exception)
+
+**Status do ciclo: {pm_proj[0].status}** · buffer do cronograma: **{pm_proj[0].zona_buffer}**
+
+O agente **não incomoda ninguém** enquanto a *previsão* estiver dentro da tolerância acordada — e a
+tolerância não é um número que ele inventou: sai do que o **projeto já declarou** (a data prometida,
+o orçamento aprovado, a classificação do próprio registro de risco, a baseline de qualidade do
+próprio projeto). Só o limite de ROI é política explícita, e está aqui para o board discordar.
+
+<DataTable data={pm_tol_proj} rows=all>
+  <Column id=dimensao title="Dimensão"/>
+  <Column id=metrica title="Tolerância ancorada em" wrap=true/>
+  <Column id=previsto title="Previsto" fmt=num2/>
+  <Column id=limite title="Limite" fmt=num2/>
+  <Column id=unidade title="Un."/>
+  <Column id=folga_pct title="Folga" fmt=pct0 contentType=colorscale/>
+  <Column id=estourou title="Exceção?" contentType=colorscale/>
+</DataTable>
+
+### 🌡️ Fever chart do buffer (CCPM — Goldratt)
+
+<BigValue data={fever_proj} value=pct_cadeia title="Cadeia concluída" fmt=pct0/>
+<BigValue data={fever_proj} value=pct_buffer title="Buffer consumido" fmt=pct0/>
+<BigValue data={fever_proj} value=buffer_dias title="Buffer total (dias)" fmt=num1/>
+<BigValue data={fever_proj} value=zona title="Zona"/>
+
+As fronteiras são **diagonais** de propósito: queimar buffer no fim do projeto é normal — queimar no
+começo é grave, porque ainda falta projeto inteiro pela frente. **Verde = não faça nada** (e o agente
+cala). **Amarelo = planeje.** **Vermelho = aja.**
+
+{#if reserva_proj.length > 0}
+### 🏦 Análise de reserva (PMI)
+
+<BigValue data={reserva_proj} value=contingencia title="Contingência P80−P50 (dias)" fmt=num1/>
+<BigValue data={reserva_proj} value=reserva_gerencial title="Reserva gerencial P95−P80 (dias)" fmt=num1/>
+<BigValue data={reserva_proj} value=buffer_pct_cadeia title="Buffer / cadeia" fmt=pct0/>
+<BigValue data={reserva_proj} value=emv_risco_dias title="Contingência que o risco justifica (dias)" fmt=num1/>
+
+{reserva_proj[0].veredito}
+
+{/if}
+
+### ⚖️ Veredito
+
+{pm_proj[0].veredito}
+
+{#if pm_proj[0].status === 'EXCECAO'}
+### 🚨 Exception Report (PRINCE2)
+
+O que separa um Exception Report de um alarme é a linha das **opções**: escalar sem oferecer
+alternativas é empurrar o problema para cima, não gerenciar.
+
+{pm_proj[0].excecao}
+
+{/if}
+
+### 🛠️ Ação recomendada — dono e prazo definidos
+
+{pm_proj[0].acao}
+
+<BigValue data={pm_proj} value=impacto_rs title="💰 Valor em jogo nesta ação (R$)" fmt='$#,##0'/>
+
+**Prática que sustenta a recomendação:** _{pm_proj[0].pratica}_
+
+### 🎯 O radar das dimensões — por que esta e não outra
+
+O agente **não olha só a vencedora**: ele mostra a bancada inteira. Cada dimensão vira dias
+equivalentes, os dias viram reais pelo custo de atraso **deste** projeto, e o peso é o que o agente
+**aprendeu** aqui. A prioridade é `dano × peso` — e a linha do topo é a escolhida.
+
+<DataTable data={pm_radar_proj} rows=all>
+  <Column id=dimensao title="Dimensão"/>
+  <Column id=metrica title="Métrica-alvo (menor é melhor)" wrap=true/>
+  <Column id=valor title="Medido" fmt=num2/>
+  <Column id=dias_eq title="Dias-eq." fmt=num2/>
+  <Column id=dano_rs title="Dano (R$)" fmt='$#,##0' contentType=colorscale/>
+  <Column id=peso title="Peso aprendido" fmt=num2/>
+  <Column id=prioridade title="Prioridade (dano × peso)" fmt='$#,##0'/>
+</DataTable>
+
+<BarChart data={pm_radar_proj} x=dimensao y=dano_rs title="Dano por dimensão (R$ — mesma régua para todas)" yAxisTitle="R$" swapXY=true/>
+
+### 🏃 Sprints & o debate da weekly de sexta
+
+A sprint aqui **não é inventada**: ela é o **período do EVM**, a cadência que este projeto já tem,
+com PV/EV/AC reais. Inventar um calendário de sprint paralelo ao cronograma seria criar uma segunda
+verdade sobre o mesmo projeto — e duas verdades é o mesmo que nenhuma.
+
+> **⚠️ Conformidade, dita na cara.** Isto é um **relatório de progresso por cadência, baseado em EVM
+> (ANSI/EIA-748) com métricas de inspiração ágil** — **não é Scrum**. O *Scrum Guide 2020* não contém
+> "velocity" nem "burndown chart" (são prática de mercado, não artefato oficial), e trocou o
+> *commitment* do Sprint Backlog pelo **Sprint Goal**, tratando o backlog como **forecast**. Portanto
+> "say-do ratio (entregue ÷ comprometido)" é vocabulário da **indústria**, não de Scrum canônico. Não
+> há Sprint Goal, Review, Retrospective nem time auto-gerenciado aqui. **A métrica é honesta; seria a
+> etiqueta que mentiria.**
+
+#### 📋 A pauta que o agente leva para a sexta
+
+_Uma linha = um ponto de debate, **com o número na frente**. Reunião sem número é opinião, e opinião
+não muda projeto._
+
+<DataTable data={debate_proj} rows=all>
+  <Column id=severidade title=""/>
+  <Column id=tema title="Tema"/>
+  <Column id=ponto title="O ponto de debate" wrap=true/>
+</DataTable>
+
+#### 📉 Burndown do projeto — real contra o planejado
+
+<LineChart data={sprints_proj} x=sprint y={['restante','restante_ideal']} title="Trabalho restante (BAC − EV) vs plano (BAC − PV)" yAxisTitle="valor restante" xAxisTitle="sprint"/>
+
+#### 🎯 Say-do ratio — a métrica que muda o tom da reunião
+
+<BarChart data={sprints_feitas} x=sprint y=say_do title="Entregue ÷ Comprometido por sprint" yAxisTitle="say-do" xAxisTitle="sprint"/>
+
+Um time com say-do de 0,7 **não é lento**: ele está *prometendo 30% a mais do que consegue*. O remédio
+é outro — não se conserta capacidade com cobrança, conserta-se compromisso com previsibilidade. E
+say-do muito **acima** de 1 também não é heroísmo: é **linha de base furada**.
+
+#### 💸 O CPI da sprint que a média acumulada esconde
+
+<LineChart data={sprints_feitas} x=sprint y=cpi_sprint title="CPI de cada sprint (local, não acumulado)" yAxisTitle="CPI da sprint" xAxisTitle="sprint"/>
+
+O CPI **acumulado** é uma média, e média **esconde** a sprint ruim recente: um acumulado de 1,05 pode
+abrigar uma última sprint a 0,6. O local denuncia; o acumulado consola.
+
+<DataTable data={sprints_proj} rows=all>
+  <Column id=sprint title="Sprint"/>
+  <Column id=status title="Status"/>
+  <Column id=comprometido title="Comprometido (ΔPV)" fmt=num0/>
+  <Column id=entregue title="Entregue (ΔEV)" fmt=num0/>
+  <Column id=custo title="Custo (ΔAC)" fmt=num0/>
+  <Column id=say_do title="Say-do" fmt=pct0 contentType=colorscale/>
+  <Column id=cpi_sprint title="CPI da sprint" fmt=num2 contentType=colorscale/>
+</DataTable>
+
+### 🧠 Motor de reaprendizagem — o que o agente aprendeu **sobre este projeto**
+
+{pm_proj[0].aprendizado}
+
+**Perfil taylor-made deste projeto:** {pm_proj[0].perfil}
+
+> **Como ele aprende.** A cada ciclo o agente recomenda uma alavanca e **guarda a métrica-alvo dela**.
+> No ciclo seguinte cobra a si mesmo: a métrica melhorou? Se sim, o peso daquela alavanca **sobe** —
+> nesta casa ela funciona. Se piorou, **cai** — aqui ela não move o ponteiro. Variação abaixo de 2% é
+> ruído, e **o agente não aprende com ruído**. Só a alavanca que ele **recomendou** é avaliada: ele
+> responde pelo que mandou fazer, e não leva crédito pelo que o acaso melhorou.
+>
+> É um **bandit contextual** — simples, auditável, e dito na cara: **não é deep learning**. O resultado
+> é que o perfil deste projeto **não serve para o vizinho**, e é exatamente esse o ponto.
+
+{:else}
+
+⏳ O Project Manager Agent ainda não rodou um ciclo para este projeto.
+
+{/if}

@@ -63,6 +63,18 @@ python3 risco.py || echo "  (risco pulado)"
 echo "▶️  Métricas de fluxo (CFD/cycle time/throughput/WIP)..."
 python3 fluxo.py || echo "  (fluxo pulado)"
 
+echo "🔗 CADEIA CAUSAL: telemetria → risco → prazo → dinheiro (o elo que ninguém tem)..."
+python3 cadeia_causal.py || echo "  (cadeia causal pulada)"
+
+echo "🌡️  CCPM buffer/fever chart + 🏦 PMI reserve analysis (o direito de ficar calado)..."
+python3 buffer_ccpm.py || echo "  (buffer CCPM pulado)"
+
+echo "🤖 PROJECT MANAGER AGENT: varre as 10 dimensões, decide e REAPRENDE por projeto..."
+python3 pm_agent.py || echo "  (PM Agent pulado)"
+
+echo "🏃 Sprints + pauta do debate de progresso da weekly de sexta..."
+python3 sprints.py || echo "  (sprints pulado)"
+
 echo "▶️  Gerando gráficos de Monte Carlo (histograma + tornado)..."
 python3 gerar_mc_graficos.py || echo "  (gráficos MC pulados)"
 python3 gerar_mcdm_graficos.py || echo "  (gráficos MCDM pulados)"

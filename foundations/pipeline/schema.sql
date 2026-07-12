@@ -500,3 +500,207 @@ CREATE TABLE IF NOT EXISTS fluxo_resumo (
     wip_medio      REAL,
     lead_p50       REAL
 );
+
+-- ===========================================================================
+-- 🔗 CADEIA CAUSAL — o fosso: telemetria → risco → prazo → dinheiro.
+-- Nenhuma ferramenta do mercado liga um token do Langfuse a um VPL, a uma data
+-- P80 e a uma probabilidade de risco. Langfuse diz que o modelo derivou; ele NÃO
+-- diz que o projeto atrasou 4 dias e o VPL caiu R$ 18 mil por causa disso.
+-- Exige os QUATRO motores juntos (observabilidade + risco + cronograma MC + VPL).
+-- ===========================================================================
+-- NÃO usar DROP aqui: o schema sobe em TODO script (init_schema), e um DROP apagaria
+-- a cadeia para quem rodasse depois — foi exatamente assim que o pm_agent.py achou
+-- zero projetos. Quem regrava é o cadeia_causal.py, com DELETE por projeto.
+CREATE TABLE IF NOT EXISTS cadeia_causal (
+    project_name    TEXT PRIMARY KEY,
+    -- elo 1: TELEMETRIA (logs reais do Langfuse)
+    dias_com_drift  INTEGER,  -- dias em que o D de KS passou do limiar
+    ks_max          REAL,     -- maior distância KS observada vs a baseline
+    -- elo 2: RISCO
+    risco_prob_base INTEGER,  -- probabilidade do risco "Modelo" sem drift (1..5)
+    risco_prob_nova INTEGER,  -- probabilidade com o drift observado
+    -- elo 3: PRAZO (Monte Carlo re-simulado com a incerteza alargada)
+    tarefa_afetada  TEXT,     -- a tarefa cuja duração alarga (avaliação/guardrails)
+    dur_pess_base   REAL,     -- duração pessimista (b) antes
+    dur_pess_nova   REAL,     -- duração pessimista depois do drift
+    p80_base        REAL,     -- P80 do cronograma antes
+    p80_novo        REAL,     -- P80 depois
+    dias_perdidos   REAL,     -- p80_novo - p80_base
+    -- elo 4: DINHEIRO (fluxos empurrados pelos dias perdidos)
+    vpl_base        REAL,
+    vpl_novo        REAL,
+    delta_vpl       REAL,     -- vpl_base - vpl_novo (efeito do desconto; pequeno em fluxos anuais)
+    -- COST OF DELAY: o número que a diretoria sente. Receita não faturada + burn que
+    -- continua queimando, por dia de atraso. É o padrão de produto (Reinertsen).
+    cod_dia         REAL,     -- MRR/30 + custo de desenvolvimento por dia + burn de IA por dia
+    custo_atraso    REAL      -- dias_perdidos × cod_dia, em R$ — o CUSTO REAL do drift
+);
+
+-- ===========================================================================
+-- 🤖 PROJECT MANAGER AGENT — feedback conclusivo + MOTOR DE REAPRENDIZAGEM
+--    POR PROJETO. Não é "IA genérica": é um reforço de alavancas por projeto.
+--
+-- A cada ciclo o agente (1) mede o dano de cada alavanca pela CADEIA CAUSAL,
+-- (2) pondera pelo PESO APRENDIDO daquele projeto, (3) recomenda a alavanca de
+-- maior dano×peso, e (4) no ciclo seguinte VERIFICA se a métrica-alvo melhorou:
+--   melhorou -> peso sobe (a alavanca funciona NESTE projeto)
+--   piorou   -> peso cai (aqui ela não move o ponteiro)
+-- É um bandit contextual simples e auditável, não deep RL. Cada projeto
+-- desenvolve o seu próprio perfil de alavancas ao longo dos ciclos.
+-- ===========================================================================
+
+-- Memória do agente: o peso de cada alavanca, POR PROJETO (o que ele aprendeu).
+CREATE TABLE IF NOT EXISTS pm_agent_pesos (
+    project_name TEXT,
+    -- 9 alavancas, uma por DIMENSÃO do projeto: 'prazo' | 'roi' | 'risco' | 'tokens'
+    -- | 'custo' | 'drift' | 'slo' | 'qualidade' | 'fluxo'
+    alavanca     TEXT,
+    peso         REAL,     -- começa em 1.0; sobe quando a alavanca funciona NESTE projeto
+    acertos      INTEGER,  -- ciclos em que a métrica-alvo melhorou após a recomendação
+    erros        INTEGER,  -- ciclos em que piorou/não melhorou
+    metrica_ant  REAL,     -- valor da métrica-alvo no ciclo anterior (para o reforço)
+    PRIMARY KEY (project_name, alavanca)
+);
+
+-- Feedback conclusivo do agente, por ciclo (é o que aparece no Bottom-Line).
+CREATE TABLE IF NOT EXISTS pm_agent_feedback (
+    project_name    TEXT,
+    ciclo           INTEGER,
+    veredito        TEXT,    -- a frase que nenhuma outra ferramenta consegue emitir
+    dimensao        TEXT,    -- Prazo | ROI | Risco | Tokens | Custo | Qualidade | Fluxo | Confiabilidade
+    causa_raiz      TEXT,    -- a alavanca de maior dano×peso
+    acao            TEXT,    -- o que fazer AGORA
+    pratica         TEXT,    -- a prática de referência que sustenta a ação (não é opinião)
+    impacto_rs      REAL,    -- quanto se recupera, em R$, se a ação funcionar
+    confianca       TEXT,    -- baixa | média | alta (vem do histórico de acertos)
+    aprendizado     TEXT,    -- o que o agente aprendeu SOBRE ESTE PROJETO até aqui
+    perfil          TEXT,    -- o perfil taylor-made: pesos aprendidos deste projeto
+    -- PRINCE2 — management by exception. O agente só escala quando a PREVISÃO estoura a
+    -- tolerância. NORMAL = dentro do acordado, nada a fazer, e ele CALA.
+    status          TEXT,    -- NORMAL | EXCECAO
+    zona_buffer     TEXT,    -- VERDE | AMARELO | VERMELHO (fever chart do CCPM)
+    excecao         TEXT,    -- Exception Report: causa, impacto, OPÇÕES, recomendação
+    PRIMARY KEY (project_name, ciclo)
+);
+
+-- Radar de TODAS as dimensões no ciclo corrente: o agente não olha só a vencedora,
+-- ele mostra a bancada inteira — e o cliente vê por que a escolhida ganhou.
+CREATE TABLE IF NOT EXISTS pm_agent_radar (
+    project_name TEXT,
+    ciclo        INTEGER,
+    alavanca     TEXT,
+    dimensao     TEXT,
+    metrica      TEXT,    -- nome legível da métrica-alvo
+    valor        REAL,    -- valor medido agora
+    dias_eq      REAL,    -- dano convertido em DIAS-EQUIVALENTES de projeto
+    dano_rs      REAL,    -- dias_eq × Cost of Delay/dia (R$)
+    peso         REAL,    -- peso APRENDIDO desta alavanca NESTE projeto
+    prioridade   REAL,    -- dano_rs × peso  (o critério de decisão)
+    escolhida    INTEGER, -- 1 = é a alavanca recomendada neste ciclo
+    PRIMARY KEY (project_name, ciclo, alavanca)
+);
+
+-- ===========================================================================
+-- 🌡️ CCPM — BUFFER MANAGEMENT & FEVER CHART (Goldratt / Critical Chain)
+-- O sinal de QUANDO AGIR. Cruza "% da cadeia concluída" com "% do buffer
+-- consumido". Queimar buffer no fim é normal; queimar no começo é grave — é
+-- por isso que as fronteiras são DIAGONAIS, e não linhas horizontais.
+--   verde/amarelo:  y = 1/3 + (1/3)·x      amarelo/vermelho: y = 2/3 + (1/3)·x
+-- VERDE = não faça nada.  AMARELO = planeje a recuperação.  VERMELHO = aja.
+-- O valor aqui não é o gráfico: é dar ao agente o DIREITO DE FICAR CALADO.
+-- ===========================================================================
+CREATE TABLE IF NOT EXISTS buffer_fever (
+    project_name    TEXT PRIMARY KEY,
+    p50             REAL,  -- cadeia agressiva (sem buffer)
+    p80             REAL,  -- compromisso
+    p95             REAL,
+    buffer_dias     REAL,  -- P80 − P50: o buffer do projeto
+    previsao_dias   REAL,  -- P50 ÷ SPI(t): onde a cadeia termina no ritmo atual
+    consumido_dias  REAL,  -- max(0, previsão − P50)
+    pct_cadeia      REAL,  -- % da cadeia concluída (EV/BAC)
+    pct_buffer      REAL,  -- % do buffer consumido
+    lim_verde       REAL,  -- fronteira verde/amarelo NESTE ponto da cadeia
+    lim_vermelho    REAL,  -- fronteira amarelo/vermelho NESTE ponto da cadeia
+    zona            TEXT   -- VERDE | AMARELO | VERMELHO
+);
+
+-- ===========================================================================
+-- 🏦 PMI — RESERVE ANALYSIS (contingência × reserva gerencial)
+-- Responde a pergunta que ninguém faz: "você está SEQUER reservado o bastante?"
+--   contingência      = P80 − P50   (conhecidos-desconhecidos: a variabilidade)
+--   reserva gerencial = P95 − P80   (desconhecidos-desconhecidos: o susto)
+-- E confronta a contingência com o que o REGISTRO DE RISCO justifica (EMV em
+-- dias, Integrated Cost-Schedule Risk Analysis / Hulett). Se o risco justifica
+-- mais dias do que você reservou, você está SUB-RESERVADO — e não sabia.
+-- ===========================================================================
+CREATE TABLE IF NOT EXISTS reserva_analise (
+    project_name      TEXT PRIMARY KEY,
+    contingencia      REAL,  -- P80 − P50
+    reserva_gerencial REAL,  -- P95 − P80
+    consumido          REAL, -- dias de contingência já queimados
+    pct_consumido     REAL,
+    exaustao_pct_cadeia REAL, -- em que % da cadeia a contingência acaba no ritmo atual
+    emv_risco_dias    REAL,  -- contingência que o registro de risco JUSTIFICA (suposição declarada)
+    emv_conservador   REAL,  -- o mesmo EMV com METADE do impacto suposto (teste de estresse)
+    sub_reservado     INTEGER, -- 1 = o risco justifica mais do que você reservou
+    robusto           INTEGER, -- 1 = a conclusão SOBREVIVE ao corte pela metade da suposição
+    buffer_pct_cadeia REAL,  -- (P80−P50)/P50 — FATO, não depende de suposição alguma
+    veredito          TEXT
+);
+
+-- ===========================================================================
+-- 🚦 PRINCE2 — MANAGEMENT BY EXCEPTION (tolerâncias por dimensão)
+-- O gerente NÃO é incomodado enquanto a PREVISÃO estiver dentro da tolerância.
+-- Estourou a previsão -> Exception Report: causa, impacto, OPÇÕES, recomendação.
+-- É o que separa um agente confiável de um alarme que toca toda semana.
+-- ===========================================================================
+CREATE TABLE IF NOT EXISTS pm_agent_tolerancia (
+    project_name TEXT,
+    ciclo        INTEGER,
+    dimensao     TEXT,
+    metrica      TEXT,
+    previsto     REAL,    -- a PREVISÃO (não o realizado: PRINCE2 escala por previsão)
+    limite       REAL,    -- a tolerância acordada
+    unidade      TEXT,
+    estourou     INTEGER, -- 1 = exceção
+    folga_pct    REAL,    -- quanto ainda cabe dentro da tolerância (negativo = estourou)
+    PRIMARY KEY (project_name, ciclo, dimensao)
+);
+
+-- ===========================================================================
+-- 🏃 SPRINTS — o debate do progresso da weekly de sexta-feira.
+-- A sprint NÃO é inventada aqui: ela é o PERÍODO do EVM, a cadência que o
+-- projeto já tem, com PV/EV/AC reais. Sprint futura tem só PV (o plano);
+-- sprint passada tem EV e AC (o que de fato aconteceu).
+--
+-- A métrica que abre a discussão é o SAY-DO RATIO (entregue ÷ comprometido).
+-- Um time com say-do de 0,7 não é lento: ele está PROMETENDO 30% a mais do
+-- que consegue. O remédio é diferente, e é por isso que a métrica importa.
+--
+-- E o CPI DA SPRINT (local) é separado do CPI acumulado de propósito: o
+-- acumulado é uma média que ESCONDE a sprint ruim recente. O local denuncia.
+-- ===========================================================================
+CREATE TABLE IF NOT EXISTS sprints (
+    project_name  TEXT,
+    sprint        INTEGER,
+    status        TEXT,     -- CONCLUIDA | ATUAL | FUTURA
+    comprometido  REAL,     -- ΔPV: o que o time se comprometeu a entregar
+    entregue      REAL,     -- ΔEV: o que de fato entregou (NULL no futuro)
+    custo         REAL,     -- ΔAC: o que custou
+    say_do        REAL,     -- entregue ÷ comprometido — a métrica do debate
+    cpi_sprint    REAL,     -- entregue ÷ custo NA SPRINT (o acumulado esconde)
+    restante      REAL,     -- BAC − EV acumulado (o burndown real)
+    restante_ideal REAL,    -- BAC − PV acumulado (o burndown planejado)
+    PRIMARY KEY (project_name, sprint)
+);
+
+-- A pauta que o Project Manager Agent leva para a weekly. Uma linha = um ponto
+-- de debate, com o número que o sustenta. Reunião sem número é opinião.
+CREATE TABLE IF NOT EXISTS sprint_debate (
+    project_name TEXT,
+    ordem        INTEGER,
+    tema         TEXT,
+    ponto        TEXT,     -- o que debater, com o número na frente
+    severidade   TEXT,     -- 🔴 | 🟡 | 🟢
+    PRIMARY KEY (project_name, ordem)
+);

@@ -85,6 +85,10 @@ jobs:
           python3 exec_metricas.py
           python3 risco.py
           python3 fluxo.py
+          python3 cadeia_causal.py
+          python3 buffer_ccpm.py
+          python3 pm_agent.py
+          python3 sprints.py
           python3 gerar_mc_graficos.py
           python3 gerar_mcdm_graficos.py
           python3 gerar_robustez_graficos.py
@@ -157,7 +161,10 @@ jobs:
                    evm_indices evm_serie \
                    exec_latencia_tempo exec_tokens_burndown exec_qualidade_tempo exec_drift \
                    risco_registro risco_burndown \
-                   fluxo_cfd fluxo_itens fluxo_resumo; do
+                   fluxo_cfd fluxo_itens fluxo_resumo cadeia_causal \
+                   pm_agent_feedback pm_agent_radar pm_agent_pesos \
+                   buffer_fever reserva_analise pm_agent_tolerancia \
+                   sprints sprint_debate; do
             if ! find "build/data/bsc/$t" -name '*.parquet' -print -quit | grep -q .; then
               echo "❌ $t: sem parquet"; faltando=$((faltando+1))
             fi
