@@ -914,6 +914,68 @@ mesures, seule, ne dirait cela.
 
 ---
 
+<!-- pm-agent-section -->
+
+## 🤖 Project Manager Agent — il lit 10 dimensions, apprend et **sait se taire**
+
+Le tableau de bord **diagnostique**. La chaîne causale **quantifie**. L'agent **décide quoi faire maintenant** — et, cycle après cycle, découvre quel levier fait vraiment bouger l'aiguille *sur ce projet-là*. Il balaie **10 dimensions** (délai, ROI, risque, tokens, coût, dérive du modèle, fiabilité, qualité, flux et gaspillage), convertit chacune en **jours-équivalents de projet × le coût du retard de ce projet**, et répond à la seule question qui compte : **quoi faire maintenant, et combien cela vaut.**
+
+> **La faiblesse qu'il fallait corriger.** L'agent recommandait **toujours** quelque chose : à chaque cycle il prenait le plus gros dommage et criait. **Un agent qui crie chaque semaine devient du bruit, et le bruit est ignoré** — il ne change donc rien, aussi juste soit-il. **Il lui manquait le droit de se taire.** C'est ce que livrent les trois méthodologies ci-dessous.
+
+### 🚦 PRINCE2 — *management by exception* : le droit de se taire
+
+**Concept.** Le *management by exception* de PRINCE2 dit que le manager **ne doit pas être dérangé** tant que le projet reste dans les tolérances convenues. Quand la **prévision** dépasse la tolérance — pas le réalisé, la **prévision** — un **Exception Report** se déclenche.
+
+**Méthodologie.** Une tolérance par dimension (délai, coût, risque, qualité, bénéfice). L'escalade est déclenchée par la **prévision** : le P80 de Monte-Carlo et l'EAC de l'EVM. L'Exception Report comporte quatre parties obligatoires — **cause, impact, OPTIONS et recommandation**. C'est la ligne des *options* qui distingue un rapport d'exception d'une alarme : escalader sans proposer d'alternatives, c'est pousser le problème vers le haut, pas le gérer.
+
+**Application ici.** Les tolérances **ne sont pas des chiffres que nous avons inventés** — elles sortent de ce que le projet **a déjà déclaré** : la date promise (`prazo_alvo`), le budget approuvé (`BAC`), la classification du **registre des risques lui-même** (`nivel='critico'`) et la **ligne de base qualité du projet lui-même** (régression contre soi, à la DORA). Seule la limite de ROI est une politique explicite — et elle est affichée, pour que le board puisse la contester. Les options offertes sont **absorber** (brûler la réserve de management), **récupérer** (comprimer le chemin critique) ou **renégocier** (déplacer la date ou couper le périmètre).
+
+![Tolérances PRINCE2 — la marge de chaque dimension avant l'exception ; seule la Qualité a dépassé, et seule elle est escaladée](docs/screenshots/prince2-tolerancias.png)
+
+### 🌡️ CCPM (Goldratt) — *buffer management* et le fever chart
+
+**Concept.** Dans la *Chaîne Critique* de Goldratt, le buffer n'est pas du gras caché dans chaque tâche : c'est un **coussin explicite en fin de projet**. Le **fever chart** croise *la part de chaîne achevée* avec *la part de buffer consommée*, et indique dans laquelle des trois zones vous êtes.
+
+**Méthodologie.** Les frontières sont **diagonales**, et c'est l'essence de la méthode : brûler du buffer **à la fin** est normal — le brûler **au début** est grave, car il reste un projet entier devant. **VERT = ne faites rien. JAUNE = planifiez la reprise. ROUGE = agissez maintenant.**
+
+```
+verde/amarelo:    y = 1/3 + (1/3)·x
+amarelo/vermelho: y = 2/3 + (1/3)·x
+```
+
+**Application ici.** Le buffer, c'est `P80 − P50` du **planning Monte-Carlo** que nous exécutions déjà. La consommation, c'est le **retard de l'Earned Schedule** converti en jours. Et c'est le fever chart qui donne à l'agent le déclencheur objectif du silence : **zone verte et dans les tolérances = rien à escalader.** Aujourd'hui **3 des 10 projets** reçoivent exactement cela — et c'est en se taisant quand il n'y a rien à dire que l'agent gagne le droit d'être écouté quand il y a quelque chose.
+
+![Fever chart du CCPM — les 10 projets dans les trois zones ; les frontières diagonales rendent la même consommation de buffer bénigne en fin de projet et grave au début](docs/screenshots/ccpm-fever-chart.png)
+
+### 🏦 PMI — *reserve analysis* : contingence × réserve de management
+
+**Concept.** Le PMI sépare deux réserves que presque tout le monde confond : la **contingence** couvre les *connus-inconnus* (la variabilité que vous avez **mesurée**), et la **réserve de management** couvre les *inconnus-inconnus* (le choc).
+
+**Méthodologie.** `contingence = P80 − P50` et `réserve de management = P95 − P80`. Plus la confrontation que presque personne ne fait : la contingence que vous **avez** contre celle que votre **registre des risques justifie** (EMV — *Integrated Cost-Schedule Risk Analysis*, Hulett). Un buffer de durée est **aveugle aux événements de risque** ; c'est là que presque tout planning se découvre optimiste.
+
+**Application ici — et une leçon d'honnêteté.** Convertir « impact 4 » (échelle 1–5) en jours exige un mapping qui est **le nôtre, pas le vôtre**. Nous avons donc **testé notre propre hypothèse** : en divisant par deux l'impact supposé, la conclusion « sous-réservé » passe de **10/10 à 1/10 projets**. C'est un **fil du rasoir**, et c'est pourquoi elle **n'est pas vendue comme un constat** — chaque projet porte le champ `robusto`, et l'agent **prévient quand sa propre lecture ne survit pas au test de résistance**. Ce qui **reste sans aucune hypothèse** est de l'arithmétique pure, et c'est le vrai constat : **le buffer vaut ~9 % de la chaîne, contre les 25–50 % avec lesquels travaille le CCPM.**
+
+### 🏃 Sprints et le débat du weekly du vendredi
+
+**Concept.** Le débat d'avancement du *weekly* du vendredi a besoin de **chiffres**, pas d'opinions. L'opinion ne déplace pas un projet.
+
+**Méthodologie.** Trois métriques ouvrent la discussion. **(1) Say-do ratio** (`ΔEV ÷ ΔPV`) : une équipe à 0,7 **n'est pas lente** — elle *promet 30 % de plus qu'elle ne peut livrer*. On ne répare pas la capacité en tapant du poing ; on répare l'engagement par la prévisibilité. Et un say-do **très au-dessus de 1** n'est pas non plus de l'héroïsme : c'est une **ligne de base cassée**. **(2) Le CPI local du sprint**, séparé du cumulé **à dessein** — le cumulé est une moyenne, et la moyenne **cache** le mauvais sprint récent : un CPI cumulé de 1,05 peut abriter un dernier sprint à 0,60. **Le local accuse ; le cumulé console.** **(3) Prévision par vélocité** : s'il faut 6 sprints à l'équipe et qu'il n'en reste que 4, **la date est déjà morte** et personne ne l'a vu, car le burndown cumulé *semble* encore proche du plan.
+
+**Application ici.** Le sprint **n'est pas inventé** : c'est la **période de l'EVM**, la cadence que le projet possède déjà, avec de vrais PV/EV/AC. Créer un calendrier de sprints parallèle au planning reviendrait à créer une **seconde vérité** sur le même projet — et deux vérités, c'est comme aucune.
+
+> **⚠️ Conformité, dite franchement.** Ceci est un **rapport d'avancement par cadence, fondé sur l'EVM (ANSI/EIA-748) avec des métriques d'inspiration agile** — **ce n'est pas Scrum**. Le *Scrum Guide 2020* **ne contient ni** « velocity » **ni** « burndown chart » (ce sont des pratiques du marché, pas des artefacts officiels), et il a remplacé le *commitment* du Sprint Backlog par le **Sprint Goal**, traitant le backlog comme une **prévision**. Donc « say-do ratio (livré ÷ engagé) » est du vocabulaire **de l'industrie**, pas du Scrum canonique. **La métrique est honnête ; c'est l'étiquette qui mentirait.**
+
+![Sprints — say-do ratio par sprint et le burndown réel face au plan ; la cadence est la période de l'EVM](docs/screenshots/sprints-weekly.png)
+
+### 🎯 Le radar et le moteur de réapprentissage — pourquoi cette dimension et pas une autre
+
+L'agent **ne regarde pas que la gagnante** — il montre tout le banc. Chaque dimension devient des **jours-équivalents**, les jours deviennent de l'**argent** au coût du retard de *ce* projet, et le poids est ce que l'agent **y a appris**. La priorité, c'est `dommage × poids`.
+
+Le **moteur de réapprentissage** est un *bandit contextuel* — simple et auditable, et nous le disons franchement : **ce n'est pas du deep learning**. À chaque cycle l'agent recommande un levier et **mémorise sa métrique cible** ; au cycle suivant il **se demande des comptes**. Amélioration → le poids **monte**. Dégradation → il **descend**. Une variation inférieure à 2 % est du bruit, et **l'agent n'apprend pas du bruit**. Seul le levier qu'il a **recommandé** est jugé : il répond de ce qu'il a demandé et **ne s'attribue pas ce que le hasard a amélioré**. Le résultat est un profil qui **ne vaut pas pour le projet d'à côté** — et c'est précisément le but.
+
+![Radar des 10 dimensions — le dommage de chacune sur la même règle (R$), et celle que l'agent a choisi d'attaquer](docs/screenshots/pm-agent-radar.png)
+
+---
 ## 🌐 12 langues
 
 Le tableau de bord, les pages par projet **et le texte à l'intérieur des images** des graphiques sont localisés en

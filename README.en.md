@@ -890,6 +890,68 @@ $0.91 off NPV — but in this project, NPV's uncertainty does not come from toke
 
 ---
 
+<!-- pm-agent-section -->
+
+## 🤖 Project Manager Agent — reads 10 dimensions, learns, and **knows when to stay quiet**
+
+The dashboard **diagnoses**. The causal chain **quantifies**. The agent **decides what to do now** — and, cycle after cycle, learns which lever actually moves the needle *on that specific project*. It sweeps **10 dimensions** (schedule, ROI, risk, tokens, cost, model drift, reliability, quality, flow and waste), converts each into **equivalent project-days × that project's own cost of delay**, and answers the only question that matters: **what to do now, and what it's worth.**
+
+> **The weakness we had to fix.** The agent **always** recommended something: every cycle it grabbed the biggest damage and shouted. **An agent that shouts every week becomes noise, and noise gets ignored** — so it changes nothing, however right it is. **It lacked the right to stay quiet.** That is what the three methodologies below deliver.
+
+### 🚦 PRINCE2 — *management by exception*: the right to stay quiet
+
+**Concept.** PRINCE2's *management by exception* says the manager **must not be disturbed** while the project stays within agreed tolerances. When the **forecast** breaches tolerance — not the actuals, the **forecast** — an **Exception Report** fires.
+
+**Methodology.** A tolerance per dimension (time, cost, risk, quality, benefit). Escalation is driven by the **forecast**: the Monte Carlo P80 and the EVM EAC. The Exception Report has four mandatory parts — **cause, impact, OPTIONS and recommendation**. It is the *options* line that separates an exception report from an alarm: escalating without offering alternatives is pushing the problem upward, not managing it.
+
+**How we apply it.** The tolerances are **not numbers we invented** — they come from what the project **already declared**: the promised date (`prazo_alvo`), the approved budget (`BAC`), the **risk register's own classification** (`nivel='critico'`), and the **project's own quality baseline** (regression against itself, DORA-style). Only the ROI limit is explicit policy — and it is in plain sight, for the board to disagree with. The options the agent offers are **absorb** (burn management reserve), **recover** (compress the critical path) or **renegotiate** (move the date or cut scope).
+
+![PRINCE2 tolerances — each dimension's headroom before exception; only Quality breached, and only Quality is escalated](docs/screenshots/prince2-tolerancias.png)
+
+### 🌡️ CCPM (Goldratt) — *buffer management* and the fever chart
+
+**Concept.** In Goldratt's *Critical Chain*, the buffer is not padding hidden inside every task: it is an **explicit cushion at the end of the project**. The **fever chart** crosses *how much of the chain is complete* with *how much of the buffer is consumed*, and tells you which of three zones you are in.
+
+**Methodology.** The boundaries are **diagonal**, and that is the essence of the method: burning buffer **late** is normal — burning it **early** is serious, because a whole project still lies ahead. **GREEN = do nothing. YELLOW = plan the recovery. RED = act now.**
+
+```
+verde/amarelo:    y = 1/3 + (1/3)·x
+amarelo/vermelho: y = 2/3 + (1/3)·x
+```
+
+**How we apply it.** The buffer is `P80 − P50` from the **Monte Carlo schedule** we already ran. Consumption is the **Earned Schedule slip** converted into days. And it is the fever chart that gives the agent an objective trigger for silence: **green zone plus within tolerance = nothing to escalate.** Today **3 of the 10 projects** get exactly that — and it is by staying quiet when there is nothing to say that the agent earns the right to be heard when there is.
+
+![CCPM fever chart — the 10 projects across the three zones; the diagonal boundaries make the same buffer burn benign late and serious early](docs/screenshots/ccpm-fever-chart.png)
+
+### 🏦 PMI — *reserve analysis*: contingency vs management reserve
+
+**Concept.** PMI separates two reserves that almost everyone conflates: **contingency** covers the *known-unknowns* (the variability you **measured**), and **management reserve** covers the *unknown-unknowns* (the shock).
+
+**Methodology.** `contingency = P80 − P50` and `management reserve = P95 − P80`. Plus the comparison almost nobody makes: the contingency you **have** against the one your **risk register justifies** (EMV — *Integrated Cost-Schedule Risk Analysis*, Hulett). A duration buffer is **blind to risk events**; that is where most schedules discover they were optimistic.
+
+**How we apply it — and a lesson in honesty.** Converting “impact 4” (a 1–5 scale) into days requires a mapping that is **ours, not yours**. So we **stress-tested our own assumption**: halve the assumed impact and the “under-reserved” conclusion flips from **10/10 to 1/10 projects**. It is a **knife-edge**, and therefore it is **not sold as a finding** — every project carries a `robusto` flag, and the agent **warns you when its own reading does not survive the stress test**. What is left **with no assumption at all** is pure arithmetic, and it is the real finding: **the buffer is ~9% of the chain, against the 25–50% CCPM works with.**
+
+### 🏃 Sprints and the Friday weekly debate
+
+**Concept.** The Friday *weekly* progress debate needs **numbers**, not opinions. Opinions do not move projects.
+
+**Methodology.** Three metrics open the discussion. **(1) Say-do ratio** (`ΔEV ÷ ΔPV`): a team at 0.7 is **not slow** — it is *promising 30% more than it can deliver*. You do not fix capacity by pushing harder; you fix commitment with predictability. And say-do **well above 1** is not heroism either: it is a **broken baseline**. **(2) The sprint's local CPI**, kept apart from the cumulative **on purpose** — the cumulative is an average, and averages **hide** the recent bad sprint: a cumulative CPI of 1.05 can shelter a last sprint at 0.60. **The local one accuses; the cumulative one consoles.** **(3) Velocity-based forecast**: if the team needs 6 sprints and only 4 remain, **the date is already dead** and nobody noticed, because the cumulative burndown still *looks* close to plan.
+
+**How we apply it.** The sprint is **not invented**: it is the **EVM period**, the cadence the project already has, with real PV/EV/AC. Building a sprint calendar parallel to the schedule would create a **second truth** about the same project — and two truths is the same as none.
+
+> **⚠️ Conformance, said plainly.** This is a **cadence-based progress report built on EVM (ANSI/EIA-748) with agile-inspired metrics** — **it is not Scrum**. The *2020 Scrum Guide* contains **neither** “velocity” **nor** “burndown chart” (they are industry practice, not official artefacts), and it replaced the Sprint Backlog *commitment* with the **Sprint Goal**, treating the backlog as a **forecast**. So “say-do ratio (delivered ÷ committed)” is **industry** vocabulary, not canonical Scrum. **The metric is honest; it is the label that would lie.**
+
+![Sprints — say-do ratio per sprint and the real burndown against plan; the cadence is the EVM period](docs/screenshots/sprints-weekly.png)
+
+### 🎯 The radar and the re-learning engine — why this dimension and not another
+
+The agent **does not look only at the winner** — it shows the whole bench. Each dimension becomes **equivalent days**, days become **money** at *that* project's cost of delay, and the weight is what the agent **learned there**. Priority is `damage × weight`.
+
+The **re-learning engine** is a *contextual bandit* — simple and auditable, and we say it plainly: **this is not deep learning**. Each cycle the agent recommends a lever and **stores its target metric**; the next cycle it **holds itself to account**. Improved → the weight **rises**. Worsened → it **falls**. Movement below 2% is noise, and **the agent does not learn from noise**. Only the lever it **recommended** is judged: it answers for what it told you to do and **takes no credit for what luck improved**. The result is a profile that **does not fit the project next door** — and that is exactly the point.
+
+![Radar of the 10 dimensions — each one's damage on the same ruler (R$), and the one the agent chose to attack](docs/screenshots/pm-agent-radar.png)
+
+---
 ## 🌐 12 languages
 
 The dashboard, per-project pages **and the text inside the chart images** are localized in **12 languages**:

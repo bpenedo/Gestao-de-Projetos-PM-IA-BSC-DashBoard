@@ -39,7 +39,7 @@ métodos existem para dar ao agente um critério objetivo de QUANDO NÃO FALAR.
    "impacto 4" em dias exige um mapeamento que é MEU, não seu (IMPACTO_PCT_CADEIA abaixo).
 
    ⚠️ E TESTEI A MINHA PRÓPRIA SUPOSIÇÃO: cortando o impacto suposto pela METADE, a
-   conclusão "sub-reservado" vira de 10/10 projetos para 0/10. Ou seja: ela é um FIO DE
+   conclusão "sub-reservado" vira de 10/10 projetos para 1/10. Ou seja: ela é um FIO DE
    NAVALHA apoiado num número que eu inventei, e por isso **não é vendida como achado**.
    Cada projeto carrega o campo `robusto`, e o veredito diz na cara quando a leitura não
    sobrevive ao teste de estresse. Número frágil apresentado com cara de rigor é pior do

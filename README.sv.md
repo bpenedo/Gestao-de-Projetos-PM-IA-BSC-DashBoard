@@ -871,6 +871,68 @@ tokens."* Inget av måtten ensamt skulle säga det.
 
 ---
 
+<!-- pm-agent-section -->
+
+## 🤖 Project Manager Agent — läser 10 dimensioner, lär sig och **vet när den ska tiga**
+
+Dashboarden **diagnostiserar**. Kausalkedjan **kvantifierar**. Agenten **beslutar vad som ska göras nu** — och lär sig, cykel efter cykel, vilken spak som faktiskt rör nålen *i just det projektet*. Den sveper över **10 dimensioner** (tid, ROI, risk, tokens, kostnad, modelldrift, tillförlitlighet, kvalitet, flöde och slöseri), omvandlar var och en till **ekvivalenta projektdagar × just det projektets fördröjningskostnad**, och svarar på den enda fråga som betyder något: **vad ska göras nu, och vad är det värt.**
+
+> **Svagheten vi måste rätta till.** Agenten rekommenderade **alltid** något: varje cykel tog den den största skadan och skrek. **En agent som skriker varje vecka blir brus, och brus ignoreras** — den ändrar alltså ingenting, hur rätt den än har. **Den saknade rätten att tiga.** Det är precis vad de tre metoderna nedan levererar.
+
+### 🚦 PRINCE2 — *management by exception*: rätten att tiga
+
+**Koncept.** PRINCE2:s *management by exception* säger att chefen **inte ska störas** så länge projektet håller sig inom överenskomna toleranser. När **prognosen** spräcker toleransen — inte utfallet, **prognosen** — utlöses en **Exception Report**.
+
+**Metodik.** En tolerans per dimension (tid, kostnad, risk, kvalitet, nytta). Eskalering drivs av **prognosen**: Monte Carlos P80 och EVM:s EAC. Exception Report har fyra obligatoriska delar — **orsak, påverkan, ALTERNATIV och rekommendation**. Det är raden med *alternativ* som skiljer en avvikelserapport från ett larm: att eskalera utan att erbjuda alternativ är att skjuta problemet uppåt, inte att leda.
+
+**Tillämpning här.** Toleranserna är **inga siffror vi hittat på** — de kommer från vad projektet **redan deklarerat**: det utlovade datumet (`prazo_alvo`), den godkända budgeten (`BAC`), det **egna riskregistrets** klassificering (`nivel='critico'`) och **projektets egen kvalitetsbaslinje** (regression mot sig själv, i DORA-anda). Endast ROI-gränsen är uttalad policy — och den ligger synlig, så att styrelsen kan invända. Alternativen agenten erbjuder är **absorbera** (bränna ledningsreserven), **återhämta** (komprimera kritiska linjen) eller **omförhandla** (flytta datumet eller skära i omfattning).
+
+![PRINCE2-toleranser — varje dimensions marginal till avvikelse; endast Kvalitet spräckte, och endast den eskaleras](docs/screenshots/prince2-tolerancias.png)
+
+### 🌡️ CCPM (Goldratt) — *buffer management* och feberdiagrammet
+
+**Koncept.** I Goldratts *Critical Chain* är bufferten inte fett gömt i varje uppgift: den är en **explicit kudde i projektets slut**. **Feberdiagrammet** korsar *hur mycket av kedjan som är klar* med *hur mycket buffert som förbrukats*, och säger i vilken av tre zoner du befinner dig.
+
+**Metodik.** Gränserna är **diagonala**, och det är metodens kärna: att bränna buffert **i slutet** är normalt — att bränna den **i början** är allvarligt, eftersom ett helt projekt återstår. **GRÖN = gör ingenting. GUL = planera återhämtningen. RÖD = agera nu.**
+
+```
+verde/amarelo:    y = 1/3 + (1/3)·x
+amarelo/vermelho: y = 2/3 + (1/3)·x
+```
+
+**Tillämpning här.** Bufferten är `P80 − P50` från **Monte Carlo-schemat** vi redan körde. Förbrukningen är **Earned Schedule-förseningen** omräknad till dagar. Och det är feberdiagrammet som ger agenten en objektiv trigger för tystnad: **grön zon plus inom tolerans = inget att eskalera.** Idag får **3 av 10 projekt** exakt det — och det är genom att tiga när det inte finns något att säga som agenten förtjänar rätten att bli hörd när det finns.
+
+![CCPM-feberdiagram — de 10 projekten i de tre zonerna; de diagonala gränserna gör samma bufferförbrukning ofarlig i slutet och allvarlig i början](docs/screenshots/ccpm-fever-chart.png)
+
+### 🏦 PMI — *reserve analysis*: kontingens × ledningsreserv
+
+**Koncept.** PMI skiljer två reserver som nästan alla blandar ihop: **kontingensen** täcker *kända okända* (variabiliteten du **mätt**), och **ledningsreserven** täcker *okända okända* (chocken).
+
+**Metodik.** `kontingens = P80 − P50` och `ledningsreserv = P95 − P80`. Plus jämförelsen nästan ingen gör: kontingensen du **har** mot den ditt **riskregister rättfärdigar** (EMV — *Integrated Cost-Schedule Risk Analysis*, Hulett). En varaktighetsbuffert är **blind för riskhändelser**; det är där nästan varje schema upptäcker att det var optimistiskt.
+
+**Tillämpning här — och en läxa i ärlighet.** Att omvandla ”påverkan 4” (skala 1–5) till dagar kräver en mappning som är **vår, inte din**. Så vi **stresstestade vårt eget antagande**: halvera den antagna påverkan och slutsatsen ”underreserverad” vänder från **10/10 till 1/10 projekt**. Det är en **knivsegg**, och därför **säljs den inte som ett fynd** — varje projekt bär fältet `robusto`, och agenten **varnar när dess egen tolkning inte överlever stresstestet**. Det som **återstår helt utan antaganden** är ren aritmetik, och det är det verkliga fyndet: **bufferten är ~9 % av kedjan, mot de 25–50 % som CCPM arbetar med.**
+
+### 🏃 Sprintar och fredagens weekly-debatt
+
+**Koncept.** Fredagens *weekly*-debatt om framsteg behöver **siffror**, inte åsikter. Åsikter flyttar inga projekt.
+
+**Metodik.** Tre mått öppnar diskussionen. **(1) Say-do-kvot** (`ΔEV ÷ ΔPV`): ett team på 0,7 är **inte långsamt** — det *lovar 30 % mer än det kan leverera*. Kapacitet lagas inte med press; åtaganden lagas med förutsägbarhet. Och say-do **långt över 1** är inte heller hjältemod: det är en **trasig baslinje**. **(2) Sprintens lokala CPI**, avskild från den kumulativa **med avsikt** — den kumulativa är ett medelvärde, och medelvärden **döljer** den senaste dåliga sprinten: ett kumulativt CPI på 1,05 kan hysa en sista sprint på 0,60. **Den lokala anklagar; den kumulativa tröstar.** **(3) Velocity-baserad prognos**: om teamet behöver 6 sprintar och bara 4 återstår är **datumet redan dött** — och ingen märkte det, eftersom det kumulativa burndownet fortfarande *ser ut* att ligga nära plan.
+
+**Tillämpning här.** Sprinten är **inte påhittad**: den är **EVM-perioden**, kadensen projektet redan har, med verkliga PV/EV/AC. Att bygga en sprintkalender parallellt med schemat vore att skapa en **andra sanning** om samma projekt — och två sanningar är detsamma som ingen.
+
+> **⚠️ Efterlevnad, sagt rakt ut.** Detta är en **kadensbaserad framstegsrapport byggd på EVM (ANSI/EIA-748) med agilt inspirerade mått** — **det är inte Scrum**. *Scrum Guide 2020* innehåller **varken** ”velocity” **eller** ”burndown chart” (de är marknadspraxis, inte officiella artefakter), och den ersatte Sprint Backlogens *commitment* med **Sprint Goal**, och behandlar backloggen som en **prognos**. Alltså är ”say-do-kvot (levererat ÷ åtagit)” **industrins** vokabulär, inte kanonisk Scrum. **Måttet är ärligt; det är etiketten som skulle ljuga.**
+
+![Sprintar — say-do-kvot per sprint och det verkliga burndownet mot plan; kadensen är EVM-perioden](docs/screenshots/sprints-weekly.png)
+
+### 🎯 Radarn och omlärningsmotorn — varför denna dimension och inte en annan
+
+Agenten **tittar inte bara på vinnaren** — den visar hela bänken. Varje dimension blir **ekvivalenta dagar**, dagarna blir **pengar** via *det* projektets fördröjningskostnad, och vikten är vad agenten **lärt sig där**. Prioritet är `skada × vikt`.
+
+**Omlärningsmotorn** är en *kontextuell bandit* — enkel och granskbar, och vi säger det rakt ut: **detta är inte deep learning**. Varje cykel rekommenderar agenten en spak och **sparar dess målmått**; nästa cykel **håller den sig själv ansvarig**. Förbättrades → vikten **stiger**. Försämrades → den **faller**. Rörelse under 2 % är brus, och **agenten lär sig inte av brus**. Endast spaken den **rekommenderade** bedöms: den svarar för vad den bad om och **tar inte åt sig äran för vad slumpen förbättrade**. Resultatet är en profil som **inte passar grannprojektet** — och det är precis poängen.
+
+![Radar över de 10 dimensionerna — varje dimensions skada på samma linjal (R$), och den agenten valde att angripa](docs/screenshots/pm-agent-radar.png)
+
+---
 ## 🌐 12 språk
 
 Dashboarden, projektsidorna **och texten inuti diagrambilderna** är lokaliserade på **12 språk**:

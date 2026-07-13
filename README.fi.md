@@ -886,6 +886,68 @@ projektissa NPV:n epävarmuus ei tule tokeneista."* Kumpikaan mittari yksinään
 
 ---
 
+<!-- pm-agent-section -->
+
+## 🤖 Project Manager Agent — lukee 10 ulottuvuutta, oppii ja **osaa vaieta**
+
+Dashboard **diagnosoi**. Kausaaliketju **kvantifioi**. Agentti **päättää, mitä tehdä nyt** — ja oppii sykli syklin jälkeen, mikä vipu oikeasti liikuttaa neulaa *juuri siinä projektissa*. Se käy läpi **10 ulottuvuutta** (aikataulu, ROI, riski, tokenit, kustannus, mallin ajautuma, luotettavuus, laatu, virtaus ja hukka), muuntaa jokaisen **projektipäivä-ekvivalenteiksi × kyseisen projektin viivästyskustannus**, ja vastaa ainoaan kysymykseen, jolla on merkitystä: **mitä tehdä nyt ja mitä se on arvoinen.**
+
+> **Heikkous, joka oli korjattava.** Agentti suositteli **aina** jotain: joka syklillä se otti suurimman vahingon ja huusi. **Agentti, joka huutaa joka viikko, muuttuu meluksi, ja melu ohitetaan** — se ei siis muuta mitään, olipa se kuinka oikeassa tahansa. **Siltä puuttui oikeus vaieta.** Juuri sen kolme alla olevaa menetelmää antavat.
+
+### 🚦 PRINCE2 — *management by exception*: oikeus vaieta
+
+**Käsite.** PRINCE2:n *management by exception* sanoo, ettei johtajaa **saa häiritä**, kun projekti pysyy sovituissa toleransseissa. Kun **ennuste** ylittää toleranssin — ei toteuma, vaan **ennuste** — laukeaa **Exception Report**.
+
+**Menetelmä.** Toleranssi ulottuvuutta kohden (aika, kustannus, riski, laatu, hyöty). Eskalointi perustuu **ennusteeseen**: Monte Carlon P80 ja EVM:n EAC. Exception Reportissa on neljä pakollista osaa — **syy, vaikutus, VAIHTOEHDOT ja suositus**. Juuri *vaihtoehtojen* rivi erottaa poikkeamaraportin hälytyksestä: eskalointi ilman vaihtoehtoja on ongelman työntämistä ylöspäin, ei johtamista.
+
+**Soveltaminen täällä.** Toleranssit **eivät ole keksimiämme lukuja** — ne tulevat siitä, minkä projekti **on jo ilmoittanut**: luvattu päivä (`prazo_alvo`), hyväksytty budjetti (`BAC`), **oman riskirekisterin** luokitus (`nivel='critico'`) ja **projektin oma laadun perustaso** (regressio itseään vastaan, DORA-tyyliin). Vain ROI-raja on eksplisiittinen linjaus — ja se on näkyvillä, jotta hallitus voi olla eri mieltä. Agentin tarjoamat vaihtoehdot ovat **absorboi** (polta johdon reservi), **palaudu** (tiivistä kriittinen polku) tai **neuvottele uudelleen** (siirrä päivää tai leikkaa laajuutta).
+
+![PRINCE2-toleranssit — kunkin ulottuvuuden pelivara poikkeamaan asti; vain Laatu ylitti, ja vain se eskaloidaan](docs/screenshots/prince2-tolerancias.png)
+
+### 🌡️ CCPM (Goldratt) — *buffer management* ja kuumekäyrä
+
+**Käsite.** Goldrattin *Critical Chainissa* puskuri ei ole jokaiseen tehtävään piilotettua rasvaa: se on **eksplisiittinen tyyny projektin lopussa**. **Kuumekäyrä** risteyttää *kuinka suuri osa ketjusta on valmis* ja *kuinka paljon puskuria on kulutettu*, ja kertoo, missä kolmesta vyöhykkeestä olet.
+
+**Menetelmä.** Rajat ovat **diagonaalisia**, ja siinä on menetelmän ydin: puskurin polttaminen **lopussa** on normaalia — sen polttaminen **alussa** on vakavaa, koska edessä on vielä koko projekti. **VIHREÄ = älä tee mitään. KELTAINEN = suunnittele palautuminen. PUNAINEN = toimi nyt.**
+
+```
+verde/amarelo:    y = 1/3 + (1/3)·x
+amarelo/vermelho: y = 2/3 + (1/3)·x
+```
+
+**Soveltaminen täällä.** Puskuri on `P80 − P50` **Monte Carlo -aikataulusta**, jota jo ajoimme. Kulutus on **Earned Schedule -viive** muunnettuna päiviksi. Ja juuri kuumekäyrä antaa agentille objektiivisen laukaisimen vaikenemiselle: **vihreä vyöhyke ja toleranssin sisällä = ei mitään eskaloitavaa.** Tänään **3 projektia 10:stä** saa juuri sen — ja vaikenemalla silloin kun ei ole sanottavaa, agentti ansaitsee oikeuden tulla kuulluksi silloin kun on.
+
+![CCPM-kuumekäyrä — 10 projektia kolmella vyöhykkeellä; diagonaaliset rajat tekevät samasta puskurinkulutuksesta vaarattoman lopussa ja vakavan alussa](docs/screenshots/ccpm-fever-chart.png)
+
+### 🏦 PMI — *reserve analysis*: varaus × johdon reservi
+
+**Käsite.** PMI erottaa kaksi reserviä, jotka lähes kaikki sekoittavat: **varaus** kattaa *tunnetut tuntemattomat* (vaihtelun, jonka **mittasit**), ja **johdon reservi** kattaa *tuntemattomat tuntemattomat* (järkytyksen).
+
+**Menetelmä.** `varaus = P80 − P50` ja `johdon reservi = P95 − P80`. Sekä vertailu, jota lähes kukaan ei tee: varaus, joka sinulla **on**, vastaan se, jonka **riskirekisterisi oikeuttaa** (EMV — *Integrated Cost-Schedule Risk Analysis*, Hulett). Kestopuskuri on **sokea riskitapahtumille**; juuri siinä lähes jokainen aikataulu huomaa olleensa optimistinen.
+
+**Soveltaminen täällä — ja oppitunti rehellisyydestä.** ”Vaikutus 4” (asteikko 1–5) muuntaminen päiviksi vaatii kuvauksen, joka on **meidän, ei sinun**. Siksi **stressitestasimme oman oletuksemme**: puolittamalla oletetun vaikutuksen johtopäätös ”alivarattu” kääntyy **10/10:stä 1/10:een projektiin**. Se on **veitsenterällä**, eikä sitä siksi **myydä löydöksenä** — jokaisella projektilla on kenttä `robusto`, ja agentti **varoittaa, kun sen oma tulkinta ei kestä stressitestiä**. Se, mikä **jää ilman yhtäkään oletusta**, on puhdasta aritmetiikkaa, ja se on todellinen löydös: **puskuri on ~9 % ketjusta, kun CCPM työskentelee 25–50 %:lla.**
+
+### 🏃 Sprintit ja perjantain weekly-keskustelu
+
+**Käsite.** Perjantain *weeklyn* edistymiskeskustelu tarvitsee **lukuja**, ei mielipiteitä. Mielipide ei liikuta projektia.
+
+**Menetelmä.** Kolme mittaria avaa keskustelun. **(1) Say-do-suhde** (`ΔEV ÷ ΔPV`): tiimi arvolla 0,7 **ei ole hidas** — se *lupaa 30 % enemmän kuin pystyy toimittamaan*. Kapasiteettia ei korjata painostamalla; sitoumus korjataan ennustettavuudella. Ja say-do **selvästi yli 1** ei myöskään ole sankaruutta: se on **rikkinäinen perustaso**. **(2) Sprintin paikallinen CPI**, erotettuna kumulatiivisesta **tarkoituksella** — kumulatiivinen on keskiarvo, ja keskiarvo **piilottaa** viimeisimmän huonon sprintin: kumulatiivinen CPI 1,05 voi kätkeä viimeisen sprintin arvolla 0,60. **Paikallinen syyttää; kumulatiivinen lohduttaa.** **(3) Nopeuteen perustuva ennuste**: jos tiimi tarvitsee 6 sprinttiä ja jäljellä on 4, **päivämäärä on jo kuollut** eikä kukaan huomannut, koska kumulatiivinen burndown *näyttää* yhä lähellä suunnitelmaa.
+
+**Soveltaminen täällä.** Sprint **ei ole keksitty**: se on **EVM-jakso**, kadenssi, joka projektilla jo on, aidoilla PV/EV/AC-arvoilla. Aikataulun rinnalle rakennettu sprint-kalenteri loisi **toisen totuuden** samasta projektista — ja kaksi totuutta on sama kuin ei yhtään.
+
+> **⚠️ Yhdenmukaisuus, suoraan sanottuna.** Tämä on **kadenssipohjainen edistymisraportti, joka perustuu EVM:ään (ANSI/EIA-748) ketterästä inspiroituneilla mittareilla** — **tämä ei ole Scrum**. *Scrum Guide 2020* **ei sisällä** ”velocitya” **eikä** ”burndown chartia” (ne ovat markkinakäytäntöä, eivät virallisia artefakteja), ja se korvasi Sprint Backlogin *commitmentin* **Sprint Goalilla**, kohdellen backlogia **ennusteena**. Näin ollen ”say-do-suhde (toimitettu ÷ sitoutunut)” on **teollisuuden** sanastoa, ei kanonista Scrumia. **Mittari on rehellinen; valehtelisi vasta etiketti.**
+
+![Sprintit — say-do-suhde sprinteittäin ja todellinen burndown suunnitelmaa vastaan; kadenssi on EVM-jakso](docs/screenshots/sprints-weekly.png)
+
+### 🎯 Tutka ja uudelleenoppimismoottori — miksi tämä ulottuvuus eikä toinen
+
+Agentti **ei katso vain voittajaa** — se näyttää koko penkin. Jokainen ulottuvuus muuttuu **ekvivalenttipäiviksi**, päivät muuttuvat **rahaksi** *kyseisen* projektin viivästyskustannuksella, ja paino on se, mitä agentti **siellä oppi**. Prioriteetti on `vahinko × paino`.
+
+**Uudelleenoppimismoottori** on *kontekstuaalinen bandiitti* — yksinkertainen ja auditoitava, ja sanomme sen suoraan: **tämä ei ole syväoppimista**. Joka syklillä agentti suosittelee vipua ja **tallentaa sen kohdemittarin**; seuraavalla syklillä se **vaatii itseltään tiliä**. Parani → paino **nousee**. Huononi → **laskee**. Alle 2 %:n liike on kohinaa, eikä **agentti opi kohinasta**. Vain **suosittelemansa** vipu arvioidaan: se vastaa siitä, mitä käski tehdä, **eikä ota kunniaa siitä, minkä sattuma paransi**. Tuloksena on profiili, joka **ei sovi naapuriprojektiin** — ja juuri se on pointti.
+
+![10 ulottuvuuden tutka — kunkin vahinko samalla mitalla (R$) ja se, jonka agentti valitsi hyökkäyskohteeksi](docs/screenshots/pm-agent-radar.png)
+
+---
 ## 🌐 12 kieltä
 
 Dashboard, projektikohtaiset sivut **ja kaavioiden kuvien sisäinen teksti** on lokalisoitu **12 kielelle**:

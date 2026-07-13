@@ -895,6 +895,68 @@ do VPL — mas, neste projeto, a incerteza do VPL não vem dos tokens."* Nenhuma
 
 ---
 
+<!-- pm-agent-section -->
+
+## 🤖 Project Manager Agent — o gerente que lê 10 dimensões, aprende e **sabe calar**
+
+O dashboard **diagnostica**. A cadeia causal **quantifica**. O agente **decide o que fazer agora** — e, ciclo após ciclo, descobre qual alavanca de fato move o ponteiro *naquele* projeto. Ele varre **10 dimensões** (prazo, ROI, risco, tokens, custo, deriva do modelo, confiabilidade, qualidade, fluxo e desperdício), converte cada uma em **dias-equivalentes de projeto × o custo do atraso daquele projeto**, e responde à única pergunta que importa: **o que fazer agora, e quanto vale fazer.**
+
+> **A fraqueza que precisávamos corrigir.** O agente **sempre** recomendava algo: todo ciclo pegava o maior dano e gritava. **Um agente que grita toda semana vira ruído, e ruído é ignorado** — logo não muda nada, por mais certo que esteja. **Faltava-lhe o direito de ficar calado.** É isso que as três metodologias abaixo entregam.
+
+### 🚦 PRINCE2 — *management by exception*: o direito de ficar calado
+
+**Conceito.** O *management by exception* do PRINCE2 diz que o gerente **não deve ser incomodado** enquanto o projeto estiver dentro das tolerâncias acordadas. Quando a **previsão** estoura a tolerância — não o realizado, a **previsão** — dispara-se um **Exception Report**.
+
+**Metodologia.** Tolerância por dimensão (prazo, custo, risco, qualidade, benefício). Escalada pela **previsão**: o P80 do Monte Carlo e o EAC do EVM. O Exception Report tem quatro partes obrigatórias — **causa, impacto, OPÇÕES e recomendação**. É a linha das *opções* que separa um relatório de exceção de um alarme: escalar sem oferecer alternativas é empurrar o problema para cima, não gerenciar.
+
+**Aplicação aqui.** As tolerâncias **não são números que inventamos** — saem do que o projeto **já declarou**: a data prometida (`prazo_alvo`), o orçamento aprovado (`BAC`), a classificação do **próprio registro de risco** (`nivel='critico'`) e a **baseline de qualidade do próprio projeto** (regressão contra si mesmo, à la DORA). Só o limite de ROI é política explícita — e está à vista, para o board discordar. As opções que o agente oferece são **absorver** (queimar reserva gerencial), **recuperar** (comprimir o caminho crítico) ou **renegociar** (mover a data ou cortar escopo).
+
+![Tolerâncias PRINCE2 — a folga de cada dimensão até a exceção; só Qualidade estourou, e só ela é escalada](docs/screenshots/prince2-tolerancias.png)
+
+### 🌡️ CCPM (Goldratt) — *buffer management* e o fever chart
+
+**Conceito.** No *Critical Chain* de Goldratt, o buffer não é gordura escondida em cada tarefa: é um **colchão explícito no fim do projeto**. O **fever chart** cruza *quanto da cadeia já foi concluída* com *quanto do buffer já foi consumido*, e diz em qual das três zonas você está.
+
+**Metodologia.** As fronteiras são **diagonais**, e essa é a essência do método: queimar buffer **no fim** do projeto é normal — queimar **no começo** é grave, porque ainda falta projeto inteiro pela frente. **VERDE = não faça nada. AMARELO = planeje a recuperação. VERMELHO = aja agora.**
+
+```
+verde/amarelo:    y = 1/3 + (1/3)·x
+amarelo/vermelho: y = 2/3 + (1/3)·x
+```
+
+**Aplicação aqui.** O buffer é `P80 − P50` do **cronograma Monte Carlo** que já rodávamos. O consumo é o **atraso do Earned Schedule** convertido em dias. E é o fever chart que dá ao agente o gatilho objetivo do silêncio: **projeto em zona verde e dentro das tolerâncias = nada a escalar.** Hoje **3 dos 10 projetos** recebem exatamente isso — e é calando quando não há o que dizer que o agente ganha o direito de ser ouvido quando há.
+
+![Fever chart do CCPM — os 10 projetos nas três zonas; as fronteiras diagonais tornam o mesmo consumo de buffer benigno no fim e grave no começo](docs/screenshots/ccpm-fever-chart.png)
+
+### 🏦 PMI — *reserve analysis*: contingência × reserva gerencial
+
+**Conceito.** O PMI separa duas reservas que quase todo mundo mistura: a **contingência** cobre os *conhecidos-desconhecidos* (a variabilidade que você **mediu**), e a **reserva gerencial** cobre os *desconhecidos-desconhecidos* (o susto).
+
+**Metodologia.** `contingência = P80 − P50` e `reserva gerencial = P95 − P80`. E o confronto que quase ninguém faz: a contingência que você **tem** contra a que o **registro de risco justifica** (EMV — *Integrated Cost-Schedule Risk Analysis*, Hulett). O buffer de duração é **cego aos eventos de risco**; é aí que quase todo cronograma se descobre otimista.
+
+**Aplicação aqui — e uma lição de honestidade.** Converter “impacto 4” (escala 1–5) em dias exige um **mapeamento nosso, não seu**. Então **testamos a nossa própria suposição**: cortando o impacto suposto pela metade, a conclusão “sub-reservado” vira de **10/10 para 1/10 projetos**. É um **fio de navalha**, e por isso **não é vendida como achado** — cada projeto carrega o campo `robusto`, e o agente **avisa quando a própria leitura não sobrevive ao teste de estresse**. O que **sobra sem suposição nenhuma** é aritmética pura, e é o achado de verdade: **o buffer é ~9% da cadeia, contra os 25–50% com que o CCPM trabalha.**
+
+### 🏃 Sprints e o debate da weekly de sexta
+
+**Conceito.** O debate de progresso da *weekly* de sexta precisa de **número**, não de opinião. Opinião não muda projeto.
+
+**Metodologia.** Três métricas abrem a discussão. **(1) Say-do ratio** (`ΔEV ÷ ΔPV`): um time com say-do 0,7 **não é lento** — está *prometendo 30% a mais do que consegue*. Não se conserta capacidade com cobrança; conserta-se compromisso com previsibilidade. E say-do **muito acima de 1** também não é heroísmo: é **linha de base furada**. **(2) CPI local da sprint**, separado do acumulado **de propósito** — o acumulado é uma média, e média **esconde** a sprint ruim recente: um CPI acumulado de 1,05 pode abrigar uma última sprint a 0,60. **O local denuncia; o acumulado consola.** **(3) Previsão por velocidade**: se o time precisa de 6 sprints e só restam 4, **a data já morreu** e ninguém percebeu, porque o burndown acumulado ainda *parece* perto do ideal.
+
+**Aplicação aqui.** A sprint **não é inventada**: ela é o **período do EVM**, a cadência que o projeto já tem, com PV/EV/AC reais. Criar um calendário de sprint paralelo ao cronograma seria criar uma **segunda verdade** sobre o mesmo projeto — e duas verdades é o mesmo que nenhuma.
+
+> **⚠️ Conformidade, dita na cara.** Isto é um **relatório de progresso por cadência, baseado em EVM (ANSI/EIA-748) com métricas de inspiração ágil** — **não é Scrum**. O *Scrum Guide 2020* **não contém** “velocity” nem “burndown chart” (são prática de mercado, não artefato oficial), e trocou o *commitment* do Sprint Backlog pelo **Sprint Goal**, tratando o backlog como **forecast**. Logo, “say-do ratio (entregue ÷ comprometido)” é vocabulário da **indústria**, não de Scrum canônico. **A métrica é honesta; seria a etiqueta que mentiria.**
+
+![Sprints — say-do ratio por sprint e o burndown real contra o planejado; a cadência é o período do EVM](docs/screenshots/sprints-weekly.png)
+
+### 🎯 O radar e o motor de reaprendizagem — por que esta dimensão, e não outra
+
+O agente **não olha só a vencedora** — ele mostra a bancada inteira. Cada dimensão vira **dias-equivalentes**, os dias viram **reais** pelo custo de atraso *daquele* projeto, e o peso é o que o agente **aprendeu ali**. A prioridade é `dano × peso`.
+
+O **motor de reaprendizagem** é um *bandit contextual* — simples e auditável, e dizemos na cara: **não é deep learning**. A cada ciclo o agente recomenda uma alavanca e **guarda a métrica-alvo dela**; no ciclo seguinte **cobra a si mesmo**. Melhorou → o peso **sobe**. Piorou → **cai**. Variação abaixo de 2% é ruído, e **o agente não aprende com ruído**. Só a alavanca que ele **recomendou** é avaliada: ele responde pelo que mandou fazer e **não leva crédito pelo que o acaso melhorou**. O resultado é um perfil que **não serve para o vizinho** — e é exatamente esse o ponto.
+
+![Radar das 10 dimensões — o dano de cada uma na mesma régua (R$), e a que o agente escolheu atacar](docs/screenshots/pm-agent-radar.png)
+
+---
 ## 🌐 12 idiomas
 
 Dashboard, páginas por projeto **e o texto interno das imagens** dos gráficos estão localizados em **12

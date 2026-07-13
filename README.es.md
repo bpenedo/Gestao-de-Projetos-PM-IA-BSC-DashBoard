@@ -900,6 +900,68 @@ las dos medidas, sola, diría eso.
 
 ---
 
+<!-- pm-agent-section -->
+
+## 🤖 Project Manager Agent — lee 10 dimensiones, aprende y **sabe callarse**
+
+El dashboard **diagnostica**. La cadena causal **cuantifica**. El agente **decide qué hacer ahora** — y, ciclo tras ciclo, descubre qué palanca mueve de verdad la aguja *en ese proyecto concreto*. Recorre **10 dimensiones** (plazo, ROI, riesgo, tokens, coste, deriva del modelo, fiabilidad, calidad, flujo y desperdicio), convierte cada una en **días-equivalentes de proyecto × el coste del retraso de ese proyecto**, y responde a la única pregunta que importa: **qué hacer ahora, y cuánto vale hacerlo.**
+
+> **La debilidad que había que corregir.** El agente **siempre** recomendaba algo: cada ciclo cogía el mayor daño y gritaba. **Un agente que grita cada semana se convierte en ruido, y el ruido se ignora** — así que no cambia nada, por más razón que tenga. **Le faltaba el derecho a callarse.** Eso es lo que entregan las tres metodologías siguientes.
+
+### 🚦 PRINCE2 — *management by exception*: el derecho a callarse
+
+**Concepto.** El *management by exception* de PRINCE2 dice que al gestor **no se le debe molestar** mientras el proyecto esté dentro de las tolerancias acordadas. Cuando la **previsión** rebasa la tolerancia — no lo realizado, la **previsión** — se dispara un **Exception Report**.
+
+**Metodología.** Una tolerancia por dimensión (plazo, coste, riesgo, calidad, beneficio). El escalado lo dispara la **previsión**: el P80 de Monte Carlo y el EAC del EVM. El Exception Report tiene cuatro partes obligatorias — **causa, impacto, OPCIONES y recomendación**. Es la línea de las *opciones* la que separa un informe de excepción de una alarma: escalar sin ofrecer alternativas es empujar el problema hacia arriba, no gestionarlo.
+
+**Aplicación aquí.** Las tolerancias **no son números que nos inventamos** — salen de lo que el proyecto **ya declaró**: la fecha prometida (`prazo_alvo`), el presupuesto aprobado (`BAC`), la clasificación del **propio registro de riesgos** (`nivel='critico'`) y la **línea base de calidad del propio proyecto** (regresión contra sí mismo, al estilo DORA). Solo el límite de ROI es política explícita — y está a la vista, para que el board discrepe. Las opciones que ofrece el agente son **absorber** (quemar reserva de gestión), **recuperar** (comprimir el camino crítico) o **renegociar** (mover la fecha o recortar alcance).
+
+![Tolerancias PRINCE2 — el margen de cada dimensión hasta la excepción; solo Calidad la rebasó, y solo ella se escala](docs/screenshots/prince2-tolerancias.png)
+
+### 🌡️ CCPM (Goldratt) — *buffer management* y el fever chart
+
+**Concepto.** En la *Cadena Crítica* de Goldratt, el búfer no es grasa escondida en cada tarea: es un **colchón explícito al final del proyecto**. El **fever chart** cruza *cuánto de la cadena está terminado* con *cuánto del búfer se ha consumido*, y dice en cuál de las tres zonas estás.
+
+**Metodología.** Las fronteras son **diagonales**, y esa es la esencia del método: quemar búfer **al final** es normal — quemarlo **al principio** es grave, porque queda proyecto entero por delante. **VERDE = no hagas nada. AMARILLO = planifica la recuperación. ROJO = actúa ya.**
+
+```
+verde/amarelo:    y = 1/3 + (1/3)·x
+amarelo/vermelho: y = 2/3 + (1/3)·x
+```
+
+**Aplicación aquí.** El búfer es `P80 − P50` del **cronograma Monte Carlo** que ya ejecutábamos. El consumo es el **retraso del Earned Schedule** convertido a días. Y es el fever chart lo que da al agente el gatillo objetivo del silencio: **zona verde y dentro de tolerancia = nada que escalar.** Hoy **3 de los 10 proyectos** reciben exactamente eso — y es callándose cuando no hay nada que decir como el agente gana el derecho a ser escuchado cuando sí lo hay.
+
+![Fever chart del CCPM — los 10 proyectos en las tres zonas; las fronteras diagonales hacen que el mismo consumo de búfer sea benigno al final y grave al principio](docs/screenshots/ccpm-fever-chart.png)
+
+### 🏦 PMI — *reserve analysis*: contingencia × reserva de gestión
+
+**Concepto.** El PMI separa dos reservas que casi todo el mundo mezcla: la **contingencia** cubre los *conocidos-desconocidos* (la variabilidad que **mediste**), y la **reserva de gestión** cubre los *desconocidos-desconocidos* (el susto).
+
+**Metodología.** `contingencia = P80 − P50` y `reserva de gestión = P95 − P80`. Y la confrontación que casi nadie hace: la contingencia que **tienes** contra la que tu **registro de riesgos justifica** (EMV — *Integrated Cost-Schedule Risk Analysis*, Hulett). El búfer de duración es **ciego a los eventos de riesgo**; ahí es donde casi todo cronograma se descubre optimista.
+
+**Aplicación aquí — y una lección de honestidad.** Convertir “impacto 4” (escala 1–5) en días exige un mapeo que es **nuestro, no tuyo**. Así que **sometimos a estrés nuestra propia suposición**: al reducir a la mitad el impacto supuesto, la conclusión “infra-reservado” pasa de **10/10 a 1/10 proyectos**. Es un **filo de navaja**, y por eso **no se vende como hallazgo** — cada proyecto lleva el campo `robusto`, y el agente **avisa cuando su propia lectura no sobrevive al test de estrés**. Lo que **queda sin suposición alguna** es aritmética pura, y ese sí es el hallazgo: **el búfer es ~9% de la cadena, frente al 25–50% con que trabaja el CCPM.**
+
+### 🏃 Sprints y el debate del weekly del viernes
+
+**Concepto.** El debate de progreso del *weekly* del viernes necesita **números**, no opiniones. La opinión no mueve proyectos.
+
+**Metodología.** Tres métricas abren la discusión. **(1) Say-do ratio** (`ΔEV ÷ ΔPV`): un equipo en 0,7 **no es lento** — está *prometiendo un 30% más de lo que puede entregar*. La capacidad no se arregla exigiendo; el compromiso se arregla con previsibilidad. Y un say-do **muy por encima de 1** tampoco es heroísmo: es una **línea base rota**. **(2) El CPI local del sprint**, separado del acumulado **a propósito** — el acumulado es una media, y la media **esconde** el sprint malo reciente: un CPI acumulado de 1,05 puede albergar un último sprint a 0,60. **El local acusa; el acumulado consuela.** **(3) Previsión por velocidad**: si el equipo necesita 6 sprints y solo quedan 4, **la fecha ya murió** y nadie se enteró, porque el burndown acumulado todavía *parece* cerca del plan.
+
+**Aplicación aquí.** El sprint **no está inventado**: es el **período del EVM**, la cadencia que el proyecto ya tiene, con PV/EV/AC reales. Crear un calendario de sprints paralelo al cronograma sería crear una **segunda verdad** sobre el mismo proyecto — y dos verdades es lo mismo que ninguna.
+
+> **⚠️ Conformidad, dicha de frente.** Esto es un **informe de progreso por cadencia, basado en EVM (ANSI/EIA-748) con métricas de inspiración ágil** — **no es Scrum**. La *Scrum Guide 2020* **no contiene** “velocity” ni “burndown chart” (son práctica de mercado, no artefactos oficiales), y sustituyó el *commitment* del Sprint Backlog por el **Sprint Goal**, tratando el backlog como **forecast**. Por tanto “say-do ratio (entregado ÷ comprometido)” es vocabulario de la **industria**, no Scrum canónico. **La métrica es honesta; sería la etiqueta la que mentiría.**
+
+![Sprints — say-do ratio por sprint y el burndown real contra el plan; la cadencia es el período del EVM](docs/screenshots/sprints-weekly.png)
+
+### 🎯 El radar y el motor de reaprendizaje — por qué esta dimensión y no otra
+
+El agente **no mira solo a la ganadora** — enseña el banquillo entero. Cada dimensión se vuelve **días-equivalentes**, los días se vuelven **dinero** al coste de retraso de *ese* proyecto, y el peso es lo que el agente **aprendió allí**. La prioridad es `daño × peso`.
+
+El **motor de reaprendizaje** es un *bandit contextual* — simple y auditable, y lo decimos de frente: **no es deep learning**. Cada ciclo el agente recomienda una palanca y **guarda su métrica objetivo**; al ciclo siguiente **se cobra a sí mismo**. Mejoró → el peso **sube**. Empeoró → **baja**. Una variación por debajo del 2% es ruido, y **el agente no aprende del ruido**. Solo se juzga la palanca que él **recomendó**: responde por lo que mandó hacer y **no se apunta el mérito de lo que mejoró por azar**. El resultado es un perfil que **no sirve para el proyecto de al lado** — y ese es exactamente el punto.
+
+![Radar de las 10 dimensiones — el daño de cada una en la misma regla (R$), y la que el agente eligió atacar](docs/screenshots/pm-agent-radar.png)
+
+---
 ## 🌐 12 idiomas
 
 El dashboard, las páginas por proyecto **y el texto dentro de las imágenes** de los gráficos están localizados en
