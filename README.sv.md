@@ -871,6 +871,70 @@ tokens."* Inget av måtten ensamt skulle säga det.
 
 ---
 
+<!-- budget-global-section -->
+
+## 💰 Global tokenbudget — varje projekt är ett KOSTNADSSTÄLLE
+
+**Det finns EN budget: den för planen du abonnerar på.** Allt annat **rinner ur den**. Varje projekt är ett **kostnadsställe** — det har **ingen egen budget**. Dess tilldelning är en **skiva av den globala budgeten**, och den skivan **räknas om automatiskt** varje gång ett projekt tillkommer eller lämnar portföljen. **Inget skapas; allt fördelas.**
+
+> **Den strukturella buggen detta rättade.** Varje projekts tokenbudget var `förbrukning × 1,10` — exakt 1,100 för **alla tio**. Cirkulär. Självrättfärdigande. **Inget projekt kunde spränga sin budget, per konstruktion.** *En budget som härleds ur den egna utgiften är ingen budget: det är ett kvitto.* Idag, med kvoten från den verkliga poolen, **spränger 6 av 10 projekt den**.
+
+```text
+   ASSINATURA DO PLANO / PLAN SUBSCRIPTION
+              │
+              ▼
+   💰 BUDGET GLOBAL  ─────────  a quota mensal contratada. É FINITA.
+              │
+              ├── piso igualitário (50%)
+              └── por VALOR entregue (50%)
+              │
+              ▼
+   🏷️ CENTRO DE CUSTO 1 … N  ──  a cota de CADA projeto
+```
+
+### 🍩 Koncept — poolen är DELAD och ÄNDLIG
+
+**Koncept.** Langfuse, CloudZero, Vantage och de andra ger **kostnad per projekt**, som om vart och ett hade sin egen kran. **Det har det inte.** Det finns **en tecknad plan** med ändlig månadskvot, och **varje token ett projekt bränner är en token ett annat inte får**. Det är **allmänningens tragedi** tillämpad på AI-budgeten.
+
+**Metodik.** Den globala budgeten kommer från avtalet: `platser × US$ × växelkurs × (1+IOF)` plus fast infra, vilket ger **månatlig TCO** och **kostnad per miljon tokens**. Verklig förbrukning kommer från loggarna, projicerad till en **månatlig run-rate**. Därur faller **kvotutnyttjande**, **marginal** och **poolens uttömningsdatum**.
+
+**Tillämpning — och siffran som gör ont.** **31 % av förbrukningen är SLÖSERI**: 29 miljoner tokens/månad brända på anrop som **misslyckades och gav ingenting tillbaka** (hallucination, rate-limit). Det är **4,7× hela din avtalsmarginal**. Rakt ut: **du skulle knuffas till en större plan på grund av anrop som aldrig levererade ett svar.** Att skära bort hälften av slöseriet frigör mer kapacitet än hela marginalen — **utan att spendera en krona till**.
+
+![Global budget per projekt (Burn Token Rate) — varje skiva är inte 'dess kostnad': det är kapaciteten den tar från de andra](docs/screenshots/budget-donut-burn-token.png)
+
+### ⚖️ Adaptiv fördelning och KORSSUBVENTION — vem betalar för vem
+
+**Koncept.** Att fördela **efter förbrukning** är marknadsstandard, och det är **självrättfärdigande**: den som bränner mest får störst kvot, vilket **legitimerar slöseriet**. Den ärliga fördelningen sker efter **levererat värde (EV)**.
+
+**Metodik.** Varje kostnadsställes kvot är `lika golv (50 %) + levererat värde (50 %)`, **omdimensionerad så fort N ändras** — ett nytt projekt har EV = 0 och skulle utan golvet få **noll tokens** och aldrig kunna producera värde. **Korssubventionen** är skillnaden mellan kvoten det skulle få för vad det **förbrukar** och den för vad det **levererar**. Summan av subventionerna är **exakt noll**: det är en överföring, inte värdeskapande.
+
+**Tillämpning.** Effektivitetsspannet är **68×**: Project F levererar **642** i värde per miljon tokens; Project J, **10**. Och fördelningen avslöjar notan: **R$ 3 431/månad — 40 % av TCO — överförs från de effektiva till de ineffektiva, varje månad, i mörkret.** Project F, portföljens billigaste, **betalar Project J:s nota**.
+
+![Korssubvention — den som förbrukar mer än den levererar subventioneras; den som levererar mer än den förbrukar betalar de andras nota](docs/screenshots/budget-subsidio-cruzado.png)
+
+### 🔒 PRISSATT resurskonkurrens — kausalkedjan tillämpad på PORTFÖLJEN
+
+**Koncept.** Kausalkedjan binder, **inuti** ett projekt: `token som driftat → risk → tid (P80) → pengar`. Detta binder **MELLAN** projekt: `ett projekts överuttag → poolen töms → de ANDRA stryps → DERAS P80 glider → DERAS Cost of Delay skickar notan`.
+
+**Metodik.** Det kräver **samtidigt** FinOps (kvoten), EVM (levererat värde), risk (exponering) och ett simulerat schema (P80). Det är därför **inget verktyg på marknaden gör det** — inget har de fyra motorerna tillsammans. Langfuse ser token. Jira ser uppgiften. CloudZero ser fakturan. **Inget av dem kan säga att projekt J kostar projekt F R$ X i försening.**
+
+**Tillämpning — och ärligheten som bär siffran.** I strypningsscenariot **orsakar Project J R$ 3 730 i skada på de andra och lider bara R$ 853** — saldo +2 877: det är **FÖRÖVAREN**. **Project C, 30× effektivare, lider R$ 867 och orsakar inget** — det är ett **OFFER**. Saldona summerar till **noll**: varje förövare har ett offer.
+
+> ⚠️ **Men idag RYMS poolen** (94 % av kvoten). **Det finns ingen fysisk strypning** — ingen stannar, ingen glider. Skadan är **allokativ**, inte **operativ**. Att säga *"J försenar C"* medan poolen har marginal vore **en lögn klädd i stringens**. Därför är modulen **scenariobaserad** och **märkt som prognos**: den visar *från vilken punkt* poolen vänder (+10 % förbrukning → hela portföljen stannar 0,9 dagar, R$ 1 497) och *vad det kostar när den vänder*.
+
+![Prissatt resurskonkurrens — vem orsakar skadan och vem betalar den; när poolen sinar stannar ALLA, även de effektiva som inte orsakade något](docs/screenshots/budget-contencao.png)
+
+### 🪓 Skärpolitik — om portföljen behöver plats, VEM lämnar?
+
+**Koncept.** Detta är frågan portföljkommittén **aldrig kan besvara**. I en ändlig pool tar det att släppa in projekt N+1 **tokens från alla N som redan var där** — att släppa in ett projekt **späder ut alla med 9,1 %**.
+
+**Metodik.** Det ärliga svaret är **inte "den som spenderar mest"** — att skära efter rå förbrukning skulle straffa ett **stort och produktivt** projekt. Svaret är **"den som levererar minst PER TOKEN"**: sortering efter **effektivitet** (EV ÷ miljon tokens) frigör mest pool till **lägsta värdekostnad**. Diagonalen `y = x` skiljer skäret som **lönar sig** från det som **förstör mer än det frigör**.
+
+**Tillämpning.** Att skära **Project J** frigör **20,5 % av poolen** och offrar **1,9 % av värdet** — det öppnar nästan 2 nya platser utan att späda ut någon. Att skära **Project F** skulle frigöra 3,4 % och offra **21,2 % av värdet**: det skulle **förstöra mer värde än det frigör kapacitet**. **Detta är inte "skär kostnader" — det är en explicit avvägning, med siffror.**
+
+![Skärpolitik — % av poolen som frigörs mot % av värdet som offras; diagonalen skiljer det lönsamma skäret från det förstörande](docs/screenshots/budget-politica-corte.png)
+
+---
 <!-- pm-agent-section -->
 
 ## 🤖 Project Manager Agent — läser 10 dimensioner, lär sig och **vet när den ska tiga**

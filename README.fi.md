@@ -886,6 +886,70 @@ projektissa NPV:n epävarmuus ei tule tokeneista."* Kumpikaan mittari yksinään
 
 ---
 
+<!-- budget-global-section -->
+
+## 💰 Globaali token-budjetti — jokainen projekti on KUSTANNUSPAIKKA
+
+**On olemassa YKSI budjetti: tilaamasi suunnitelman budjetti.** Kaikki muu **valuu siitä**. Jokainen projekti on **kustannuspaikka** — sillä **ei ole omaa budjettia**. Sen kiintiö on **viipale globaalista budjetista**, ja tämä viipale **lasketaan automaattisesti uudelleen** aina kun projekti liittyy salkkuun tai poistuu siitä. **Mitään ei luoda; kaikki jaetaan.**
+
+> **Rakenteellinen bugi, jonka tämä korjasi.** Kunkin projektin token-budjetti oli `kulutus × 1,10` — täsmälleen 1,100 **kaikilla kymmenellä**. Kehämäinen. Itsensä oikeuttava. **Yksikään projekti ei voinut ylittää budjettiaan, rakenteellisesti.** *Budjetti, joka johdetaan omasta kulutuksesta, ei ole budjetti: se on kuitti.* Nyt, kun kiintiö tulee oikeasta poolista, **6/10 projektia ylittää sen**.
+
+```text
+   ASSINATURA DO PLANO / PLAN SUBSCRIPTION
+              │
+              ▼
+   💰 BUDGET GLOBAL  ─────────  a quota mensal contratada. É FINITA.
+              │
+              ├── piso igualitário (50%)
+              └── por VALOR entregue (50%)
+              │
+              ▼
+   🏷️ CENTRO DE CUSTO 1 … N  ──  a cota de CADA projeto
+```
+
+### 🍩 Käsite — pooli on JAETTU ja RAJALLINEN
+
+**Käsite.** Langfuse, CloudZero, Vantage ja muut antavat **kustannuksen projektia kohden**, ikään kuin jokaisella olisi oma hana. **Ei ole.** On **yksi tilattu suunnitelma**, jolla on rajallinen kuukausikiintiö, ja **jokainen token, jonka yksi projekti polttaa, on token, jota toisella ei ole**. Se on **yhteismaan tragedia** sovellettuna tekoälybudjettiin.
+
+**Menetelmä.** Globaali budjetti tulee sopimuksesta: `paikat × US$ × valuuttakurssi × (1+IOF)` plus kiinteä infra, jolloin saadaan **kuukausittainen TCO** ja **kustannus miljoonaa tokenia kohden**. Todellinen kulutus tulee lokeista, projisoituna **kuukausittaiseksi run-rateksi**. Siitä seuraavat **kiintiön käyttöaste**, **pelivara** ja **poolin loppumispäivä**.
+
+**Soveltaminen — ja luku, joka sattuu.** **31 % kulutuksesta on HUKKAA**: 29 miljoonaa tokenia/kk poltettuna kutsuihin, jotka **epäonnistuivat eivätkä palauttaneet mitään** (hallusinaatio, rate-limit). Se on **4,7× koko sopimuksellinen pelivarasi**. Suomeksi: **sinut painostettaisiin isompaan suunnitelmaan sellaisten kutsujen takia, jotka eivät koskaan tuottaneet vastausta.** Puolet hukasta pois vapauttaa enemmän kapasiteettia kuin koko pelivara — **ilman senttiäkään lisää**.
+
+![Globaali budjetti projektia kohden (Burn Token Rate) — jokainen viipale ei ole 'sen kustannus': se on kapasiteetti, jonka se ottaa muilta](docs/screenshots/budget-donut-burn-token.png)
+
+### ⚖️ Mukautuva jako ja RISTIINTUKI — kuka maksaa kenen puolesta
+
+**Käsite.** **Kulutuksen mukaan** jakaminen on markkinastandardi, ja se on **itsensä oikeuttava**: eniten polttava saa suurimman kiintiön, mikä **oikeuttaa hukan**. Rehellinen jako perustuu **tuotettuun arvoon (EV)**.
+
+**Menetelmä.** Kunkin kustannuspaikan kiintiö on `tasapohja (50 %) + tuotettu arvo (50 %)`, **mitoitettu uudelleen aina kun N muuttuu** — uudella projektilla on EV = 0 ja ilman pohjaa se saisi **nolla tokenia** eikä voisi koskaan tuottaa arvoa. **Ristiintuki** on erotus sen kiintiön, jonka se saisi **kulutuksensa** perusteella, ja sen, jonka se saisi **tuotoksensa** perusteella. Tukien summa on **täsmälleen nolla**: se on siirto, ei arvon luontia.
+
+**Soveltaminen.** Tehokkuuden vaihteluväli on **68×**: Project F tuottaa **642** arvoa miljoonaa tokenia kohden; Project J, **10**. Ja jako paljastaa laskun: **R$ 3 431/kk — 40 % TCO:sta — siirtyy tehokkailta tehottomille, joka kuukausi, pimeässä.** Project F, salkun halvin, **maksaa Project J:n laskun**.
+
+![Ristiintuki — se joka kuluttaa enemmän kuin tuottaa saa tukea; se joka tuottaa enemmän kuin kuluttaa maksaa muiden laskun](docs/screenshots/budget-subsidio-cruzado.png)
+
+### 🔒 HINNOITELTU kilpailu resurssista — kausaaliketju sovellettuna SALKKUUN
+
+**Käsite.** Kausaaliketju yhdistää **projektin sisällä**: `ajautunut token → riski → aikataulu (P80) → raha`. Tämä yhdistää **projektien VÄLILLÄ**: `yhden ylikulutus → poolin loppuminen → MUIDEN kuristaminen → HEIDÄN P80 luisuu → HEIDÄN viivästyskustannuksensa lähettää laskun`.
+
+**Menetelmä.** Se vaatii **samanaikaisesti** FinOpsin (kiintiö), EVM:n (tuotettu arvo), riskin (altistuminen) ja simuloidun aikataulun (P80). Siksi **mikään markkinoiden työkalu ei tee tätä** — yhdelläkään ei ole neljää moottoria yhdessä. Langfuse näkee tokenin. Jira näkee tehtävän. CloudZero näkee laskun. **Yksikään ei osaa sanoa, että projekti J maksaa projektille F R$ X viivästystä.**
+
+**Soveltaminen — ja rehellisyys, joka kannattelee lukua.** Kuristusskenaariossa **Project J aiheuttaa R$ 3 730 vahinkoa muille ja kärsii itse vain R$ 853** — saldo +2 877: se on **PAHANTEKIJÄ**. **Project C, 30× tehokkaampi, kärsii R$ 867 eikä aiheuta mitään** — se on **UHRI**. Saldojen summa on **nolla**: jokaisella pahantekijällä on uhri.
+
+> ⚠️ **Mutta tänään pooli RIITTÄÄ** (94 % kiintiöstä). **Fyysistä kuristusta ei ole** — kukaan ei pysähdy, kukaan ei myöhästy. Vahinko on **allokatiivinen**, ei **operatiivinen**. Sanoa *"J viivästyttää C:tä"*, kun poolissa on pelivaraa, olisi **valhe tarkkuuden naamiossa**. Siksi moduuli on **skenaariopohjainen** ja **merkitty ennusteeksi**: se näyttää *mistä pisteestä* pooli kääntyy (+10 % kulutusta → koko salkku pysähtyy 0,9 päiväksi, R$ 1 497) ja *mitä se maksaa kun kääntyy*.
+
+![Hinnoiteltu kilpailu — kuka aiheuttaa vahingon ja kuka maksaa sen; kun pooli kuivuu, KAIKKI pysähtyvät, myös tehokkaat jotka eivät aiheuttaneet mitään](docs/screenshots/budget-contencao.png)
+
+### 🪓 Leikkauspolitiikka — jos salkku tarvitsee tilaa, KUKA lähtee?
+
+**Käsite.** Tämä on kysymys, johon salkkukomitea **ei koskaan osaa vastata**. Rajallisessa poolissa projektin N+1 hyväksyminen **ottaa tokeneita kaikilta N:ltä, jotka olivat jo siellä** — yhden projektin hyväksyminen **laimentaa kaikkia 9,1 %**.
+
+**Menetelmä.** Rehellinen vastaus **ei ole "se joka kuluttaa eniten"** — raakakulutuksen mukaan leikkaaminen rankaisisi **suurta ja tuottavaa** projektia. Vastaus on **"se joka tuottaa vähiten TOKENIA KOHDEN"**: järjestäminen **tehokkuuden** mukaan (EV ÷ miljoona tokenia) vapauttaa eniten poolia **pienimmällä arvon menetyksellä**. Lävistäjä `y = x` erottaa leikkauksen joka **kannattaa** siitä joka **tuhoaa enemmän kuin vapauttaa**.
+
+**Soveltaminen.** Project J:n leikkaaminen vapauttaa **20,5 % poolista** uhraten **1,9 % arvosta** — se avaa lähes 2 uutta paikkaa laimentamatta ketään. Project F:n leikkaaminen vapauttaisi 3,4 % ja uhraisi **21,2 % arvosta**: se **tuhoaisi enemmän arvoa kuin vapauttaisi kapasiteettia**. **Tämä ei ole "leikatkaa kuluja" — tämä on eksplisiittinen vaihtokauppa, numeroilla.**
+
+![Leikkauspolitiikka — vapautuvan poolin % vs. uhrattavan arvon %; lävistäjä erottaa kannattavan leikkauksen tuhoavasta](docs/screenshots/budget-politica-corte.png)
+
+---
 <!-- pm-agent-section -->
 
 ## 🤖 Project Manager Agent — lukee 10 ulottuvuutta, oppii ja **osaa vaieta**

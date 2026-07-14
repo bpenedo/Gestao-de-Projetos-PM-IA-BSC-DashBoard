@@ -909,6 +909,70 @@ Maße allein würde das sagen.
 
 ---
 
+<!-- budget-global-section -->
+
+## 💰 Globales Token-Budget — jedes Projekt ist eine KOSTENSTELLE
+
+**Es gibt EIN Budget: das des Plans, den Sie abonnieren.** Alles andere **fließt daraus ab**. Jedes Projekt ist eine **Kostenstelle** — es hat **kein eigenes Budget**. Sein Kontingent ist ein **Anteil am Globalen Budget**, und dieser Anteil wird **automatisch neu berechnet**, sobald ein Projekt ins Portfolio kommt oder es verlässt. **Nichts wird geschaffen; alles wird verteilt.**
+
+> **Der strukturelle Bug, den das behoben hat.** Das Token-Budget jedes Projekts war `Verbrauch × 1,10` — exakt 1,100 bei **allen zehn**. Zirkulär. Selbstrechtfertigend. **Kein Projekt konnte sein Budget reißen, konstruktionsbedingt.** *Ein Budget, das aus den eigenen Ausgaben entsteht, ist kein Budget: es ist eine Quittung.* Heute, mit dem Kontingent aus dem echten Pool, **reißen 6 von 10 Projekten es**.
+
+```text
+   ASSINATURA DO PLANO / PLAN SUBSCRIPTION
+              │
+              ▼
+   💰 BUDGET GLOBAL  ─────────  a quota mensal contratada. É FINITA.
+              │
+              ├── piso igualitário (50%)
+              └── por VALOR entregue (50%)
+              │
+              ▼
+   🏷️ CENTRO DE CUSTO 1 … N  ──  a cota de CADA projeto
+```
+
+### 🍩 Konzept — der Pool ist GETEILT und ENDLICH
+
+**Konzept.** Langfuse, CloudZero, Vantage und Co. liefern **Kosten pro Projekt**, als hätte jedes seinen eigenen Wasserhahn. **Hat es nicht.** Es gibt **einen abgeschlossenen Plan** mit endlichem Monatskontingent, und **jedes Token, das ein Projekt verbrennt, ist ein Token, das ein anderes nicht haben wird**. Es ist die **Tragik der Allmende**, angewandt aufs KI-Budget.
+
+**Methodik.** Das Globale Budget stammt aus dem Vertrag: `Plätze × US$ × Kurs × (1+IOF)` plus fixe Infrastruktur, ergibt die **monatlichen TCO** und die **Kosten je Million Token**. Der Ist-Verbrauch kommt aus den Logs, hochgerechnet auf eine **monatliche Run-Rate**. Daraus folgen **Kontingentauslastung**, **Puffer** und das **Erschöpfungsdatum des Pools**.
+
+**Anwendung — und die Zahl, die weh tut.** **31 % des Verbrauchs sind VERSCHWENDUNG**: 29 Millionen Token/Monat, verbrannt in Aufrufen, die **fehlgeschlagen sind und nichts zurückgegeben haben** (Halluzination, Rate-Limit). Das ist **4,7× Ihr gesamter Vertragspuffer**. Im Klartext: **Sie würden in einen größeren Plan gedrängt — wegen Aufrufen, die nie eine Antwort geliefert haben.** Die Hälfte der Verschwendung zu streichen setzt mehr Kapazität frei als der gesamte Puffer — **ohne einen Cent mehr**.
+
+![Globales Budget je Projekt (Burn Token Rate) — jedes Stück ist nicht „seine Kosten“: es ist die Kapazität, die es den anderen wegnimmt](docs/screenshots/budget-donut-burn-token.png)
+
+### ⚖️ Adaptive Umlage und QUERSUBVENTION — wer bezahlt für wen
+
+**Konzept.** Die Umlage **nach Verbrauch** ist Marktstandard und **selbstrechtfertigend**: Wer am meisten verbrennt, bekommt das größte Kontingent — das **legitimiert die Verschwendung**. Die ehrliche Umlage erfolgt nach **geliefertem Wert (EV)**.
+
+**Methodik.** Das Kontingent jeder Kostenstelle ist `Gleichheitssockel (50 %) + gelieferter Wert (50 %)`, **neu dimensioniert, sobald N sich ändert** — ein neues Projekt hat EV = 0 und bekäme ohne Sockel **null Token** und könnte nie Wert erzeugen. Die **Quersubvention** ist die Differenz zwischen dem Kontingent für das, was es **verbraucht**, und dem für das, was es **liefert**. Die Summe der Subventionen ist **exakt null**: Es ist ein Transfer, keine Wertschöpfung.
+
+**Anwendung.** Die Effizienzspanne beträgt **68×**: Project F liefert **642** Wert je Million Token; Project J, **10**. Und die Umlage legt die Rechnung offen: **R$ 3.431/Monat — 40 % der TCO — werden Monat für Monat im Dunkeln von den Effizienten zu den Ineffizienten transferiert.** Project F, das billigste im Portfolio, **bezahlt die Rechnung von Project J**.
+
+![Quersubvention — wer mehr verbraucht als er liefert, wird subventioniert; wer mehr liefert als er verbraucht, zahlt die Rechnung der anderen](docs/screenshots/budget-subsidio-cruzado.png)
+
+### 🔒 BEPREISTE Kontention — die Kausalkette aufs PORTFOLIO angewandt
+
+**Konzept.** Die Kausalkette verbindet **innerhalb** eines Projekts: `abgedriftetes Token → Risiko → Termin (P80) → Geld`. Dies verbindet **ZWISCHEN** Projekten: `Mehrverbrauch des einen → Erschöpfung des Pools → Drosselung der ANDEREN → deren P80 rutscht → deren Cost of Delay stellt die Rechnung`.
+
+**Methodik.** Es erfordert **gleichzeitig** FinOps (das Kontingent), EVM (den gelieferten Wert), Risiko (die Exposition) und einen simulierten Terminplan (das P80). Deshalb **macht es kein Werkzeug am Markt** — keines hat die vier Motoren zusammen. Langfuse sieht das Token. Jira sieht die Aufgabe. CloudZero sieht die Rechnung. **Keines kann sagen, dass Projekt J dem Projekt F R$ X an Verzug kostet.**
+
+**Anwendung — und die Ehrlichkeit, die die Zahl trägt.** Im Drosselungsszenario **verursacht Project J R$ 3.730 Schaden bei den anderen und erleidet selbst nur R$ 853** — Saldo +2.877: Es ist der **TÄTER**. **Project C, 30× effizienter, erleidet R$ 867 und verursacht nichts** — es ist das **OPFER**. Die Salden summieren sich auf **null**: Jeder Täter hat ein Opfer.
+
+> ⚠️ **Aber heute PASST der Pool** (94 % des Kontingents). **Es gibt keine physische Drosselung** — niemand steht still, niemand rutscht. Der Schaden ist **allokativ**, nicht **operativ**. Zu sagen *„J verzögert C“*, solange der Pool Puffer hat, wäre **eine als Strenge verkleidete Lüge**. Deshalb ist das Modul **szenariobasiert** und **als Prognose gekennzeichnet**: Es zeigt, *ab welchem Punkt* der Pool kippt (+10 % Verbrauch → das ganze Portfolio steht 0,9 Tage, R$ 1.497) und *was es kostet, wenn er kippt*.
+
+![Bepreiste Kontention — wer den Schaden verursacht und wer ihn zahlt; wenn der Pool austrocknet, stehen ALLE still, auch die Effizienten, die nichts verursacht haben](docs/screenshots/budget-contencao.png)
+
+### 🪓 Schnittpolitik — wenn das Portfolio Platz braucht, WER geht?
+
+**Konzept.** Das ist die Frage, die das Portfolio-Komitee **nie beantworten kann**. In einem endlichen Pool nimmt die Aufnahme von Projekt N+1 **allen N bereits Anwesenden Token weg** — ein Projekt aufzunehmen **verwässert alle um 9,1 %**.
+
+**Methodik.** Die ehrliche Antwort ist **nicht „das, was am meisten ausgibt“** — nach Rohverbrauch zu schneiden bestrafte ein **großes, produktives** Projekt. Die Antwort lautet **„das, was am wenigsten PRO TOKEN liefert“**: Sortieren nach **Effizienz** (EV ÷ Million Token) gibt am meisten Pool frei bei **geringsten Wertkosten**. Die Diagonale `y = x` trennt den Schnitt, der sich **lohnt**, von dem, der **mehr zerstört, als er freigibt**.
+
+**Anwendung.** Project J zu streichen gibt **20,5 % des Pools** frei und opfert **1,9 % des Werts** — es öffnet fast 2 neue Plätze, ohne jemanden zu verwässern. Project F zu streichen gäbe 3,4 % frei und opferte **21,2 % des Werts**: Es **zerstörte mehr Wert, als es Kapazität freigäbe**. **Das ist kein „Kosten senken“ — es ist ein expliziter Trade-off, mit Zahlen.**
+
+![Schnittpolitik — % des freigegebenen Pools gegen % des geopferten Werts; die Diagonale trennt den lohnenden Schnitt vom zerstörerischen](docs/screenshots/budget-politica-corte.png)
+
+---
 <!-- pm-agent-section -->
 
 ## 🤖 Project Manager Agent — liest 10 Dimensionen, lernt und **weiß zu schweigen**

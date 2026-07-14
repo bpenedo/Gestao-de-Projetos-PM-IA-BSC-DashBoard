@@ -890,6 +890,70 @@ $0.91 off NPV — but in this project, NPV's uncertainty does not come from toke
 
 ---
 
+<!-- budget-global-section -->
+
+## 💰 Global Token Budget — every project is a COST CENTRE
+
+**There is ONE budget: the plan you pay for.** Everything else **flows down from it**. Each project is a **cost centre** — it has **no budget of its own**. Its allowance is a **slice of the Global Budget**, and that slice is **recomputed automatically** every time a project joins or leaves the portfolio. **Nothing is created; everything is divided.**
+
+> **The structural bug this fixed.** Each project's token budget was `consumption × 1.10` — exactly 1.100 across **all ten** projects. Circular. Self-justifying. **No project could ever go over budget, by construction.** *A budget derived from your own spend is not a budget: it's a receipt.* Today, with the quota coming from the real pool, **6 of 10 projects blow through it**.
+
+```text
+   ASSINATURA DO PLANO / PLAN SUBSCRIPTION
+              │
+              ▼
+   💰 BUDGET GLOBAL  ─────────  a quota mensal contratada. É FINITA.
+              │
+              ├── piso igualitário (50%)
+              └── por VALOR entregue (50%)
+              │
+              ▼
+   🏷️ CENTRO DE CUSTO 1 … N  ──  a cota de CADA projeto
+```
+
+### 🍩 Concept — the pool is SHARED and FINITE
+
+**Concept.** Langfuse, CloudZero, Vantage and the rest give you **cost per project**, as if each had its own tap. **It doesn't.** There is **one contracted plan** with a finite monthly quota, and **every token one project burns is a token another will not have**. It is the **tragedy of the commons** applied to an AI budget.
+
+**Methodology.** The Global Budget comes from the contract: `seats × US$ × FX × (1+IOF)` plus fixed infra, yielding the **monthly TCO** and the **cost per million tokens**. Real consumption comes from the logs, projected into a **monthly run-rate**. From that fall out the **quota utilisation**, the **headroom** and the **pool exhaustion date**.
+
+**How we apply it — and the number that hurts.** **31% of consumption is WASTE**: 29 million tokens/month burned on calls that **failed and returned nothing** (hallucination, rate-limit). That is **4.7× your entire contractual headroom**. In plain words: **you would be pushed into a bigger plan because of calls that never delivered an answer.** Cutting half the waste frees more capacity than the whole headroom — **without spending a cent more**.
+
+![Global Budget used per project (Burn Token Rate) — each slice is not 'its cost': it is the capacity it takes from the others](docs/screenshots/budget-donut-burn-token.png)
+
+### ⚖️ Adaptive allocation and CROSS-SUBSIDY — who is paying for whom
+
+**Concept.** Allocating **by consumption** is the market standard, and it is **self-justifying**: whoever burns most gets the biggest quota, which **legitimises the waste**. The honest allocation is by **value delivered (EV)**.
+
+**Methodology.** Each cost centre's quota is `equal floor (50%) + value delivered (50%)`, **resized whenever N changes** — a new project has EV = 0 and, without the floor, would get **zero tokens** and could never produce value. The **cross-subsidy** is the gap between the quota it would get for what it **consumes** and the one for what it **delivers**. The subsidies sum to **exactly zero**: it is a transfer, not value creation.
+
+**How we apply it.** The efficiency spread is **68×**: Project F delivers **642** of value per million tokens; Project J, **10**. And the allocation reveals the bill: **R$ 3,431/month — 40% of TCO — is transferred from the efficient to the inefficient, every month, in the dark.** Project F, the cheapest in the portfolio, **is paying Project J's bill**.
+
+![Cross-subsidy — whoever consumes more than they deliver is subsidised; whoever delivers more than they consume pays the others' bill](docs/screenshots/budget-subsidio-cruzado.png)
+
+### 🔒 PRICED contention — the causal chain applied to the PORTFOLIO
+
+**Concept.** The causal chain links, **inside** one project: `token that drifted → risk → schedule (P80) → money`. This links **BETWEEN** projects: `one project's overrun → pool exhaustion → the OTHERS are throttled → THEIR P80 slips → THEIR Cost of Delay sends the bill`.
+
+**Methodology.** It requires, **simultaneously**, FinOps (the quota), EVM (value delivered), risk (exposure) and a simulated schedule (the P80). That is why **no tool on the market does it** — none has the four engines together. Langfuse sees the token. Jira sees the task. CloudZero sees the invoice. **None of them can say that Project J is costing Project F R$ X in delay.**
+
+**How we apply it — and the honesty that holds the number up.** In the throttling scenario, **Project J causes R$ 3,730 of damage to the others and only suffers R$ 853** — balance +2,877: it is the **AGGRESSOR**. **Project C, 30× more efficient, suffers R$ 867 and causes nothing** — it is a **VICTIM**. The balances sum to **zero**: every aggressor has a victim.
+
+> ⚠️ **But today the pool FITS** (94% of quota). **There is no physical throttling** — nobody stops, nobody slips. The damage is **allocative**, not **operational**. Saying *"J is delaying C"* while the pool still has headroom would be **a lie dressed as rigour**. That is why the module is **scenario-based** and **labelled as a forecast**: it shows *at what point* the pool turns (+10% consumption → the whole portfolio stops for 0.9 days, R$ 1,497) and *what it costs when it does*.
+
+![Priced contention — who causes the damage and who pays for it; when the pool dries up EVERYONE stops, including the efficient who caused nothing](docs/screenshots/budget-contencao.png)
+
+### 🪓 Cut policy — if the portfolio needs room, WHO leaves?
+
+**Concept.** This is the question the portfolio committee **can never answer**. In a finite pool, admitting project N+1 **takes tokens from all N already there** — admitting one project **dilutes everyone by 9.1%**.
+
+**Methodology.** The honest answer is **not "the one that spends most"** — cutting by raw consumption would punish a **large, productive** project. The answer is **"the one that delivers least PER TOKEN"**: ranking by **efficiency** (EV ÷ million tokens) frees the most pool at the **least cost in value**. The `y = x` diagonal separates the cut that **pays off** from the one that **destroys more than it frees**.
+
+**How we apply it.** Cutting **Project J** frees **20.5% of the pool** while sacrificing **1.9% of the value** — it opens nearly 2 new slots without diluting anyone. Cutting **Project F** would free 3.4% and sacrifice **21.2% of the value**: it would **destroy more value than it frees capacity**. **This is not "cut costs" — it is an explicit trade-off, with numbers.**
+
+![Cut policy — % of pool freed against % of value sacrificed; the diagonal separates the cut that pays off from the one that destroys](docs/screenshots/budget-politica-corte.png)
+
+---
 <!-- pm-agent-section -->
 
 ## 🤖 Project Manager Agent — reads 10 dimensions, learns, and **knows when to stay quiet**

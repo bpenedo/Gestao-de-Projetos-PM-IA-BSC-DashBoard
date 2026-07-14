@@ -623,7 +623,7 @@ Cada projeto do portfólio é um **centro de custo** — ele **não tem verba pr
 **fatia do Budget Global**, e essa fatia é **recalculada automaticamente** toda vez que um projeto
 entra ou sai do portfólio. **Nada é criado; tudo é repartido.**
 
-```
+```text
    ASSINATURA DO PLANO  (Claude Max · ChatGPT Pro · Google Ultra · assentos Team)
               │
               ▼
@@ -759,7 +759,7 @@ menos capacidade, menos entrega e — pela cadeia causal — **atraso em R$**.
 A cadeia causal, **dentro** de um projeto, liga: `token que derivou → risco → prazo (P80) → R$`.
 Isto liga **ENTRE** projetos:
 
-```
+```text
    excedente de um  →  exaustão do pool  →  estrangulamento dos OUTROS
                     →  o P80 DELES escorrega  →  o Cost of Delay DELES cobra a conta
 ```

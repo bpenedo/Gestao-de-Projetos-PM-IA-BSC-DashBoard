@@ -895,6 +895,70 @@ do VPL — mas, neste projeto, a incerteza do VPL não vem dos tokens."* Nenhuma
 
 ---
 
+<!-- budget-global-section -->
+
+## 💰 Budget Global de Tokens — cada projeto é um CENTRO DE CUSTO
+
+**Existe UM único budget: o do plano que você assina.** Todo o resto **desce dele**. Cada projeto é um **centro de custo** — ele **não tem verba própria**. A verba dele é uma **fatia do Budget Global**, e essa fatia é **recalculada automaticamente** toda vez que um projeto entra ou sai do portfólio. **Nada é criado; tudo é repartido.**
+
+> **O bug estrutural que isto consertou.** O orçamento de tokens de cada projeto era `consumo × 1,10` — exatamente 1,100 nos **dez** projetos. Circular. Auto-justificante. **Nenhum projeto podia estourar o orçamento, por construção.** *Orçamento que sai do próprio gasto não é orçamento: é recibo.* Hoje, com a cota vinda do pool real, **6 de 10 projetos estouram**.
+
+```text
+   ASSINATURA DO PLANO / PLAN SUBSCRIPTION
+              │
+              ▼
+   💰 BUDGET GLOBAL  ─────────  a quota mensal contratada. É FINITA.
+              │
+              ├── piso igualitário (50%)
+              └── por VALOR entregue (50%)
+              │
+              ▼
+   🏷️ CENTRO DE CUSTO 1 … N  ──  a cota de CADA projeto
+```
+
+### 🍩 Conceito — o pool é COMPARTILHADO e FINITO
+
+**Conceito.** Langfuse, CloudZero, Vantage e afins dão **custo por projeto**, como se cada um tivesse a própria torneira. **Não tem.** Existe **um plano contratado**, com quota mensal finita, e **cada token que um projeto queima é um token que outro não terá**. É a **tragédia dos comuns** aplicada ao orçamento de IA.
+
+**Metodologia.** O Budget Global sai do contrato: `assentos × US$ × câmbio × (1+IOF)` mais a infra fixa, resultando no **TCO mensal** e no **custo por milhão de tokens**. O consumo real vem dos logs, projetado em **run-rate mensal**. Daí saem a **utilização da quota**, a **folga** e a **data de exaustão do pool**.
+
+**Aplicação — e o número que dói.** **31% do consumo é DESPERDÍCIO**: 29 milhões de tokens/mês queimados em chamadas que **falharam e não devolveram nada** (alucinação, rate-limit). Isso é **4,7× toda a folga contratual**. Traduzindo: **você seria empurrado a contratar um plano maior por causa de chamadas que não entregaram resposta.** Cortar metade do desperdício libera mais capacidade do que a folga inteira — **sem gastar um centavo a mais**.
+
+![Budget Global utilizado por projeto (Burn Token Rate) — cada fatia não é 'o custo dele': é a capacidade que ele retira dos outros](docs/screenshots/budget-donut-burn-token.png)
+
+### ⚖️ Rateio adaptativo e o SUBSÍDIO CRUZADO — quem banca quem
+
+**Conceito.** O rateio **por consumo** é o padrão do mercado, e é **auto-justificante**: quem mais queima recebe a maior cota, o que **legitima o desperdício**. O rateio honesto é por **valor entregue (EV)**.
+
+**Metodologia.** A cota de cada centro de custo é `piso igualitário (50%) + valor entregue (50%)`, **redimensionada sempre que N muda** — um projeto novo tem EV = 0 e, sem o piso, receberia **zero tokens** e jamais poderia produzir valor. O **subsídio cruzado** é a diferença entre a cota que ele teria pelo que **consome** e a que teria pelo que **entrega**. A soma dos subsídios é **exatamente zero**: é transferência, não criação de valor.
+
+**Aplicação.** A amplitude de eficiência é de **68×**: o Project F entrega **642** de valor por milhão de tokens; o Project J, **10**. E o rateio revela a conta: **R$ 3.431/mês — 40% do TCO — é transferido dos eficientes para os ineficientes, todo mês, no escuro.** O Project F, o mais barato do portfólio, **está pagando a conta do Project J**.
+
+![Subsídio cruzado — quem consome mais do que entrega é subsidiado; quem entrega mais do que consome paga a conta dos outros](docs/screenshots/budget-subsidio-cruzado.png)
+
+### 🔒 Contenção PRECIFICADA — a cadeia causal aplicada ao PORTFÓLIO
+
+**Conceito.** A cadeia causal liga, **dentro** de um projeto: `token que derivou → risco → prazo (P80) → R$`. Isto liga **ENTRE** projetos: `excedente de um → exaustão do pool → estrangulamento dos OUTROS → o P80 DELES escorrega → o Cost of Delay DELES cobra a conta`.
+
+**Metodologia.** Exige, **ao mesmo tempo**, FinOps (a quota), EVM (o valor entregue), risco (a exposição) e cronograma simulado (o P80). É por isso que **nenhuma ferramenta do mercado faz** — nenhuma tem os quatro motores juntos. O Langfuse vê o token. O Jira vê a tarefa. O CloudZero vê a fatura. **Nenhum deles consegue dizer que o projeto J está custando R$ X de atraso ao projeto F.**
+
+**Aplicação — e a honestidade que sustenta o número.** No cenário de estrangulamento, o **Project J causa R$ 3.730 de dano aos outros e só sofre R$ 853** — saldo +2.877: ele é o **ALGOZ**. O **Project C, 30× mais eficiente, sofre R$ 867 e não causa nada** — é **VÍTIMA**. A soma dos saldos é **zero**: todo algoz tem uma vítima.
+
+> ⚠️ **Mas hoje o pool CABE** (94% da quota). **Não há estrangulamento físico** — ninguém para, ninguém atrasa. O dano é **alocativo**, não **operacional**. Dizer *"o J está atrasando o C"* com folga no pool seria **mentira com cara de rigor**. Por isso o módulo é **cenarizado** e **rotulado como previsão**: ele mostra *a partir de que ponto* o pool vira (+10% de consumo → o portfólio inteiro para 0,9 dia, R$ 1.497) e *quanto custa quando virar*.
+
+![Contenção precificada — quem causa o dano e quem paga por ele; quando o pool seca, TODOS param, inclusive os eficientes que não causaram nada](docs/screenshots/budget-contencao.png)
+
+### 🪓 Política de corte — se o portfólio precisa de espaço, QUEM sai?
+
+**Conceito.** Esta é a pergunta que o comitê de portfólio **nunca consegue responder**. Num pool finito, admitir o projeto N+1 **tira tokens de todos os N que já estavam lá** — admitir 1 projeto **dilui todos em 9,1%**.
+
+**Metodologia.** A resposta honesta **não é "o que gasta mais"** — cortar por consumo bruto puniria um projeto **grande e produtivo**. A resposta é **"o que entrega menos POR TOKEN"**: ordenar por **eficiência** (EV ÷ milhão de tokens) libera o máximo de pool ao **mínimo custo de valor**. A diagonal `y = x` separa o corte que **compensa** do que **destrói mais do que libera**.
+
+**Aplicação.** Cortar o **Project J** libera **20,5% do pool** sacrificando **1,9% do valor** — abre quase 2 vagas novas sem diluir ninguém. Cortar o **Project F** liberaria 3,4% e sacrificaria **21,2% do valor**: **destruiria mais valor do que liberaria capacidade**. **Não é "cortem custos" — é um trade-off explícito, com número.**
+
+![Política de corte — % do pool que se libera contra % do valor que se sacrifica; a diagonal separa o corte que compensa do que destrói](docs/screenshots/budget-politica-corte.png)
+
+---
 <!-- pm-agent-section -->
 
 ## 🤖 Project Manager Agent — o gerente que lê 10 dimensões, aprende e **sabe calar**

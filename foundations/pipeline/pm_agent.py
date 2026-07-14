@@ -178,6 +178,7 @@ TOL_FOLGA = 0.10          # +10% sobre o compromisso (prazo e custo)
 TOL_CRITICOS_ABERTOS = 1  # até 1 risco 'crítico' aberto é tolerado; o 2º é exceção
 TOL_REGRESSAO_QUAL = 1.10 # 10% pior que a própria baseline = regressão
 TOL_ROI_PNEG = 0.20       # política: até 20% de chance de VPL negativo
+TOL_COTA = 1.10           # +10% sobre a COTA do pool global; acima disso, escala
 
 TOLERANCIAS = {
     "prazo":     dict(dimensao="Prazo", metrica="P80 vs a data prometida", unidade="dias"),
@@ -187,6 +188,11 @@ TOLERANCIAS = {
     "qualidade": dict(dimensao="Qualidade", metrica="Taxa de erro vs a baseline DESTE projeto",
                       unidade="%"),
     "roi":       dict(dimensao="ROI", metrica="P(VPL < 0)", unidade="prob."),
+    # Sem esta, um projeto podia queimar 167% da cota do pool e o agente dizia "nada a
+    # escalar" — o Project D fazia exatamente isso. Tolerância que não cobre o recurso
+    # mais escasso do portfólio não é tolerância: é ponto cego.
+    "tokens":    dict(dimensao="Tokens", metrica="Consumo vs a COTA do pool global",
+                      unidade="tokens"),
 }
 P_AJUSTE_MIN = 0.05    # abaixo disto o ajuste da distribuição é ruim -> não confie no P80
 
@@ -553,12 +559,18 @@ def avaliar_tolerancias(conn, p, valores):
     else:
         base_q = atual_q = valores["qualidade"]
 
+    # tokens — a cota vem do POOL GLOBAL, não do próprio consumo. É o recurso mais escasso
+    # do portfólio: estourar aqui é tomar capacidade dos outros projetos.
+    oc = conn.execute("SELECT consumo_tokens, cota_tokens FROM orcamento_cota "
+                      "WHERE project_name=?", (p,)).fetchone() or (0.0, 0.0)
+
     plano = {
         "prazo":     (cr[0], cr[1] * (1 + TOL_FOLGA)),
         "custo":     (ev[0], ev[1] * (1 + TOL_FOLGA)),
         "risco":     (float(criticos), float(TOL_CRITICOS_ABERTOS)),
         "qualidade": (atual_q, base_q * TOL_REGRESSAO_QUAL),
         "roi":       (valores["roi"], TOL_ROI_PNEG),
+        "tokens":    (oc[0], oc[1] * TOL_COTA),
     }
 
     out = []
