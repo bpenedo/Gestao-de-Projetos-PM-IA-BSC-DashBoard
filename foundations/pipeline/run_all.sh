@@ -63,8 +63,14 @@ python3 risco.py || echo "  (risco pulado)"
 echo "▶️  Métricas de fluxo (CFD/cycle time/throughput/WIP)..."
 python3 fluxo.py || echo "  (fluxo pulado)"
 
+echo "💰 ORÇAMENTO GLOBAL de tokens + base de rateio adaptativa por N projetos..."
+python3 orcamento.py || echo "  (orçamento pulado)"
+
 echo "🔗 CADEIA CAUSAL: telemetria → risco → prazo → dinheiro (o elo que ninguém tem)..."
 python3 cadeia_causal.py || echo "  (cadeia causal pulada)"
+
+echo "🔒 CONTENÇÃO DE RECURSO precificada + política de corte (cadeia causal do PORTFÓLIO)..."
+python3 contencao.py || echo "  (contenção pulada)"
 
 echo "🌡️  CCPM buffer/fever chart + 🏦 PMI reserve analysis (o direito de ficar calado)..."
 python3 buffer_ccpm.py || echo "  (buffer CCPM pulado)"

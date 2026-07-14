@@ -704,3 +704,137 @@ CREATE TABLE IF NOT EXISTS sprint_debate (
     severidade   TEXT,     -- 🔴 | 🟡 | 🟢
     PRIMARY KEY (project_name, ordem)
 );
+
+-- ===========================================================================
+-- 💰 ORÇAMENTO GLOBAL DE TOKENS — o pool é COMPARTILHADO e FINITO.
+-- Nenhuma ferramenta do mercado modela isso. Langfuse/CloudZero dão custo POR
+-- PROJETO, como se cada um tivesse a própria torneira. Não tem: existe UM plano
+-- contratado, e cada token que um projeto queima é um token que outro não terá.
+-- É a tragédia dos comuns aplicada ao orçamento de IA — e ela tem preço.
+-- ===========================================================================
+CREATE TABLE IF NOT EXISTS orcamento_global (
+    referencia          TEXT PRIMARY KEY,  -- 'mensal'
+    tokens_contratados  INTEGER,  -- quota mensal do plano (soma dos assentos)
+    custo_plano_brl     REAL,     -- USD × câmbio × (1+IOF)
+    custo_infra_brl     REAL,     -- assinaturas fixas (n8n, Temporal, DB, IDE, Langfuse)
+    tco_brl             REAL,     -- custo total mensal de IA
+    custo_por_mtoken    REAL,     -- R$ por milhão de tokens CONTRATADOS
+    consumo_run_rate    INTEGER,  -- tokens/mês na velocidade atual
+    pct_utilizacao      REAL,     -- consumo ÷ contratado
+    folga_tokens        INTEGER,  -- contratado − consumo (negativo = estouro)
+    dias_ate_exaustao   REAL,     -- em quantos dias o pool acaba no ritmo atual
+    desperdicio_rr      INTEGER,  -- tokens/mês queimados em chamadas que FALHARAM
+    desperdicio_brl     REAL,     -- o mesmo, em R$
+    desperdicio_vs_folga REAL     -- ⚠️ >1 = o desperdício é MAIOR que a folga contratual
+);
+
+-- Base de rateio por projeto. O rateio POR CONSUMO é o padrão do mercado — e é
+-- AUTO-JUSTIFICANTE: quem mais queima recebe a maior cota, o que legitima o
+-- desperdício. O rateio honesto é por VALOR ENTREGUE (EV). A diferença entre os
+-- dois é o SUBSÍDIO CRUZADO: quem está sendo bancado por quem, em R$/mês.
+CREATE TABLE IF NOT EXISTS orcamento_rateio (
+    project_name     TEXT PRIMARY KEY,
+    tokens_mes       INTEGER,  -- run-rate mensal deste projeto
+    pct_pool         REAL,     -- fatia do pool que ele consome
+    ev               REAL,     -- valor agregado (EVM)
+    pct_valor        REAL,     -- fatia do valor que ele entrega
+    eficiencia       REAL,     -- EV por milhão de tokens — a métrica que ninguém calcula
+    cota_consumo     REAL,     -- R$: rateio pelo que consome (o padrão, e o errado)
+    cota_valor       REAL,     -- R$: rateio pelo valor que entrega (FinOps)
+    cota_progresso   REAL,     -- R$: rateio pelo avanço declarado
+    cota_igual       REAL,     -- R$: rateio igualitário (a base ingênua)
+    subsidio_brl     REAL,     -- cota_consumo − cota_valor  (>0 = É subsidiado)
+    papel            TEXT,     -- SUBSIDIADO | PAGADOR | NEUTRO
+    desperdicio_tok  INTEGER,  -- tokens que ESTE projeto queimou em falha
+    desperdicio_brl  REAL
+);
+
+-- ===========================================================================
+-- 🔄 COTA ADAPTATIVA — o budget de cada projeto é FATIADO do pool global, e
+-- REDIMENSIONADO sempre que N muda. Cadastrou projeto novo? Todo mundo encolhe.
+-- Isto substitui o orçamento circular antigo (consumo × 1,10), que era um RECIBO
+-- disfarçado de orçamento: nenhum projeto podia estourar, por construção.
+-- ===========================================================================
+CREATE TABLE IF NOT EXISTS orcamento_cota (
+    project_name   TEXT PRIMARY KEY,
+    n_portfolio    INTEGER,  -- quantos projetos dividiam o pool quando isto foi calculado
+    piso_tokens    INTEGER,  -- o mínimo vital (nenhum projeto entrega valor com zero token)
+    variavel_tokens INTEGER, -- a parte distribuída por VALOR ENTREGUE (EV)
+    cota_tokens    INTEGER,  -- piso + variável = o orçamento REAL deste projeto
+    cota_brl       REAL,
+    consumo_tokens INTEGER,  -- run-rate mensal
+    pct_uso        REAL,     -- consumo ÷ cota  (>1 = ESTOUROU)
+    excedente      INTEGER,  -- consumo − cota (positivo = rouba do pool dos outros)
+    excedente_brl  REAL,
+    estourou       INTEGER
+);
+
+-- 💥 O CUSTO DE ADMITIR UM PROJETO NOVO. Ninguém no mercado precifica isto: num pool
+-- FINITO, cadastrar o projeto N+1 tira tokens de todos os N que já estavam lá. A diluição
+-- não é abstrata — ela vira menos capacidade, menos entrega e, pela cadeia causal, atraso
+-- em R$. É a pergunta que o comitê de portfólio nunca consegue responder:
+-- "o que custa dizer SIM a mais um projeto?"
+CREATE TABLE IF NOT EXISTS orcamento_admissao (
+    cenario          TEXT PRIMARY KEY,  -- 'n+1', 'n+2', 'n+3'
+    n_atual          INTEGER,
+    n_novo           INTEGER,
+    cota_media_antes INTEGER,
+    cota_media_depois INTEGER,
+    diluicao_pct     REAL,     -- quanto CADA projeto existente perde de cota
+    tokens_perdidos  INTEGER,  -- total tirado dos projetos existentes
+    custo_diluicao   REAL,     -- em R$ do plano
+    veredito         TEXT
+);
+
+-- ===========================================================================
+-- 🔒 CONTENÇÃO DE RECURSO PRECIFICADA — a cadeia causal aplicada ao PORTFÓLIO.
+--
+-- A cadeia causal original liga, DENTRO de um projeto: token → risco → prazo → R$.
+-- Isto liga ENTRE projetos: o excedente de um → exaustão do pool → estrangulamento
+-- dos outros → o P80 DELES escorrega → o Cost of Delay DELES cobra a conta.
+--
+-- ⚠️ HONESTIDADE OBRIGATÓRIA: enquanto o consumo total couber na quota, NÃO há
+-- estrangulamento físico — o dano é ALOCATIVO (subsídio cruzado), não operacional.
+-- Dizer "o projeto J está atrasando o C" com folga no pool seria mentira. Por isso
+-- este módulo é CENARIZADO: ele mostra a que ponto de crescimento o pool vira, e
+-- quanto custa quando virar. É previsão, e está rotulada como tal.
+-- ===========================================================================
+CREATE TABLE IF NOT EXISTS contencao_cenario (
+    cenario          TEXT PRIMARY KEY,  -- 'atual' | '+10%' | '+25%' | 'sem desperdício'
+    crescimento      REAL,
+    consumo_mes      INTEGER,
+    pct_quota        REAL,
+    dia_exaustao     REAL,     -- em que dia do mês o pool acaba
+    dias_parados     REAL,     -- 30 − dia_exaustao (0 se não esgota)
+    custo_cod_total  REAL,     -- Σ (dias parados × CoD/dia de CADA projeto)  -- em R$
+    veredito         TEXT
+);
+
+-- Quem paga a conta do estrangulamento, projeto a projeto. Quando o pool seca, TODOS
+-- param — inclusive (e sobretudo) os eficientes, que não causaram o problema.
+CREATE TABLE IF NOT EXISTS contencao_projeto (
+    project_name     TEXT PRIMARY KEY,
+    cod_dia          REAL,     -- Cost of Delay/dia DESTE projeto (da cadeia causal)
+    excedente        INTEGER,  -- quanto ele toma do pool (negativo = cede)
+    eficiencia       REAL,     -- EV por milhão de tokens
+    custo_sofrido    REAL,     -- R$ que ELE perde no cenário de exaustão
+    culpa_rs         REAL,     -- R$ de dano que ELE causa aos OUTROS (rateado pelo excedente)
+    saldo            REAL,     -- culpa − sofrido: >0 = causa mais dano do que sofre
+    papel            TEXT      -- ALGOZ | VÍTIMA | NEUTRO
+);
+
+-- 🪓 POLÍTICA DE ADMISSÃO E CORTE. Se o portfólio precisa de espaço, QUEM sai?
+-- A resposta honesta não é "o que gasta mais" — é "o que entrega menos POR TOKEN".
+-- Ordena os candidatos por eficiência (EV/Mtoken) e mostra o trade-off explícito:
+-- quanto de pool se libera contra quanto de valor se sacrifica.
+CREATE TABLE IF NOT EXISTS admissao_politica (
+    project_name     TEXT PRIMARY KEY,
+    ordem_corte      INTEGER,  -- 1 = primeiro candidato ao corte
+    eficiencia       REAL,
+    tokens_liberados INTEGER,  -- quanto do pool volta se ele sair
+    pct_pool_liberado REAL,
+    valor_sacrificado REAL,    -- EV que se perde
+    pct_valor_perdido REAL,
+    projetos_novos   REAL,     -- quantos projetos novos cabem no espaço liberado
+    troca            TEXT      -- o veredito do trade-off
+);

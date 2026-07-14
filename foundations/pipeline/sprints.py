@@ -164,7 +164,38 @@ def pauta_da_weekly(conn, p, sp):
                           f"**{restam}** no plano. A data fecha com folga de "
                           f"{restam - precisa:.1f} sprint(s).", "🟢"))
 
-    # 4 — A ESCALAÇÃO DO AGENTE (PRINCE2): só entra na pauta se houver exceção
+    # 4 — 💰 O ORÇAMENTO DE TOKENS. Monitorado TODA weekly, porque o pool é finito e o
+    # estouro de um é o estrangulamento de outro. Isto não é "custo": é capacidade tomada.
+    o = conn.execute(
+        "SELECT cota_tokens, consumo_tokens, excedente, excedente_brl, n_portfolio "
+        "FROM orcamento_cota WHERE project_name=?", (p,)).fetchone()
+    r = conn.execute(
+        "SELECT papel, subsidio_brl, eficiencia, desperdicio_tok, desperdicio_brl "
+        "FROM orcamento_rateio WHERE project_name=?", (p,)).fetchone()
+    if o and r:
+        cota, cons, exc, exc_brl, n_port = o
+        papel, sub, efic, desp_t, desp_brl = r
+        if exc > 0:
+            pauta.append(("Orçamento de tokens — o pool é de todos",
+                          f"Consumo de **{cons:,}** tokens/mês contra uma cota de **{cota:,}** "
+                          f"(**{cons/cota:.0%}**). O excedente de {exc:,} tokens "
+                          f"(**R$ {exc_brl:,.0f}/mês**) **não vem do nada — vem dos outros "
+                          f"{n_port-1} projetos**. E {desp_t:,} desses tokens "
+                          f"(R$ {desp_brl:,.0f}) foram queimados em chamadas que **falharam**. "
+                          f"Debater na sexta: cortar o desperdício antes de pedir mais cota.",
+                          "🔴" if cons/cota > 1.5 else "🟡"))
+        elif papel == "PAGADOR":
+            pauta.append(("Orçamento de tokens — este projeto banca os outros",
+                          f"Consumo em {cons/cota:.0%} da cota e eficiência de **{efic:.0f} de EV "
+                          f"por milhão de tokens** — este projeto **paga R$ {abs(sub):,.0f}/mês** "
+                          f"de subsídio cruzado para quem consome mais do que entrega. "
+                          f"É o projeto mais barato do portfólio; proteja-o.", "🟢"))
+        else:
+            pauta.append(("Orçamento de tokens",
+                          f"Consumo em {cons/cota:.0%} da cota do pool ({cons:,} de {cota:,}). "
+                          f"Dentro do orçamento global.", "🟢"))
+
+    # 5 — A ESCALAÇÃO DO AGENTE (PRINCE2): só entra na pauta se houver exceção
     fb = conn.execute(
         "SELECT status, dimensao, causa_raiz, acao, zona_buffer FROM pm_agent_feedback "
         "WHERE project_name=? ORDER BY ciclo DESC LIMIT 1", (p,)).fetchone()

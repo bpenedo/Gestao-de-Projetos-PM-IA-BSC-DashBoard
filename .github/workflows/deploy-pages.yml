@@ -85,7 +85,9 @@ jobs:
           python3 exec_metricas.py
           python3 risco.py
           python3 fluxo.py
+          python3 orcamento.py
           python3 cadeia_causal.py
+          python3 contencao.py
           python3 buffer_ccpm.py
           python3 pm_agent.py
           python3 sprints.py
@@ -164,7 +166,9 @@ jobs:
                    fluxo_cfd fluxo_itens fluxo_resumo cadeia_causal \
                    pm_agent_feedback pm_agent_radar pm_agent_pesos \
                    buffer_fever reserva_analise pm_agent_tolerancia \
-                   sprints sprint_debate; do
+                   sprints sprint_debate \
+                   orcamento_global orcamento_rateio orcamento_cota orcamento_admissao \
+                   contencao_cenario contencao_projeto admissao_politica; do
             if ! find "build/data/bsc/$t" -name '*.parquet' -print -quit | grep -q .; then
               echo "❌ $t: sem parquet"; faltando=$((faltando+1))
             fi

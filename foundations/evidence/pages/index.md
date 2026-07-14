@@ -58,6 +58,34 @@ select * from bsc.vpl_resultado
 ```sql vpl_fluxo
 select * from bsc.vpl_fluxo
 ```
+```sql orc_global
+select * from bsc.orcamento_global
+```
+
+```sql orc_rateio
+select * from bsc.orcamento_rateio order by tokens_mes desc
+```
+
+```sql orc_cota
+select * from bsc.orcamento_cota order by pct_uso desc
+```
+
+```sql orc_admissao
+select * from bsc.orcamento_admissao order by cenario
+```
+
+```sql cont_cenario
+select * from bsc.contencao_cenario
+```
+
+```sql cont_projeto
+select * from bsc.contencao_projeto order by saldo desc
+```
+
+```sql admissao
+select * from bsc.admissao_politica order by ordem_corte
+```
+
 ```sql planos
 select * from bsc.planos_assinatura
 ```
@@ -584,6 +612,225 @@ uma divergência de escola — e a decisão merece o olho do decisor, não só o
 
 > O vencedor tem **pitchdeck** gerado (ver pasta Projetos / `pitchdeck/`). Se as posições 6–7
 > divergem entre normalizações, é onde o ranking é mais sensível — decida com cautela ali.
+
+## 💰 Budget Global de Tokens — cada projeto é um CENTRO DE CUSTO
+
+### 🧭 Leia isto antes de olhar qualquer número
+
+**Existe UM único budget: o do plano que você assina.** Todo o resto **desce dele**.
+
+Cada projeto do portfólio é um **centro de custo** — ele **não tem verba própria**. A verba dele é uma
+**fatia do Budget Global**, e essa fatia é **recalculada automaticamente** toda vez que um projeto
+entra ou sai do portfólio. **Nada é criado; tudo é repartido.**
+
+```
+   ASSINATURA DO PLANO  (Claude Max · ChatGPT Pro · Google Ultra · assentos Team)
+              │
+              ▼
+   💰 BUDGET GLOBAL/PRINCIPAL   ──────────  a quota mensal contratada. É FINITA.
+              │
+              ├── piso igualitário (50%)  ── o mínimo vital de cada centro de custo
+              └── por VALOR entregue (50%) ── quem entrega mais, recebe mais
+              │
+              ▼
+   🏷️ CENTRO DE CUSTO 1 … N   ──────────  a cota de CADA projeto
+```
+
+> ⚠️ **A consequência que ninguém enxerga.** Como o pool é **finito**, **um projeto que estoura a
+> própria cota não “gasta mais” — ele TOMA a verba dos outros centros de custo.** É a tragédia dos
+> comuns aplicada ao orçamento de IA. Langfuse, CloudZero e afins mostram **custo por projeto**, como
+> se cada um tivesse a sua própria torneira. **Não tem. A torneira é uma só.**
+
+### 🏷️ Tabela prévia — os centros de custo e a origem da verba
+
+<DataTable data={orc_cota} rows=all>
+  <Column id=project_name title="🏷️ Centro de custo"/>
+  <Column id=cota_tokens title="Verba recebida do Budget Global (tokens/mês)" fmt=num0/>
+  <Column id=cota_brl title="Verba (R$/mês)" fmt='$#,##0'/>
+  <Column id=consumo_tokens title="Consumo real (tokens/mês)" fmt=num0/>
+  <Column id=pct_uso title="Uso da verba" fmt=pct0 contentType=colorscale/>
+  <Column id=estourou title="Estourou?" contentType=colorscale/>
+</DataTable>
+
+_Note que a soma das verbas **é** o Budget Global — não sobra nem falta. **Quem estoura, tira de quem
+não estourou.**_
+
+---
+
+### 📊 O Budget Global, em números
+
+<BigValue data={orc_global} value=tokens_contratados title="Contratado (tokens/mês)" fmt=num0/>
+<BigValue data={orc_global} value=consumo_run_rate title="Consumo (run-rate/mês)" fmt=num0/>
+<BigValue data={orc_global} value=pct_utilizacao title="Utilização da quota" fmt=pct1/>
+<BigValue data={orc_global} value=tco_brl title="TCO mensal de IA (R$)" fmt='$#,##0'/>
+
+<BigValue data={orc_global} value=folga_tokens title="Folga contratual (tokens/mês)" fmt=num0/>
+<BigValue data={orc_global} value=desperdicio_rr title="🔥 Desperdício (tokens/mês)" fmt=num0/>
+<BigValue data={orc_global} value=desperdicio_brl title="🔥 Desperdício (R$/mês)" fmt='$#,##0'/>
+<BigValue data={orc_global} value=desperdicio_vs_folga title="Desperdício ÷ Folga" fmt=num1/>
+
+### 🔥 O número que dói
+
+O **desperdício** — tokens queimados em chamadas que **falharam e não devolveram nada**
+(alucinação, rate-limit) — é **{orc_global[0].desperdicio_vs_folga.toFixed(1)}× maior que toda a sua folga contratual**.
+
+**Traduzindo:** você vai ser empurrado a **contratar um plano maior por causa de chamadas que não
+entregaram resposta**. Cortar metade do desperdício libera mais capacidade do que a folga inteira do
+contrato — **sem gastar um centavo a mais**.
+
+### 🍩 Budget Global utilizado por Projeto (ótica do Burn Token Rate)
+
+<ECharts config={{
+    tooltip: { trigger: 'item', formatter: '{b}<br/>{c} tokens/mês ({d}%)' },
+    legend: { bottom: 0, type: 'scroll' },
+    series: [{
+      name: 'Burn de tokens',
+      type: 'pie',
+      radius: ['42%', '70%'],
+      avoidLabelOverlap: true,
+      itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
+      label: { show: true, formatter: '{b}\n{d}%' },
+      data: orc_rateio.map(r => ({ name: r.project_name, value: r.tokens_mes }))
+    }]
+}}/>
+
+_Cada fatia é a parcela do **pool global** que o projeto queima por mês. Não é "o custo dele" — é **a
+capacidade que ele retira dos outros**._
+
+### ⚖️ Quem consome, quem entrega — e quem banca quem
+
+O rateio **por consumo** é o padrão do mercado, e é **auto-justificante**: quem mais queima recebe a
+maior cota, o que **legitima o desperdício**. O rateio honesto é por **valor entregue (EV)**. A
+diferença entre os dois é o **subsídio cruzado** — a resposta, em R$/mês, para a pergunta que nenhuma
+ferramenta faz: **quem está bancando quem.**
+
+<DataTable data={orc_rateio} rows=all>
+  <Column id=project_name title="Projeto"/>
+  <Column id=tokens_mes title="Tokens/mês" fmt=num0/>
+  <Column id=pct_pool title="% do pool" fmt=pct1 contentType=colorscale/>
+  <Column id=pct_valor title="% do valor" fmt=pct1 contentType=colorscale/>
+  <Column id=eficiencia title="EV por milhão de tokens" fmt=num0 contentType=colorscale/>
+  <Column id=cota_consumo title="Cota por CONSUMO (R$)" fmt='$#,##0'/>
+  <Column id=cota_valor title="Cota por VALOR (R$)" fmt='$#,##0'/>
+  <Column id=subsidio_brl title="Subsídio cruzado (R$/mês)" fmt='$#,##0' contentType=colorscale/>
+  <Column id=papel title="Papel"/>
+</DataTable>
+
+<BarChart data={orc_rateio} x=project_name y=subsidio_brl title="Subsídio cruzado (R$/mês) — positivo = É subsidiado · negativo = PAGA a conta dos outros" yAxisTitle="R$/mês" swapXY=true/>
+
+### 🔄 Cota adaptativa — o budget é redimensionado a cada projeto cadastrado
+
+A cota de cada projeto é **fatiada do pool global** e **recalculada sempre que N muda**: cadastrou um
+projeto novo, **todos encolhem**. A regra é declarada — **piso igualitário de 50%** (um projeto novo
+tem EV = 0; sem piso ele receberia zero tokens e jamais poderia produzir valor) **+ 50% por valor
+entregue**.
+
+<DataTable data={orc_cota} rows=all>
+  <Column id=project_name title="Projeto"/>
+  <Column id=n_portfolio title="N do portfólio"/>
+  <Column id=cota_tokens title="Cota (tokens/mês)" fmt=num0/>
+  <Column id=consumo_tokens title="Consumo (tokens/mês)" fmt=num0/>
+  <Column id=pct_uso title="Uso da cota" fmt=pct0 contentType=colorscale/>
+  <Column id=excedente title="Excedente (tomado dos outros)" fmt=num0 contentType=colorscale/>
+  <Column id=excedente_brl title="Excedente (R$/mês)" fmt='$#,##0'/>
+</DataTable>
+
+### 💥 O que custa dizer "SIM" a mais um projeto
+
+Esta é a pergunta que o comitê de portfólio **nunca consegue responder**. Num pool **finito**, admitir
+o projeto N+1 **tira tokens de todos os N que já estavam lá**. A diluição não é abstrata: ela vira
+menos capacidade, menos entrega e — pela cadeia causal — **atraso em R$**.
+
+<DataTable data={orc_admissao} rows=all>
+  <Column id=cenario title="Cenário"/>
+  <Column id=n_atual title="N atual"/>
+  <Column id=n_novo title="N novo"/>
+  <Column id=cota_media_antes title="Cota média ANTES" fmt=num0/>
+  <Column id=cota_media_depois title="Cota média DEPOIS" fmt=num0/>
+  <Column id=diluicao_pct title="Diluição de CADA projeto" fmt=pct1 contentType=colorscale/>
+  <Column id=custo_diluicao title="Capacidade diluída (R$/mês)" fmt='$#,##0'/>
+</DataTable>
+
+> **Ou o plano cresce, ou alguém entrega menos.** Não existe terceira via num pool finito — e agora
+> isso está na mesa do board **com número**, não com opinião.
+
+## 🔒 Contenção de recurso PRECIFICADA — a cadeia causal aplicada ao PORTFÓLIO
+
+A cadeia causal, **dentro** de um projeto, liga: `token que derivou → risco → prazo (P80) → R$`.
+Isto liga **ENTRE** projetos:
+
+```
+   excedente de um  →  exaustão do pool  →  estrangulamento dos OUTROS
+                    →  o P80 DELES escorrega  →  o Cost of Delay DELES cobra a conta
+```
+
+Exige, **ao mesmo tempo**, FinOps (a quota), EVM (o valor entregue), risco (a exposição) e cronograma
+simulado (o P80). É por isso que **nenhuma ferramenta do mercado faz** — nenhuma tem os quatro motores
+juntos. O Langfuse vê o token. O Jira vê a tarefa. O CloudZero vê a fatura. **Nenhum deles consegue
+dizer que o projeto J está custando R$ X de atraso ao projeto F.**
+
+> ⚠️ **A honestidade que sustenta o número.** Enquanto o consumo **couber na quota**, **não há
+> estrangulamento físico** — ninguém para, ninguém atrasa. O dano é **alocativo** (subsídio cruzado),
+> não **operacional**. Dizer "o J está atrasando o C" com folga no pool seria **mentira com cara de
+> rigor**. Por isso isto é **cenarizado**: mostra *a partir de que ponto* o pool vira, e *quanto custa
+> quando virar*. **É previsão, e está rotulada como previsão.**
+
+### 📉 Os cenários — a que ponto o pool vira
+
+<DataTable data={cont_cenario} rows=all>
+  <Column id=cenario title="Cenário"/>
+  <Column id=consumo_mes title="Consumo (tokens/mês)" fmt=num0/>
+  <Column id=pct_quota title="% da quota" fmt=pct0 contentType=colorscale/>
+  <Column id=dia_exaustao title="Pool seca no dia" fmt=num1/>
+  <Column id=dias_parados title="Dias de portfólio PARADO" fmt=num1 contentType=colorscale/>
+  <Column id=custo_cod_total title="Custo (Cost of Delay somado)" fmt='$#,##0' contentType=colorscale/>
+  <Column id=veredito title="Veredito" wrap=true/>
+</DataTable>
+
+**O cenário mais importante não é o pessimista — é o `sem desperdício`.** Ele mostra quanta capacidade
+está escondida em **chamadas que falharam**: a alavanca mais barata do portfólio, porque **não custa um
+centavo a mais**.
+
+### ⚔️ Algozes e vítimas — quem causa o dano, e quem paga por ele
+
+Quando o pool seca, **todos param** — inclusive (e sobretudo) os **eficientes, que não causaram o
+problema**. A culpa é rateada pelo **excedente** de cada um; o sofrimento, pelo **Cost of Delay** de
+cada um.
+
+<DataTable data={cont_projeto} rows=all>
+  <Column id=project_name title="Projeto"/>
+  <Column id=eficiencia title="EV por milhão de tokens" fmt=num0 contentType=colorscale/>
+  <Column id=excedente title="Excedente (toma do pool)" fmt=num0 contentType=colorscale/>
+  <Column id=cod_dia title="Cost of Delay (R$/dia)" fmt='$#,##0'/>
+  <Column id=custo_sofrido title="R$ que ELE perde" fmt='$#,##0'/>
+  <Column id=culpa_rs title="R$ de dano que ELE causa aos outros" fmt='$#,##0' contentType=colorscale/>
+  <Column id=saldo title="Saldo (causa − sofre)" fmt='$#,##0' contentType=colorscale/>
+  <Column id=papel title="Papel"/>
+</DataTable>
+
+<BarChart data={cont_projeto} x=project_name y=saldo title="Saldo de contenção (R$) — positivo = ALGOZ (causa mais dano do que sofre) · negativo = VÍTIMA" yAxisTitle="R$" swapXY=true/>
+
+### 🪓 Política de corte — se o portfólio precisa de espaço, QUEM sai?
+
+A resposta honesta **não é "o que gasta mais"** — cortar por consumo bruto puniria um projeto **grande
+e produtivo**. A resposta é **"o que entrega menos POR TOKEN"**: cortar por **eficiência** libera o
+máximo de pool ao **mínimo custo de valor**.
+
+<DataTable data={admissao} rows=all>
+  <Column id=ordem_corte title="Ordem de corte"/>
+  <Column id=project_name title="Projeto"/>
+  <Column id=eficiencia title="EV por milhão de tokens" fmt=num0 contentType=colorscale/>
+  <Column id=pct_pool_liberado title="% do pool que LIBERA" fmt=pct1 contentType=colorscale/>
+  <Column id=pct_valor_perdido title="% do valor que SACRIFICA" fmt=pct1 contentType=colorscale/>
+  <Column id=projetos_novos title="Vagas que abre" fmt=num1/>
+  <Column id=troca title="O trade-off" wrap=true/>
+</DataTable>
+
+> **Este é o quadro que o comitê de portfólio nunca teve.** Não é "cortem custos" — é: *este projeto
+> libera 20,5% do pool sacrificando 1,9% do valor; aquele libera 6,9% mas sacrifica 20,1% — **cortar o
+> segundo destrói mais valor do que libera capacidade**.*
+
+---
 
 ### 📌 Bottom-Line — Sumário Executivo & Insights C-Level
 

@@ -192,6 +192,18 @@ select * from bsc.sprints
 where project_name = '${params.projeto}' and entregue is not null order by sprint
 ```
 
+```sql orc_proj
+select * from bsc.orcamento_cota where project_name = '${params.projeto}'
+```
+
+```sql orc_rat_proj
+select * from bsc.orcamento_rateio where project_name = '${params.projeto}'
+```
+
+```sql orc_glob
+select * from bsc.orcamento_global
+```
+
 ```sql debate_proj
 select * from bsc.sprint_debate where project_name = '${params.projeto}' order by ordem
 ```
@@ -682,6 +694,40 @@ equivalentes, os dias viram reais pelo custo de atraso **deste** projeto, e o pe
 </DataTable>
 
 <BarChart data={pm_radar_proj} x=dimensao y=dano_rs title="Dano por dimensão (R$ — mesma régua para todas)" yAxisTitle="R$" swapXY=true/>
+
+### 💰 Orçamento de tokens — a cota deste projeto no pool GLOBAL
+
+{#if orc_proj.length > 0}
+> **O pool é compartilhado e finito.** A cota deste projeto é **fatiada do plano global** e
+> **redimensionada sempre que um projeto novo entra no portfólio**. Estourar a cota não é "gastar
+> mais": é **tomar capacidade dos outros {orc_proj[0].n_portfolio - 1} projetos**.
+
+<BigValue data={orc_proj} value=cota_tokens title="Cota (tokens/mês)" fmt=num0/>
+<BigValue data={orc_proj} value=consumo_tokens title="Consumo (run-rate/mês)" fmt=num0/>
+<BigValue data={orc_proj} value=pct_uso title="Uso da cota" fmt=pct0/>
+<BigValue data={orc_proj} value=excedente_brl title="Excedente (R$/mês)" fmt='$#,##0'/>
+
+<DataTable data={orc_rat_proj} rows=all>
+  <Column id=tokens_mes title="Tokens/mês" fmt=num0/>
+  <Column id=pct_pool title="% do pool global" fmt=pct1/>
+  <Column id=pct_valor title="% do valor entregue" fmt=pct1/>
+  <Column id=eficiencia title="EV por milhão de tokens" fmt=num0/>
+  <Column id=subsidio_brl title="Subsídio cruzado (R$/mês)" fmt='$#,##0'/>
+  <Column id=papel title="Papel no rateio"/>
+  <Column id=desperdicio_tok title="🔥 Tokens queimados em FALHA" fmt=num0/>
+  <Column id=desperdicio_brl title="🔥 Desperdício (R$/mês)" fmt='$#,##0'/>
+</DataTable>
+
+**Como ler.** A **eficiência** (EV por milhão de tokens) é a métrica que ninguém calcula: ela diz
+**quanto valor este projeto devolve por token queimado**. O **subsídio cruzado** é a diferença entre a
+cota que ele teria pelo que **consome** e a que teria pelo que **entrega** — positivo significa que o
+portfólio **está bancando** este projeto; negativo, que ele **banca os outros**.
+
+{:else}
+
+⏳ Orçamento global ainda não calculado para este projeto.
+
+{/if}
 
 ### 🏃 Sprints & o debate da weekly de sexta
 

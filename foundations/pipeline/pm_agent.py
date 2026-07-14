@@ -89,12 +89,14 @@ ALAVANCAS = {
                 "com dono e gatilho explícitos.",
         dono="Gerência do Projeto"),
     "tokens": dict(
-        dimensao="Tokens", nome="Orçamento de tokens estourando",
-        metrica="Consumo acumulado ÷ orçamento acumulado",
+        dimensao="Tokens", nome="Cota do pool global estourada",
+        metrica="Consumo ÷ COTA do pool compartilhado (não o próprio consumo)",
         acao="Cortar o modelo premium onde o menor resolve, limitar o tamanho de saída e "
-             "ligar cache; medir custo por unidade de valor entregue, não custo total.",
+             "ligar cache. E entender o que está em jogo: o pool é FINITO — cada token "
+             "acima da cota é um token que outro projeto do portfólio não terá.",
         pratica="FinOps Framework: unit economics — o que importa é R$ por resultado útil, "
-                "não a fatura absoluta.",
+                "não a fatura absoluta. O rateio por CONSUMO é auto-justificante (premia "
+                "quem queima); o rateio honesto é por VALOR ENTREGUE.",
         dono="FinOps"),
     "custo": dict(
         dimensao="Custo", nome="Eficiência de custo (CPI)",
@@ -467,6 +469,25 @@ def acao_texto(conn, p, alav, valores):
                         f"{q['folga']:.1f} dia(s) de folga — o seu MS Project diria que ela pode "
                         f"esperar — mas ela decide a data em {q['crit']:.0f}% das simulações. "
                         f"É uma **armadilha**, e só a simulação a enxerga.")
+
+    # 💰 ORÇAMENTO — a cota é fatiada de um pool FINITO. Estourar não é "gastar mais":
+    # é TOMAR de outro projeto do portfólio. Nenhuma ferramenta do mercado diz isso.
+    if alav in ("tokens", "custo", "desperdicio"):
+        o = conn.execute(
+            "SELECT cota_tokens, consumo_tokens, excedente, excedente_brl, n_portfolio "
+            "FROM orcamento_cota WHERE project_name=?", (p,)).fetchone()
+        if o and o[2] > 0:
+            txt += (f" 💰 Este projeto estourou a **cota do pool global**: consumiu "
+                    f"{o[1]:,} de {o[0]:,} tokens/mês (**{o[1]/o[0]:.0%}**). O excedente de "
+                    f"{o[2]:,} tokens (R$ {o[3]:,.0f}/mês) **não vem do nada — vem dos outros "
+                    f"{o[4]-1} projetos do portfólio**.")
+        r = conn.execute(
+            "SELECT papel, subsidio_brl, eficiencia FROM orcamento_rateio WHERE project_name=?",
+            (p,)).fetchone()
+        if r and r[0] == "SUBSIDIADO":
+            txt += (f" E o rateio confirma: ele é **SUBSIDIADO** em R$ {r[1]:,.0f}/mês — consome "
+                    f"mais do pool do que o valor que devolve (eficiência: {r[2]:.0f} de EV por "
+                    f"milhão de tokens).")
 
     # #3 — nomeia o erro que mais queima token.
     if alav in ("desperdicio", "tokens", "custo"):
