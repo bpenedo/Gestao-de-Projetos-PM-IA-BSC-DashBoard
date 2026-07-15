@@ -1201,7 +1201,7 @@ crontab -e
 
 Bidrag är **mycket välkomna**! Öppna en *issue* som beskriver ditt förslag (ny KPI, koppling, språk, rättelse) och
 skicka en *pull request*. Standarder: läsbar kod i linje med omgivningen, ingen personlig data i paketet (demon är
-anonym). Nya språk: lägg till målen i Translation Memory och kör generatorn.
+anonym). Nya språk: lägg till målen i Translation Memory och kör generatorn. Buggar händer — samarbeta och rapportera dem. Det bästa är det godas fiende: gjort är bättre än perfekt!
 
 ## 📄 Licens & upphovsrätt
 

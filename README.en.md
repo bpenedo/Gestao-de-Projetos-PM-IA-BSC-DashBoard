@@ -1221,7 +1221,7 @@ crontab -e
 
 Contributions are **very welcome**! Open an *issue* describing your proposal (new KPI, connector, language, fix)
 and send a *pull request*. Standards: readable code consistent with its surroundings, no personal data in the
-package (the demo is anonymous). New languages: add the targets to the Translation Memory and run the generator.
+package (the demo is anonymous). New languages: add the targets to the Translation Memory and run the generator. Bugs happen — collaborate and report them. Perfect is the enemy of good: done is better than perfect!
 
 ## 📄 License & authorship
 

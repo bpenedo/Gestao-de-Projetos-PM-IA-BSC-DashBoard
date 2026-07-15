@@ -1241,7 +1241,7 @@ crontab -e
 Beiträge sind **sehr willkommen**! Öffnen Sie ein *Issue* mit Ihrem Vorschlag (neuer KPI, Konnektor, Sprache,
 Korrektur) und senden Sie einen *Pull Request*. Standards: lesbarer, zum Umfeld passender Code, keine persönlichen
 Daten im Paket (die Demo ist anonym). Neue Sprachen: Ziele zum Translation Memory hinzufügen und den Generator
-ausführen.
+ausführen. Bugs passieren — arbeiten Sie mit und melden Sie sie. Das Bessere ist der Feind des Guten: erledigt ist besser als perfekt!
 
 ## 📄 Lizenz & Urheberschaft
 

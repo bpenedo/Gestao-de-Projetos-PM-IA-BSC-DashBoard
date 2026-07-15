@@ -1217,7 +1217,7 @@ crontab -e
 
 Kontribuutiot ovat **erittäin tervetulleita**! Avaa *issue*, joka kuvaa ehdotuksesi (uusi KPI, konnektori, kieli,
 korjaus), ja lähetä *pull request*. Standardit: luettava, ympäristöönsä sopiva koodi, ei henkilötietoja paketissa
-(demo on anonyymi). Uudet kielet: lisää kohteet Translation Memoryyn ja aja generaattori.
+(demo on anonyymi). Uudet kielet: lisää kohteet Translation Memoryyn ja aja generaattori. Bugeja sattuu — osallistu ja raportoi niistä. Paras on hyvän vihollinen: valmis on parempi kuin täydellinen!
 
 ## 📄 Lisenssi & tekijyys
 

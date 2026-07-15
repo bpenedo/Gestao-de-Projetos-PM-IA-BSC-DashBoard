@@ -1226,7 +1226,7 @@ crontab -e
 
 Contribuições são **muito bem-vindas**! Abra uma *issue* descrevendo a proposta (novo KPI, conector, idioma,
 correção) e envie um *pull request*. Padrões: código legível e consistente com o entorno, sem dados pessoais
-no pacote (a demo é anônima). Novos idiomas: acrescente os alvos na Translation Memory e rode o gerador.
+no pacote (a demo é anônima). Novos idiomas: acrescente os alvos na Translation Memory e rode o gerador. Bugs acontecem — colabore e reporte. O ótimo é inimigo do bom: feito é melhor do que perfeito!
 
 ## 📄 Licença & autoria
 

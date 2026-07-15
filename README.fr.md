@@ -1246,7 +1246,7 @@ crontab -e
 Les contributions sont **très bienvenues** ! Ouvrez une *issue* décrivant votre proposition (nouveau KPI,
 connecteur, langue, correction) et envoyez une *pull request*. Standards : code lisible et cohérent avec son
 environnement, aucune donnée personnelle dans le paquet (la démo est anonyme). Nouvelles langues : ajoutez les
-cibles à la Translation Memory et lancez le générateur.
+cibles à la Translation Memory et lancez le générateur. Les bugs arrivent — collaborez et signalez-les. Le mieux est l'ennemi du bien : fait vaut mieux que parfait !
 
 ## 📄 Licence & paternité
 
