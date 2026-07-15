@@ -195,6 +195,32 @@ def pauta_da_weekly(conn, p, sp):
                           f"Consumo em {cons/cota:.0%} da cota do pool ({cons:,} de {cota:,}). "
                           f"Dentro do orçamento global.", "🟢"))
 
+    # 4b — 🔁 O LOOP FECHADO: o agente presta contas do corte que ELE mandou fazer.
+    lp = conn.execute(
+        "SELECT veredito, acao, confianca, liberou_brl, whatif_brl, acertos, erros "
+        "FROM pm_agent_orcamento WHERE project_name=? ORDER BY ciclo DESC LIMIT 1", (p,)).fetchone()
+    if lp:
+        vered, acao, conf, liberou, whatif, ac, er = lp
+        if vered == "funcionou":
+            pauta.append(("Loop de orçamento — o corte funcionou",
+                          f"Na weekly passada mandei **{acao}**; o desperdício caiu e liberou "
+                          f"**R$ {liberou:,.0f}/mês** de pool. **Subo a confiança** nessa recomendação "
+                          f"({ac}✓/{er}✗). Manter o corte.", "🟢"))
+        elif vered == "nao_funcionou":
+            pauta.append(("Loop de orçamento — o corte NÃO pegou",
+                          f"Na weekly passada mandei **{acao}** e o desperdício **não caiu** — "
+                          f"**baixo a confiança** ({ac}✓/{er}✗). Debater por que o corte não landou "
+                          f"antes de repeti-lo.", "🔴"))
+        elif vered == "baseline":
+            pauta.append(("Loop de orçamento — baseline registrada",
+                          f"Recomendo **{acao}** e guardo o desperdício de hoje. What-if: o corte "
+                          f"liberaria **R$ {whatif:,.0f}/mês** de pool. Cobro a mim mesmo na próxima "
+                          f"weekly.", "🟡"))
+        else:  # sem_sinal
+            pauta.append(("Loop de orçamento — sem sinal material",
+                          f"O desperdício não se mexeu desde o último corte recomendado — não aprendo "
+                          f"com ruído. Confiança inalterada ({ac}✓/{er}✗).", "🟢"))
+
     # 5 — A ESCALAÇÃO DO AGENTE (PRINCE2): só entra na pauta se houver exceção
     fb = conn.execute(
         "SELECT status, dimensao, causa_raiz, acao, zona_buffer FROM pm_agent_feedback "

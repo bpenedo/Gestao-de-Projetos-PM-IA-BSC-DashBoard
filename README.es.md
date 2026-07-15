@@ -902,6 +902,25 @@ las dos medidas, sola, diría eso.
 
 <!-- budget-global-section -->
 
+<!-- budget-blueprint -->
+
+> ## 🌿 Tu portafolio de IA es una **biosfera** — trátalo como tal
+>
+> Deja de pensar en cada proyecto como una hoja de cálculo aislada. **Viven en el mismo ecosistema, y ese
+> ecosistema tiene un recurso finito circulando: el pool de tokens de tu plan.** Cada proyecto es una
+> especie compitiendo por él. Y como toda biosfera, obedece dos leyes que nadie puede derogar:
+>
+> - **La capacidad de carga es finita.** Lo que una especie consume de más, otra deja de tener. No hay
+>   crecimiento infinito en un pool cerrado — solo *quién se está comiendo el almuerzo de quién*.
+> - **Sin frenos, el ecosistema colapsa en monocultivo.** La especie que gana retroalimentación positiva sin
+>   límite ahoga a todas las demás — y muere con ellas, tras destruir la diversidad que la alimentaba.
+>
+> **Por eso existe este módulo.** Ninguna herramienta del mercado — Langfuse, CloudZero, Vantage — ve el
+> portafolio como un organismo vivo: dan *coste por proyecto*, como si cada uno respirara su propio aire. No
+> lo hace. **Aquí ves la biosfera entera** — quién prospera, quién parasita, quién financia a quién, y qué
+> cuesta admitir una especie más en el ecosistema. En dinero, no en opinión.
+
+
 ## 💰 Budget Global de Tokens — cada proyecto es un CENTRO DE COSTE
 
 **Existe UN único presupuesto: el del plan que contratas.** Todo lo demás **desciende de él**. Cada proyecto es un **centro de coste** — **no tiene partida propia**. Su asignación es una **porción del Budget Global**, y esa porción se **recalcula automáticamente** cada vez que un proyecto entra o sale del portafolio. **Nada se crea; todo se reparte.**
@@ -962,6 +981,21 @@ las dos medidas, sola, diría eso.
 **Aplicación.** Recortar **Project J** libera el **20,5% del pool** sacrificando el **1,9% del valor** — abre casi 2 plazas nuevas sin diluir a nadie. Recortar **Project F** liberaría el 3,4% y sacrificaría el **21,2% del valor**: **destruiría más valor del que liberaría capacidad**. **No es "recorten costes" — es un trade-off explícito, con número.**
 
 ![Política de recorte — % del pool liberado frente a % del valor sacrificado; la diagonal separa el recorte que compensa del que destruye](docs/screenshots/budget-politica-corte.png)
+
+---
+<!-- budget-loop-section -->
+
+## 🔁 Loop de reaprendizaje sobre el presupuesto — el agente que **evoluciona con el ecosistema**
+
+**Un ecosistema sano tiene memoria.** El depredador aprende qué presa vale la caza; la planta aprende hacia dónde crecer. Sin ese aprendizaje no hay adaptación — solo ensayo y error ciego, para siempre. Era justo lo que le faltaba al agente: recomendaba *recortar el desperdicio*, pero **nunca comprobaba, a la semana siguiente, si el recorte que él mismo ordenó liberó pool de verdad.** Recomendar sin verificar no es gestión — es conjetura reciclada.
+
+**Concepto.** El PM Agent cierra el loop: **guarda el número** la semana en que recomienda el recorte y, en el weekly siguiente, **se cobra a sí mismo**. ¿Cayó el desperdicio? La recomendación funcionó. ¿No? Falló. Es el mismo **bandit contextual** del motor de reaprendizaje — ahora aplicado a la dimensión de **tokens**, el recurso más escaso de la biosfera.
+
+**Metodología.** Solo se evalúa la acción que **él recomendó** — responde por lo que ordenó y **no se apunta el mérito de lo que liberó el azar**. El recorte funcionó → su confianza en esa recomendación **sube**. No funcionó → **baja**. Una variación por debajo del 2% es ruido, y **no aprende del ruido**. La confianza es **por proyecto**: el agente descubre qué recortes liberan pool en *ese* ecosistema.
+
+**Beneficio directo.** Cada viernes el agente llega al weekly con una rendición de cuentas de su propio consejo: *"la semana pasada ordené recortar ALUCINACION_CODIGO; liberó R$ X de pool — subo mi confianza"* o *"no cuajó — bajo mi confianza y reconsidero"*. Con el tiempo deja de repetir el recorte que no funciona en tu contexto y redobla el que sí. **Tu presupuesto deja de regirse por una regla fija y pasa a regirse por un agente que aprendió a jugar en tu tablero.**
+
+![Loop de reaprendizaje sobre el presupuesto — el desperdicio sube y baja, y la confianza del agente responde: sube cuando el recorte funciona, baja cuando falla, ignora el ruido](docs/screenshots/budget-loop-reaprendizagem.png)
 
 ---
 <!-- pm-agent-section -->

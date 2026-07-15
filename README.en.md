@@ -892,6 +892,25 @@ $0.91 off NPV — but in this project, NPV's uncertainty does not come from toke
 
 <!-- budget-global-section -->
 
+<!-- budget-blueprint -->
+
+> ## 🌿 Your AI portfolio is a **biosphere** — treat it like one
+>
+> Stop thinking of each project as an isolated spreadsheet. **They live in the same ecosystem, and that
+> ecosystem has one finite resource flowing through it: your plan's token pool.** Each project is a
+> species competing for it. And like every biosphere, it obeys two laws no one can repeal:
+>
+> - **Carrying capacity is finite.** What one species consumes extra, another goes without. There is no
+>   infinite growth in a closed pool — there is only *who is eating whose lunch*.
+> - **With no brakes, the ecosystem collapses into monoculture.** The species that gains unchecked positive
+>   feedback smothers all the others — and dies with them, having destroyed the diversity that fed it.
+>
+> **That is why this module exists.** No tool on the market — Langfuse, CloudZero, Vantage — sees the
+> portfolio as a living organism: they give you *cost per project*, as if each breathed its own air. It
+> doesn't. **Here you see the whole biosphere** — who thrives, who parasitises, who pays for whom, and what
+> it costs to admit one more species into the ecosystem. In money, not opinion.
+
+
 ## 💰 Global Token Budget — every project is a COST CENTRE
 
 **There is ONE budget: the plan you pay for.** Everything else **flows down from it**. Each project is a **cost centre** — it has **no budget of its own**. Its allowance is a **slice of the Global Budget**, and that slice is **recomputed automatically** every time a project joins or leaves the portfolio. **Nothing is created; everything is divided.**
@@ -952,6 +971,21 @@ $0.91 off NPV — but in this project, NPV's uncertainty does not come from toke
 **How we apply it.** Cutting **Project J** frees **20.5% of the pool** while sacrificing **1.9% of the value** — it opens nearly 2 new slots without diluting anyone. Cutting **Project F** would free 3.4% and sacrifice **21.2% of the value**: it would **destroy more value than it frees capacity**. **This is not "cut costs" — it is an explicit trade-off, with numbers.**
 
 ![Cut policy — % of pool freed against % of value sacrificed; the diagonal separates the cut that pays off from the one that destroys](docs/screenshots/budget-politica-corte.png)
+
+---
+<!-- budget-loop-section -->
+
+## 🔁 Budget re-learning loop — the agent that **evolves with the ecosystem**
+
+**A healthy ecosystem has memory.** The predator learns which prey is worth the chase; the plant learns which way to grow. Without that learning there is no adaptation — only blind trial and error, forever. That was exactly what the agent lacked: it recommended *cutting waste*, but **never checked, the following week, whether the cut it ordered actually freed pool.** Recommending without verifying is not management — it is recycled guesswork.
+
+**Concept.** The PM Agent closes the loop: it **stores the number** the week it recommends the cut and, the following weekly, **holds itself to account**. Did waste drop? The recommendation worked. It didn't? It failed. It is the same **contextual bandit** as the re-learning engine — now applied to the **token** dimension, the scarcest resource in the biosphere.
+
+**Methodology.** Only the action **it recommended** is judged — it answers for what it ordered and **takes no credit for what luck freed**. The cut worked → its confidence in that recommendation **rises**. It didn't → it **falls**. Movement below 2% is noise, and **it does not learn from noise**. Confidence is **per project**: the agent discovers which cuts actually free pool in *that* ecosystem.
+
+**Direct benefit.** Every Friday the agent arrives at the weekly with an accounting of its own advice: *"last week I ordered cutting HALLUCINATION_CODE; it freed R$ X of pool — I raise my confidence"* or *"it didn't take — I lower my confidence and reconsider"*. Over time it stops repeating the cut that doesn't work in your context and doubles down on the one that does. **Your budget stops being run by a fixed rule and starts being run by an agent that learned to play on your board.**
+
+![Budget re-learning loop — waste rises and falls, and the agent's confidence responds: up when the cut works, down when it fails, ignoring the noise](docs/screenshots/budget-loop-reaprendizagem.png)
 
 ---
 <!-- pm-agent-section -->

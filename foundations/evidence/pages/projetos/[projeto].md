@@ -200,6 +200,11 @@ select * from bsc.orcamento_cota where project_name = '${params.projeto}'
 select * from bsc.orcamento_rateio where project_name = '${params.projeto}'
 ```
 
+```sql orc_loop_proj
+select * from bsc.pm_agent_orcamento
+where project_name = '${params.projeto}' order by ciclo desc limit 1
+```
+
 ```sql orc_glob
 select * from bsc.orcamento_global
 ```
@@ -726,6 +731,37 @@ portfólio **está bancando** este projeto; negativo, que ele **banca os outros*
 {:else}
 
 ⏳ Orçamento global ainda não calculado para este projeto.
+
+{/if}
+
+### 🔁 Loop de reaprendizagem sobre o orçamento — o agente cobra a si mesmo
+
+{#if orc_loop_proj.length > 0}
+> **O PM Agent fecha o loop.** Ele não só recomenda cortar desperdício — ele **guarda o número** e,
+> na weekly seguinte, **cobra a si mesmo** se o corte de fato liberou pool. É a mesma mecânica do motor
+> de reaprendizagem (bandit contextual), agora aplicada à dimensão de **tokens**: só a ação que **ele
+> recomendou** é avaliada, e ele **não leva crédito pelo que o acaso liberou**.
+
+<BigValue data={orc_loop_proj} value=veredito title="Veredito do último corte"/>
+<BigValue data={orc_loop_proj} value=confianca title="Confiança (histórico deste projeto)"/>
+<BigValue data={orc_loop_proj} value=liberou_brl title="Pool liberado no ciclo (R$/mês)" fmt='$#,##0'/>
+<BigValue data={orc_loop_proj} value=whatif_brl title="What-if do corte pendente (R$/mês)" fmt='$#,##0'/>
+
+{orc_loop_proj[0].aprendizado}
+
+<DataTable data={orc_loop_proj} rows=all>
+  <Column id=ciclo title="Ciclo"/>
+  <Column id=acao title="Ação recomendada" wrap=true/>
+  <Column id=desperdicio_ref title="Desperdício na recomendação (tok)" fmt=num0/>
+  <Column id=desperdicio_agora title="Desperdício agora (tok)" fmt=num0/>
+  <Column id=liberou_tokens title="Liberado (tok)" fmt=num0 contentType=colorscale/>
+  <Column id=acertos title="Cortes que funcionaram" fmt=num0/>
+  <Column id=erros title="Cortes que não pegaram" fmt=num0/>
+</DataTable>
+
+{:else}
+
+⏳ O loop de orçamento ainda não registrou um ciclo para este projeto.
 
 {/if}
 

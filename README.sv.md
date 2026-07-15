@@ -873,6 +873,25 @@ tokens."* Inget av måtten ensamt skulle säga det.
 
 <!-- budget-global-section -->
 
+<!-- budget-blueprint -->
+
+> ## 🌿 Din AI-portfölj är en **biosfär** — behandla den som en
+>
+> Sluta se varje projekt som ett isolerat kalkylblad. **De lever i samma ekosystem, och genom det
+> ekosystemet flödar en ändlig resurs: din plans token-pool.** Varje projekt är en art som konkurrerar om
+> den. Och som varje biosfär lyder den två lagar ingen kan upphäva:
+>
+> - **Bärkraften är ändlig.** Vad en art förbrukar för mycket får en annan avstå. Ingen oändlig tillväxt i
+>   en sluten pool — bara *vem som äter vems lunch*.
+> - **Utan bromsar kollapsar ekosystemet till monokultur.** Arten som får obromsad positiv återkoppling kväver
+>   alla andra — och dör med dem, efter att ha förstört mångfalden som födde den.
+>
+> **Därför finns den här modulen.** Inget verktyg på marknaden — Langfuse, CloudZero, Vantage — ser
+> portföljen som en levande organism: de ger *kostnad per projekt*, som om var och en andades sin egen luft.
+> Det gör den inte. **Här ser du hela biosfären** — vem som frodas, vem som parasiterar, vem som betalar för
+> vem, och vad det kostar att släppa in ännu en art i ekosystemet. I pengar, inte i åsikt.
+
+
 ## 💰 Global tokenbudget — varje projekt är ett KOSTNADSSTÄLLE
 
 **Det finns EN budget: den för planen du abonnerar på.** Allt annat **rinner ur den**. Varje projekt är ett **kostnadsställe** — det har **ingen egen budget**. Dess tilldelning är en **skiva av den globala budgeten**, och den skivan **räknas om automatiskt** varje gång ett projekt tillkommer eller lämnar portföljen. **Inget skapas; allt fördelas.**
@@ -933,6 +952,21 @@ tokens."* Inget av måtten ensamt skulle säga det.
 **Tillämpning.** Att skära **Project J** frigör **20,5 % av poolen** och offrar **1,9 % av värdet** — det öppnar nästan 2 nya platser utan att späda ut någon. Att skära **Project F** skulle frigöra 3,4 % och offra **21,2 % av värdet**: det skulle **förstöra mer värde än det frigör kapacitet**. **Detta är inte "skär kostnader" — det är en explicit avvägning, med siffror.**
 
 ![Skärpolitik — % av poolen som frigörs mot % av värdet som offras; diagonalen skiljer det lönsamma skäret från det förstörande](docs/screenshots/budget-politica-corte.png)
+
+---
+<!-- budget-loop-section -->
+
+## 🔁 Omlärningsloop för budgeten — agenten som **utvecklas med ekosystemet**
+
+**Ett friskt ekosystem har minne.** Rovdjuret lär sig vilket byte som är värt jakten; växten lär sig åt vilket håll den ska växa. Utan det lärandet finns ingen anpassning — bara blind försök och misstag, för alltid. Det var precis vad agenten saknade: den rekommenderade att *skära bort slöseri*, men **kontrollerade aldrig, veckan därpå, om skäret den själv beordrade faktiskt frigjorde pool.** Att rekommendera utan att verifiera är inte ledning — det är återvunnen gissning.
+
+**Koncept.** PM-agenten sluter loopen: den **sparar siffran** veckan den rekommenderar skäret och **håller sig själv ansvarig** nästa weekly. Sjönk slöseriet? Rekommendationen fungerade. Inte? Den misslyckades. Det är samma **kontextuella bandit** som omlärningsmotorn — nu tillämpad på **token**-dimensionen, biosfärens knappaste resurs.
+
+**Metodik.** Endast åtgärden **den rekommenderade** bedöms — den svarar för vad den beordrade och **tar inte åt sig äran för vad slumpen frigjorde**. Skäret fungerade → dess förtroende för den rekommendationen **stiger**. Inte → det **faller**. Rörelse under 2 % är brus, och **den lär sig inte av brus**. Förtroendet är **per projekt**: agenten upptäcker vilka skär som frigör pool i *det* ekosystemet.
+
+**Direkt nytta.** Varje fredag kommer agenten till weekly med en redovisning av sitt eget råd: *"förra veckan beordrade jag att skära HALLUCINATION_KOD; det frigjorde R$ X pool — jag höjer mitt förtroende"* eller *"det tog inte — jag sänker mitt förtroende och omprövar"*. Med tiden slutar den upprepa skäret som inte fungerar i ditt sammanhang och satsar på det som gör det. **Din budget styrs inte längre av en fast regel utan av en agent som lärt sig spela på din spelplan.**
+
+![Omlärningsloop för budgeten — slöseriet stiger och faller, och agentens förtroende svarar: stiger när skäret fungerar, faller när det misslyckas, ignorerar bruset](docs/screenshots/budget-loop-reaprendizagem.png)
 
 ---
 <!-- pm-agent-section -->

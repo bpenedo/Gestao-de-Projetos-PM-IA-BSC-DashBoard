@@ -911,6 +911,25 @@ Maße allein würde das sagen.
 
 <!-- budget-global-section -->
 
+<!-- budget-blueprint -->
+
+> ## 🌿 Ihr KI-Portfolio ist eine **Biosphäre** — behandeln Sie es so
+>
+> Hören Sie auf, jedes Projekt als isolierte Tabelle zu sehen. **Sie leben im selben Ökosystem, und durch
+> dieses Ökosystem fließt eine endliche Ressource: der Token-Pool Ihres Plans.** Jedes Projekt ist eine
+> Art, die darum konkurriert. Und wie jede Biosphäre gehorcht es zwei Gesetzen, die niemand aufheben kann:
+>
+> - **Die Tragfähigkeit ist endlich.** Was eine Art mehr verbraucht, fehlt einer anderen. Kein unendliches
+>   Wachstum in einem geschlossenen Pool — nur *wer wem das Mittagessen wegisst*.
+> - **Ohne Bremsen kollabiert das Ökosystem zur Monokultur.** Die Art mit ungebremster positiver Rückkopplung
+>   erstickt alle anderen — und stirbt mit ihnen, weil sie die Vielfalt zerstört hat, die sie nährte.
+>
+> **Dafür gibt es dieses Modul.** Kein Werkzeug am Markt — Langfuse, CloudZero, Vantage — sieht das
+> Portfolio als lebenden Organismus: Sie liefern *Kosten pro Projekt*, als atmete jedes seine eigene Luft.
+> Tut es nicht. **Hier sehen Sie die ganze Biosphäre** — wer gedeiht, wer parasitiert, wer für wen zahlt und
+> was es kostet, eine weitere Art aufzunehmen. In Geld, nicht in Meinung.
+
+
 ## 💰 Globales Token-Budget — jedes Projekt ist eine KOSTENSTELLE
 
 **Es gibt EIN Budget: das des Plans, den Sie abonnieren.** Alles andere **fließt daraus ab**. Jedes Projekt ist eine **Kostenstelle** — es hat **kein eigenes Budget**. Sein Kontingent ist ein **Anteil am Globalen Budget**, und dieser Anteil wird **automatisch neu berechnet**, sobald ein Projekt ins Portfolio kommt oder es verlässt. **Nichts wird geschaffen; alles wird verteilt.**
@@ -971,6 +990,21 @@ Maße allein würde das sagen.
 **Anwendung.** Project J zu streichen gibt **20,5 % des Pools** frei und opfert **1,9 % des Werts** — es öffnet fast 2 neue Plätze, ohne jemanden zu verwässern. Project F zu streichen gäbe 3,4 % frei und opferte **21,2 % des Werts**: Es **zerstörte mehr Wert, als es Kapazität freigäbe**. **Das ist kein „Kosten senken“ — es ist ein expliziter Trade-off, mit Zahlen.**
 
 ![Schnittpolitik — % des freigegebenen Pools gegen % des geopferten Werts; die Diagonale trennt den lohnenden Schnitt vom zerstörerischen](docs/screenshots/budget-politica-corte.png)
+
+---
+<!-- budget-loop-section -->
+
+## 🔁 Budget-Relearning-Schleife — der Agent, der **mit dem Ökosystem evolviert**
+
+**Ein gesundes Ökosystem hat Gedächtnis.** Der Räuber lernt, welche Beute die Jagd lohnt; die Pflanze lernt, wohin sie wächst. Ohne dieses Lernen gibt es keine Anpassung — nur blindes Versuch und Irrtum, für immer. Genau das fehlte dem Agenten: Er empfahl, *Verschwendung zu kappen*, prüfte aber **in der Folgewoche nie, ob der Schnitt, den er selbst angeordnet hatte, tatsächlich Pool freigesetzt hatte.** Empfehlen ohne Prüfen ist kein Management — es ist recyceltes Raten.
+
+**Konzept.** Der PM Agent schließt die Schleife: Er **speichert die Zahl** in der Woche, in der er den Schnitt empfiehlt, und **nimmt sich im nächsten Weekly selbst in die Pflicht**. Ist die Verschwendung gesunken? Die Empfehlung hat gewirkt. Nicht? Sie ist gescheitert. Es ist derselbe **kontextuelle Bandit** wie die Relearning-Engine — nun auf die **Token**-Dimension angewandt, die knappste Ressource.
+
+**Methodik.** Nur die Aktion, die **er empfohlen** hat, wird bewertet — er haftet für das Angeordnete und **nimmt keinen Kredit für das, was der Zufall freigab**. Schnitt gewirkt → sein Vertrauen in diese Empfehlung **steigt**. Nicht → es **fällt**. Bewegung unter 2 % ist Rauschen, und **er lernt nicht aus Rauschen**. Das Vertrauen ist **projektspezifisch**: Der Agent findet heraus, welche Schnitte in *diesem* Ökosystem tatsächlich Pool freisetzen.
+
+**Direkter Nutzen.** Jeden Freitag kommt der Agent mit einer Rechenschaft über den eigenen Rat ins Weekly: *„letzte Woche ordnete ich an, HALLUZINATION_CODE zu kappen; es setzte R$ X Pool frei — ich hebe mein Vertrauen“* oder *„es zog nicht — ich senke mein Vertrauen und überdenke“*. Mit der Zeit wiederholt er den Schnitt, der bei Ihnen nicht wirkt, nicht mehr und setzt auf den, der wirkt. **Ihr Budget wird nicht mehr von einer festen Regel geführt, sondern von einem Agenten, der auf Ihrem Brett spielen lernte.**
+
+![Budget-Relearning-Schleife — die Verschwendung steigt und fällt, und das Vertrauen des Agenten reagiert: steigt, wenn der Schnitt wirkt, fällt, wenn er scheitert, ignoriert das Rauschen](docs/screenshots/budget-loop-reaprendizagem.png)
 
 ---
 <!-- pm-agent-section -->

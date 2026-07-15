@@ -86,6 +86,10 @@ select * from bsc.contencao_projeto order by saldo desc
 select * from bsc.admissao_politica order by ordem_corte
 ```
 
+```sql orc_loop
+select * from bsc.pm_agent_orcamento order by whatif_brl desc
+```
+
 ```sql planos
 select * from bsc.planos_assinatura
 ```
@@ -829,6 +833,31 @@ máximo de pool ao **mínimo custo de valor**.
 > **Este é o quadro que o comitê de portfólio nunca teve.** Não é "cortem custos" — é: *este projeto
 > libera 20,5% do pool sacrificando 1,9% do valor; aquele libera 6,9% mas sacrifica 20,1% — **cortar o
 > segundo destrói mais valor do que libera capacidade**.*
+
+## 🔁 Loop de reaprendizagem sobre o orçamento — o agente cobra a si mesmo
+
+O PM Agent não só recomenda cortar desperdício — ele **guarda o número** e, na weekly seguinte, **cobra
+a si mesmo** se o corte de fato liberou pool. É a **mesma mecânica do motor de reaprendizagem** (bandit
+contextual), aplicada à dimensão de **tokens**: só a ação que **ele recomendou** é avaliada, ele
+**não leva crédito pelo que o acaso liberou**, e variação abaixo de 2% é ruído — **não se aprende com
+ruído**.
+
+<DataTable data={orc_loop} rows=all>
+  <Column id=project_name title="Projeto"/>
+  <Column id=acao title="Ação recomendada" wrap=true/>
+  <Column id=veredito title="Veredito do último corte"/>
+  <Column id=liberou_brl title="Pool liberado (R$/mês)" fmt='$#,##0' contentType=colorscale/>
+  <Column id=whatif_brl title="What-if do corte pendente (R$/mês)" fmt='$#,##0'/>
+  <Column id=acertos title="Cortes ✓" fmt=num0/>
+  <Column id=erros title="Cortes ✗" fmt=num0/>
+  <Column id=confianca title="Confiança"/>
+</DataTable>
+
+> **O que fecha o loop:** hoje, com dados DEMO estáticos, o veredito é `baseline` — o agente registrou o
+> desperdício e **cobra a si mesmo na próxima weekly**. Quando o dado real fluir e o corte de fato
+> reduzir o desperdício, o veredito vira `funcionou` e a **confiança do agente naquela recomendação
+> sobe**. Se o desperdício não ceder, vira `não funcionou` e a **confiança cai**. O agente aprende, por
+> projeto, **quais cortes de fato liberam pool aqui**.
 
 ---
 

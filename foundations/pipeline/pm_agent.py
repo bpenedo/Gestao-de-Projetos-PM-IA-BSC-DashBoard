@@ -636,6 +636,88 @@ def perfil_texto(conn, p, pesos):
     return txt
 
 
+def orcamento_reaprende(conn, p, ciclo, cod_dia):
+    """
+    🔁 O PM Agent FECHA O LOOP sobre o próprio orçamento.
+
+    Mesma mecânica do reaprender(), agora aplicada aos TOKENS e responsabilizando o
+    agente pela recomendação de corte que ELE mesmo emitiu:
+
+      ciclo N   : recomendo cortar o ralo X e GUARDO o desperdício de hoje.
+      ciclo N+1 : cobro a mim mesmo — o desperdício caiu além da BANDA MORTA?
+                    sim  -> a recomendação funcionou; a confiança sobe.
+                    não  -> não funcionou; a confiança cai.
+                    nem  -> variação < banda morta é ruído; não aprendo com ruído.
+
+    Só a AÇÃO que eu recomendei é avaliada: não levo crédito pelo que o acaso liberou.
+    """
+    oc = conn.execute("SELECT consumo_tokens, cota_tokens, excedente, excedente_brl "
+                      "FROM orcamento_cota WHERE project_name=?", (p,)).fetchone()
+    if not oc:
+        return
+    consumo, cota, excedente, exc_brl = oc
+    por_mtoken = (conn.execute("SELECT custo_por_mtoken FROM orcamento_global").fetchone()
+                  or [70.0])[0]
+
+    # O desperdício mensal (run-rate) vem de orcamento_rateio — a MESMA base do dashboard.
+    # Ler alertas_criticos cru daria o total de 7 dias e o número não bateria com o Budget.
+    desp = int((conn.execute("SELECT COALESCE(desperdicio_tok,0) FROM orcamento_rateio "
+                             "WHERE project_name=?", (p,)).fetchone() or [0])[0])
+    # O nome do ralo dominante só existe em alertas_criticos (7 dias); escalo a sua FATIA
+    # para o mensal, mantendo tudo na régua do run-rate.
+    cats = conn.execute("SELECT tipo_erro, SUM(tokens_desperdicados) FROM alertas_criticos "
+                        "WHERE project_name=? GROUP BY 1 ORDER BY 2 DESC", (p,)).fetchall()
+    tot7 = sum(c[1] for c in cats) or 1
+    ralo = (cats[0][0], int(desp * cats[0][1] / tot7)) if cats else None
+    acao = (f"cortar {ralo[0]} ({ralo[1]:,} tokens/mês no ralo)" if ralo and ralo[1]
+            else "sem desperdício relevante a cortar")
+    # what-if: se o corte pendente landar, quanto libera da cota (em tokens e R$).
+    whatif_tok = int(ralo[1]) if ralo and ralo[1] else 0
+    whatif_brl = (whatif_tok / 1e6) * por_mtoken
+
+    ref = conn.execute(
+        "SELECT desperdicio_agora, excedente_agora, acao, acertos, erros FROM pm_agent_orcamento "
+        "WHERE project_name=? ORDER BY ciclo DESC LIMIT 1", (p,)).fetchone()
+
+    if not ref:
+        veredito, acertos, erros = "baseline", 0, 0
+        aprend = (f"Primeiro ciclo do loop de orçamento neste projeto. Recomendo **{acao}** e "
+                  f"**guardo o desperdício de hoje ({desp:,} tokens)** como referência — na próxima "
+                  f"weekly eu cobro a mim mesmo se o corte de fato liberou pool.")
+    else:
+        desp_ref, exc_ref, acao_ref, acertos, erros = ref
+        base = max(abs(desp_ref), 1e-9)
+        delta_rel = (desp_ref - desp) / base           # positivo = desperdício caiu
+        liberou = desp_ref - desp
+        if abs(delta_rel) < BANDA_MORTA:
+            veredito = "sem_sinal"
+            aprend = (f"No ciclo passado recomendei **{acao_ref}**. O desperdício não se mexeu de "
+                      f"forma material ({desp_ref:,} → {desp:,} tokens, variação < {BANDA_MORTA:.0%}) "
+                      f"— **não aprendo com ruído**. Confiança inalterada; sigo cobrando o corte.")
+        elif delta_rel > 0:
+            veredito, acertos = "funcionou", acertos + 1
+            aprend = (f"✅ No ciclo passado recomendei **{acao_ref}** e o desperdício **caiu de "
+                      f"{desp_ref:,} para {desp:,} tokens** ({liberou:,} liberados, "
+                      f"R$ {(liberou/1e6)*por_mtoken:,.0f}/mês). O corte funcionou — **subo minha "
+                      f"confiança** nessa recomendação para este projeto.")
+        else:
+            veredito, erros = "nao_funcionou", erros + 1
+            aprend = (f"⚠️ No ciclo passado recomendei **{acao_ref}**, mas o desperdício **subiu de "
+                      f"{desp_ref:,} para {desp:,} tokens**. O corte não pegou — **baixo minha "
+                      f"confiança** nessa recomendação aqui e reavalio a abordagem.")
+
+    conf = ("alta" if acertos >= 3 and acertos > erros else
+            "média" if (acertos + erros) >= 2 else "baixa")
+    cur = conn.cursor()
+    exc_ref_val = ref[1] if ref else excedente
+    cur.execute("INSERT OR REPLACE INTO pm_agent_orcamento VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                (p, ciclo, acao, (ref[0] if ref else desp), desp, exc_ref_val, excedente,
+                 (0 if not ref else ref[0] - desp), (0.0 if not ref else ((ref[0]-desp)/1e6)*por_mtoken),
+                 veredito, acertos, erros, conf, whatif_tok, whatif_brl, aprend))
+    conn.commit()
+    return veredito
+
+
 def processar(conn, p):
     valores, dias_eq, danos, cod = medir(conn, p)
     pesos = carregar_pesos(conn, p)
@@ -715,8 +797,13 @@ def main():
         "SELECT DISTINCT project_name FROM cadeia_causal ORDER BY project_name")]
     print(f"🤖 Project Manager Agent — {len(ALAVANCAS)} dimensões × {len(projetos)} projetos")
     n_calado = 0
+    veredito_orc = {"baseline": 0, "funcionou": 0, "nao_funcionou": 0, "sem_sinal": 0}
     for p in projetos:
         ciclo, alav, dano, conf, peso, status, zona = processar(conn, p)
+        # 🔁 o agente fecha o loop sobre o próprio orçamento, no mesmo ciclo.
+        v = orcamento_reaprende(conn, p, ciclo, dano)
+        if v:
+            veredito_orc[v] = veredito_orc.get(v, 0) + 1
         a = ALAVANCAS[alav]
         if status == "NORMAL":
             print(f"   {p:<12} ciclo {ciclo} → 🟢 NORMAL   buffer {zona:<8} "
@@ -728,6 +815,10 @@ def main():
     conn.close()
     print(f"✅ PM Agent: {n_calado}/{len(projetos)} projetos sem nada a escalar — "
           f"o agente calou onde não havia o que dizer (PRINCE2 management by exception).")
+    print(f"🔁 Loop de orçamento: {veredito_orc['baseline']} baseline · "
+          f"{veredito_orc['funcionou']} corte funcionou · "
+          f"{veredito_orc['nao_funcionou']} não funcionou · "
+          f"{veredito_orc['sem_sinal']} sem sinal material (não aprende com ruído).")
 
 
 if __name__ == "__main__":

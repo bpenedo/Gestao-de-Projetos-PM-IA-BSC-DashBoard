@@ -916,6 +916,25 @@ mesures, seule, ne dirait cela.
 
 <!-- budget-global-section -->
 
+<!-- budget-blueprint -->
+
+> ## 🌿 Votre portefeuille d'IA est une **biosphère** — traitez-le comme telle
+>
+> Cessez de voir chaque projet comme un tableur isolé. **Ils vivent dans le même écosystème, et cet
+> écosystème a une ressource finie qui y circule : le pool de tokens de votre plan.** Chaque projet est une
+> espèce qui se bat pour elle. Et comme toute biosphère, elle obéit à deux lois qu'on ne peut abroger :
+>
+> - **La capacité de charge est finie.** Ce qu'une espèce consomme en trop, une autre en est privée. Pas de
+>   croissance infinie dans un pool fermé — seulement *qui mange le déjeuner de qui*.
+> - **Sans freins, l'écosystème s'effondre en monoculture.** L'espèce qui gagne une rétroaction positive sans
+>   limite étouffe toutes les autres — et meurt avec elles, ayant détruit la diversité qui la nourrissait.
+>
+> **Voilà pourquoi ce module existe.** Aucun outil du marché — Langfuse, CloudZero, Vantage — ne voit le
+> portefeuille comme un organisme vivant : ils donnent un *coût par projet*, comme si chacun respirait son
+> propre air. Ce n'est pas le cas. **Ici vous voyez la biosphère entière** — qui prospère, qui parasite, qui
+> paie pour qui, et ce que coûte l'admission d'une espèce de plus. En euros, pas en opinion.
+
+
 ## 💰 Budget Global de Tokens — chaque projet est un CENTRE DE COÛT
 
 **Il existe UN seul budget : celui du plan que vous souscrivez.** Tout le reste en **découle**. Chaque projet est un **centre de coût** — il **n'a pas de budget propre**. Son allocation est une **part du Budget Global**, et cette part est **recalculée automatiquement** dès qu'un projet entre ou sort du portefeuille. **Rien n'est créé ; tout est réparti.**
@@ -976,6 +995,21 @@ mesures, seule, ne dirait cela.
 **Application.** Couper le **Project J** libère **20,5 % du pool** en sacrifiant **1,9 % de la valeur** — cela ouvre près de 2 places sans diluer personne. Couper le **Project F** libérerait 3,4 % et sacrifierait **21,2 % de la valeur** : cela **détruirait plus de valeur qu'il ne libérerait de capacité**. **Ce n'est pas « coupez les coûts » — c'est un arbitrage explicite, chiffré.**
 
 ![Politique de coupe — % du pool libéré face au % de valeur sacrifiée ; la diagonale sépare la coupe qui rapporte de celle qui détruit](docs/screenshots/budget-politica-corte.png)
+
+---
+<!-- budget-loop-section -->
+
+## 🔁 Boucle de réapprentissage sur le budget — l'agent qui **évolue avec l'écosystème**
+
+**Un écosystème sain a une mémoire.** Le prédateur apprend quelle proie vaut la chasse ; la plante apprend vers où pousser. Sans cet apprentissage, pas d'adaptation — seulement l'essai-erreur aveugle, à l'infini. C'était précisément ce qui manquait à l'agent : il recommandait de *couper le gaspillage*, mais **ne vérifiait jamais, la semaine suivante, si la coupe qu'il avait lui-même ordonnée avait réellement libéré du pool.** Recommander sans vérifier, ce n'est pas gérer — c'est de la conjecture recyclée.
+
+**Concept.** Le PM Agent boucle la boucle : il **mémorise le chiffre** la semaine où il recommande la coupe et, au weekly suivant, **se demande des comptes**. Le gaspillage a baissé ? La recommandation a marché. Non ? Elle a échoué. C'est le même **bandit contextuel** que le moteur de réapprentissage — appliqué maintenant à la dimension des **tokens**, la ressource la plus rare de la biosphère.
+
+**Méthodologie.** Seule l'action qu'**il a recommandée** est jugée — il répond de ce qu'il a ordonné et **ne s'attribue pas ce que le hasard a libéré**. La coupe a marché → sa confiance dans cette recommandation **monte**. Non → elle **descend**. Une variation sous 2 % est du bruit, et **il n'apprend pas du bruit**. La confiance est **par projet** : l'agent découvre quelles coupes libèrent du pool dans *cet* écosystème.
+
+**Bénéfice direct.** Chaque vendredi, l'agent arrive au weekly avec un compte rendu de son propre conseil : *« la semaine dernière j'ai ordonné de couper HALLUCINATION_CODE ; ça a libéré R$ X de pool — je monte ma confiance »* ou *« ça n'a pas pris — je baisse ma confiance et je reconsidère »*. Avec le temps, il cesse de répéter la coupe qui ne marche pas chez vous et mise sur celle qui marche. **Votre budget n'est plus régi par une règle fixe mais par un agent qui a appris à jouer sur votre échiquier.**
+
+![Boucle de réapprentissage sur le budget — le gaspillage monte et descend, et la confiance de l'agent réagit : elle monte quand la coupe marche, descend quand elle échoue, ignore le bruit](docs/screenshots/budget-loop-reaprendizagem.png)
 
 ---
 <!-- pm-agent-section -->

@@ -838,3 +838,37 @@ CREATE TABLE IF NOT EXISTS admissao_politica (
     projetos_novos   REAL,     -- quantos projetos novos cabem no espaço liberado
     troca            TEXT      -- o veredito do trade-off
 );
+
+-- ===========================================================================
+-- 🔁 LOOP DE REAPRENDIZAGEM SOBRE O ORÇAMENTO — o bandit aplicado aos TOKENS.
+--
+-- O motor de reaprendizagem do PM Agent já reforça a alavanca de tokens por dentro
+-- (pm_agent_pesos). Esta tabela é o REGISTRO AUDITÁVEL desse loop na dimensão do
+-- orçamento: fecha a pergunta que faltava — "na semana passada eu mandei cortar o
+-- ralo X; o pool foi liberado ou não?".
+--
+-- Mesma mecânica do reaprender(): guarda o desperdício no ciclo da recomendação e,
+-- no ciclo seguinte, COBRA a si mesmo. Caiu além da banda morta -> a recomendação
+-- funcionou, a confiança sobe. Não caiu -> não funcionou, a confiança cai. Variação
+-- abaixo da banda morta é ruído: não se aprende com ruído. Só a AÇÃO que ele
+-- recomendou é avaliada — não leva crédito pelo que o acaso liberou.
+-- ===========================================================================
+CREATE TABLE IF NOT EXISTS pm_agent_orcamento (
+    project_name     TEXT,
+    ciclo            INTEGER,
+    acao             TEXT,     -- o ralo concreto que ele mandou cortar
+    desperdicio_ref  INTEGER,  -- desperdício no ciclo em que a ação foi recomendada
+    desperdicio_agora INTEGER, -- desperdício medido AGORA
+    excedente_ref    INTEGER,  -- excedente sobre a cota, no ciclo da recomendação
+    excedente_agora  INTEGER,  -- excedente medido AGORA
+    liberou_tokens   INTEGER,  -- desperdicio_ref - desperdicio_agora (positivo = liberou)
+    liberou_brl      REAL,
+    veredito         TEXT,     -- baseline | funcionou | nao_funcionou | sem_sinal
+    acertos          INTEGER,  -- ciclos em que a recomendação de corte funcionou
+    erros            INTEGER,  -- ciclos em que não funcionou
+    confianca        TEXT,     -- baixa | média | alta (histórico DESTE projeto)
+    whatif_tokens    INTEGER,  -- se o corte pendente landar, quanto libera
+    whatif_brl       REAL,
+    aprendizado      TEXT,     -- a narrativa do loop fechado
+    PRIMARY KEY (project_name, ciclo)
+);

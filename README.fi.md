@@ -888,6 +888,25 @@ projektissa NPV:n epävarmuus ei tule tokeneista."* Kumpikaan mittari yksinään
 
 <!-- budget-global-section -->
 
+<!-- budget-blueprint -->
+
+> ## 🌿 Tekoälysalkkusi on **biosfääri** — kohtele sitä sellaisena
+>
+> Lakkaa ajattelemasta jokaista projektia erillisenä taulukkona. **Ne elävät samassa ekosysteemissä, ja sen
+> läpi virtaa yksi rajallinen resurssi: suunnitelmasi token-pooli.** Jokainen projekti on laji, joka kilpailee
+> siitä. Ja kuten jokainen biosfääri, se noudattaa kahta lakia, joita kukaan ei voi kumota:
+>
+> - **Kantokyky on rajallinen.** Minkä yksi laji kuluttaa liikaa, se on toiselta pois. Suljetussa poolissa ei
+>   ole ääretöntä kasvua — vain *kuka syö kenen lounaan*.
+> - **Ilman jarruja ekosysteemi romahtaa monokulttuuriksi.** Laji, joka saa rajoittamatonta positiivista
+>   palautetta, tukahduttaa kaikki muut — ja kuolee niiden mukana tuhottuaan sen monimuotoisuuden, joka ruokki sitä.
+>
+> **Siksi tämä moduuli on olemassa.** Mikään markkinoiden työkalu — Langfuse, CloudZero, Vantage — ei näe
+> salkkua elävänä organismina: ne antavat *kustannuksen projektia kohden*, ikään kuin kukin hengittäisi omaa
+> ilmaansa. Ei hengitä. **Täällä näet koko biosfäärin** — kuka menestyy, kuka loisii, kuka maksaa kenen
+> puolesta, ja mitä maksaa ottaa yksi laji lisää ekosysteemiin. Rahassa, ei mielipiteessä.
+
+
 ## 💰 Globaali token-budjetti — jokainen projekti on KUSTANNUSPAIKKA
 
 **On olemassa YKSI budjetti: tilaamasi suunnitelman budjetti.** Kaikki muu **valuu siitä**. Jokainen projekti on **kustannuspaikka** — sillä **ei ole omaa budjettia**. Sen kiintiö on **viipale globaalista budjetista**, ja tämä viipale **lasketaan automaattisesti uudelleen** aina kun projekti liittyy salkkuun tai poistuu siitä. **Mitään ei luoda; kaikki jaetaan.**
@@ -948,6 +967,21 @@ projektissa NPV:n epävarmuus ei tule tokeneista."* Kumpikaan mittari yksinään
 **Soveltaminen.** Project J:n leikkaaminen vapauttaa **20,5 % poolista** uhraten **1,9 % arvosta** — se avaa lähes 2 uutta paikkaa laimentamatta ketään. Project F:n leikkaaminen vapauttaisi 3,4 % ja uhraisi **21,2 % arvosta**: se **tuhoaisi enemmän arvoa kuin vapauttaisi kapasiteettia**. **Tämä ei ole "leikatkaa kuluja" — tämä on eksplisiittinen vaihtokauppa, numeroilla.**
 
 ![Leikkauspolitiikka — vapautuvan poolin % vs. uhrattavan arvon %; lävistäjä erottaa kannattavan leikkauksen tuhoavasta](docs/screenshots/budget-politica-corte.png)
+
+---
+<!-- budget-loop-section -->
+
+## 🔁 Budjetin uudelleenoppimissilmukka — agentti, joka **kehittyy ekosysteemin mukana**
+
+**Terveellä ekosysteemillä on muisti.** Peto oppii, mikä saalis on jahdin arvoinen; kasvi oppii, minne kasvaa. Ilman tuota oppimista ei ole sopeutumista — vain sokeaa yritystä ja erehdystä, ikuisesti. Juuri se agentilta puuttui: se suositteli *hukan leikkaamista*, mutta **ei koskaan tarkistanut seuraavalla viikolla, vapauttiko sen itse määräämä leikkaus todella poolia.** Suositella tarkistamatta ei ole johtamista — se on kierrätettyä arvausta.
+
+**Käsite.** PM Agent sulkee silmukan: se **tallentaa luvun** sillä viikolla, kun se suosittelee leikkausta, ja **vaatii itseltään tiliä** seuraavassa weeklyssä. Laskiko hukka? Suositus toimi. Eikö? Se epäonnistui. Se on sama **kontekstuaalinen bandiitti** kuin uudelleenoppimismoottori — nyt sovellettuna **token**-ulottuvuuteen, biosfäärin niukimpaan resurssiin.
+
+**Menetelmä.** Vain toimintoa, jonka **se suositteli**, arvioidaan — se vastaa käskemästään eikä **ota kunniaa siitä, minkä sattuma vapautti**. Leikkaus toimi → sen luottamus tuohon suositukseen **nousee**. Ei toiminut → se **laskee**. Alle 2 %:n liike on kohinaa, eikä **se opi kohinasta**. Luottamus on **projektikohtainen**: agentti selvittää, mitkä leikkaukset vapauttavat poolia *siinä* ekosysteemissä.
+
+**Suora hyöty.** Joka perjantai agentti saapuu weeklyyn tilityksen kanssa omasta neuvostaan: *"viime viikolla määräsin leikkaamaan HALLUSINAATIO_KOODIN; se vapautti R$ X poolia — nostan luottamustani"* tai *"ei purrut — lasken luottamustani ja harkitsen uudelleen"*. Ajan myötä se lakkaa toistamasta leikkausta, joka ei toimi sinun kontekstissasi, ja panostaa siihen, joka toimii. **Budjettisi ei enää toimi kiinteän säännön mukaan vaan agentin mukaan, joka oppi pelaamaan sinun laudallasi.**
+
+![Budjetin uudelleenoppimissilmukka — hukka nousee ja laskee, ja agentin luottamus reagoi: nousee kun leikkaus toimii, laskee kun se epäonnistuu, ohittaa kohinan](docs/screenshots/budget-loop-reaprendizagem.png)
 
 ---
 <!-- pm-agent-section -->
