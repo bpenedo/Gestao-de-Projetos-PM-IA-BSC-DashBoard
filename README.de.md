@@ -1036,7 +1036,7 @@ verde/amarelo:    y = 1/3 + (1/3)·x
 amarelo/vermelho: y = 2/3 + (1/3)·x
 ```
 
-**Anwendung hier.** Der Puffer ist `P80 − P50` aus dem **Monte-Carlo-Terminplan**, den wir ohnehin schon rechnen. Der Verbrauch ist der **Earned-Schedule-Verzug**, umgerechnet in Tage. Und es ist das Fieberdiagramm, das dem Agenten den objektiven Auslöser für Schweigen gibt: **grüne Zone plus innerhalb der Toleranz = nichts zu eskalieren.** Heute erhalten **3 von 10 Projekten** genau das — und indem er schweigt, wenn es nichts zu sagen gibt, erwirbt er das Recht, gehört zu werden, wenn es etwas gibt.
+**Anwendung hier.** Der Puffer ist `P80 − P50` aus dem **Monte-Carlo-Terminplan**, den wir ohnehin schon rechnen. Der Verbrauch ist der **Earned-Schedule-Verzug**, umgerechnet in Tage. Und es ist das Fieberdiagramm, das dem Agenten den objektiven Auslöser für Schweigen gibt: **grüne Zone plus innerhalb der Toleranz = nichts zu eskalieren.** Heute erhalten **2 von 10 Projekten** genau das — und indem er schweigt, wenn es nichts zu sagen gibt, erwirbt er das Recht, gehört zu werden, wenn es etwas gibt.
 
 ![CCPM-Fieberdiagramm — die 10 Projekte in den drei Zonen; die diagonalen Grenzen machen denselben Pufferverbrauch am Ende harmlos und am Anfang gravierend](docs/screenshots/ccpm-fever-chart.png)
 

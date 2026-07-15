@@ -1022,7 +1022,7 @@ verde/amarelo:    y = 1/3 + (1/3)·x
 amarelo/vermelho: y = 2/3 + (1/3)·x
 ```
 
-**Aplicação aqui.** O buffer é `P80 − P50` do **cronograma Monte Carlo** que já rodávamos. O consumo é o **atraso do Earned Schedule** convertido em dias. E é o fever chart que dá ao agente o gatilho objetivo do silêncio: **projeto em zona verde e dentro das tolerâncias = nada a escalar.** Hoje **3 dos 10 projetos** recebem exatamente isso — e é calando quando não há o que dizer que o agente ganha o direito de ser ouvido quando há.
+**Aplicação aqui.** O buffer é `P80 − P50` do **cronograma Monte Carlo** que já rodávamos. O consumo é o **atraso do Earned Schedule** convertido em dias. E é o fever chart que dá ao agente o gatilho objetivo do silêncio: **projeto em zona verde e dentro das tolerâncias = nada a escalar.** Hoje **2 dos 10 projetos** recebem exatamente isso — e é calando quando não há o que dizer que o agente ganha o direito de ser ouvido quando há.
 
 ![Fever chart do CCPM — os 10 projetos nas três zonas; as fronteiras diagonais tornam o mesmo consumo de buffer benigno no fim e grave no começo](docs/screenshots/ccpm-fever-chart.png)
 

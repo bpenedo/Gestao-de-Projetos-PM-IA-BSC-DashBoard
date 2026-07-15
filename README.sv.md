@@ -998,7 +998,7 @@ verde/amarelo:    y = 1/3 + (1/3)·x
 amarelo/vermelho: y = 2/3 + (1/3)·x
 ```
 
-**Tillämpning här.** Bufferten är `P80 − P50` från **Monte Carlo-schemat** vi redan körde. Förbrukningen är **Earned Schedule-förseningen** omräknad till dagar. Och det är feberdiagrammet som ger agenten en objektiv trigger för tystnad: **grön zon plus inom tolerans = inget att eskalera.** Idag får **3 av 10 projekt** exakt det — och det är genom att tiga när det inte finns något att säga som agenten förtjänar rätten att bli hörd när det finns.
+**Tillämpning här.** Bufferten är `P80 − P50` från **Monte Carlo-schemat** vi redan körde. Förbrukningen är **Earned Schedule-förseningen** omräknad till dagar. Och det är feberdiagrammet som ger agenten en objektiv trigger för tystnad: **grön zon plus inom tolerans = inget att eskalera.** Idag får **2 av 10 projekt** exakt det — och det är genom att tiga när det inte finns något att säga som agenten förtjänar rätten att bli hörd när det finns.
 
 ![CCPM-feberdiagram — de 10 projekten i de tre zonerna; de diagonala gränserna gör samma bufferförbrukning ofarlig i slutet och allvarlig i början](docs/screenshots/ccpm-fever-chart.png)
 

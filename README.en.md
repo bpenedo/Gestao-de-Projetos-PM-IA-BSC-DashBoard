@@ -1017,7 +1017,7 @@ verde/amarelo:    y = 1/3 + (1/3)·x
 amarelo/vermelho: y = 2/3 + (1/3)·x
 ```
 
-**How we apply it.** The buffer is `P80 − P50` from the **Monte Carlo schedule** we already ran. Consumption is the **Earned Schedule slip** converted into days. And it is the fever chart that gives the agent an objective trigger for silence: **green zone plus within tolerance = nothing to escalate.** Today **3 of the 10 projects** get exactly that — and it is by staying quiet when there is nothing to say that the agent earns the right to be heard when there is.
+**How we apply it.** The buffer is `P80 − P50` from the **Monte Carlo schedule** we already ran. Consumption is the **Earned Schedule slip** converted into days. And it is the fever chart that gives the agent an objective trigger for silence: **green zone plus within tolerance = nothing to escalate.** Today **2 of the 10 projects** get exactly that — and it is by staying quiet when there is nothing to say that the agent earns the right to be heard when there is.
 
 ![CCPM fever chart — the 10 projects across the three zones; the diagonal boundaries make the same buffer burn benign late and serious early](docs/screenshots/ccpm-fever-chart.png)
 

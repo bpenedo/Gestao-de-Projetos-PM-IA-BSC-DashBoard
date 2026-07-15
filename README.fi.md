@@ -1013,7 +1013,7 @@ verde/amarelo:    y = 1/3 + (1/3)·x
 amarelo/vermelho: y = 2/3 + (1/3)·x
 ```
 
-**Soveltaminen täällä.** Puskuri on `P80 − P50` **Monte Carlo -aikataulusta**, jota jo ajoimme. Kulutus on **Earned Schedule -viive** muunnettuna päiviksi. Ja juuri kuumekäyrä antaa agentille objektiivisen laukaisimen vaikenemiselle: **vihreä vyöhyke ja toleranssin sisällä = ei mitään eskaloitavaa.** Tänään **3 projektia 10:stä** saa juuri sen — ja vaikenemalla silloin kun ei ole sanottavaa, agentti ansaitsee oikeuden tulla kuulluksi silloin kun on.
+**Soveltaminen täällä.** Puskuri on `P80 − P50` **Monte Carlo -aikataulusta**, jota jo ajoimme. Kulutus on **Earned Schedule -viive** muunnettuna päiviksi. Ja juuri kuumekäyrä antaa agentille objektiivisen laukaisimen vaikenemiselle: **vihreä vyöhyke ja toleranssin sisällä = ei mitään eskaloitavaa.** Tänään **2 projektia 10:stä** saa juuri sen — ja vaikenemalla silloin kun ei ole sanottavaa, agentti ansaitsee oikeuden tulla kuulluksi silloin kun on.
 
 ![CCPM-kuumekäyrä — 10 projektia kolmella vyöhykkeellä; diagonaaliset rajat tekevät samasta puskurinkulutuksesta vaarattoman lopussa ja vakavan alussa](docs/screenshots/ccpm-fever-chart.png)
 
